@@ -1,4 +1,4 @@
 north-american-cyril
 ====================
 
-Game Development I - Pygame Project
+Game Development I - Panda3D Project
