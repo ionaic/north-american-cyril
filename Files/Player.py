@@ -5,6 +5,7 @@ import math
 class Player(object):
   def __init__(self):
     self.speed = 70
+    self.lightDist = 20
     self.forward = Vec3(0,1,0)
     self.back = Vec3(0,-1,0)
     self.left = Vec3(-1,0,0)
@@ -45,16 +46,26 @@ class Player(object):
     
     #Loads camera
     lens =  base.cam.node().getLens()
-    lens.setFov(60)
+    lens.setFov(75)
     base.cam.node().setLens(lens)
     base.camera.reparentTo(self.playerNode)
-  
+    
+    """
+    #Testing light
+    self.test = loader.loadModel('Models/sphere')
+    self.test.reparentTo(self.playerNode)
+    self.test.setTwoSided(True)
+    self.test.setPos(self.lightPos)
+    """
+    self.pLightNode = NodePath("light-node")
+    self.pLightNode.reparentTo(self.playerNode)
+    self.pLightNode.setPos(Vec3(0,self.lightDist,0))
     #Loads artifact point light
     pLight = PointLight('player-light')
-    pLight.setColor((0.2, 0.2, 0.3, 1.0))
-    pLight.setAttenuation(Vec3(0.1, 0.01, 0.0001))
-    pLightNP = self.playerNode.attachNewNode(pLight)
-
+    pLightNP = self.pLightNode.attachNewNode(pLight)
+    pLightNP.node().setColor(Vec4(0.2, 0.2, 0.2, 1.0))
+    pLightNP.node().setAttenuation(Vec3(0, 0.001, 0.0001))
+    
     render.setLight(pLightNP)
     
   def initCollisions(self, pusher, cHandler):
@@ -78,7 +89,8 @@ class Player(object):
       cam_p = base.camera.getP() - (y - base.win.getYSize()/2)*.1
       if cam_p >= -90 and cam_p <= 90:
         base.camera.setP(cam_p)
-        
+    
+    self.pLightNode.setPos(0,self.lightDist,self.lightDist*math.sin(deg2Rad(base.camera.getP())))
     #Move player based on key movements
     if self.keyMap["forward"] == 1:
       self.playerNode.setPos(self.playerNode, self.forward * dt * self.speed)
