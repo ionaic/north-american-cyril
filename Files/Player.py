@@ -74,14 +74,16 @@ class Player(object):
   def loadItem(self, item):
     self.itemNode.detachNode()
     #Filler model
-    self.itemNode = loader.loadModel('Models/sphere')
     if item == 'wall':
+      self.itemNode = loader.loadModel('Models/WallTemp')
       self.itemNode.setColor(Vec4(0,1,0,1))
+      self.itemNode.setScale(5)
     else:
+      self.itemNode = loader.loadModel('Models/sphere')
       self.itemNode.setColor(Vec4(1,1,1,1))
+      self.itemNode.setScale(2)
     #self.itemNode = loader.loadModel('Models/%s' % item)
     self.itemNode.reparentTo(self.playerNode)
-    self.itemNode.setScale(2)
     self.itemLoaded = True
     
   #Cancels ability
@@ -96,7 +98,6 @@ class Player(object):
     if self.itemLoaded:
       self.placeItem()
       self.cancelKey()
-    
   def placeItem(self):
     if self.abilities['wall'] == 1:
       self.placeWall()
@@ -105,7 +106,12 @@ class Player(object):
   
   #Places wall
   def placeWall(self):
-    return
+    item = render.attachNewNode('item-light')
+    item.setPos(self.itemNode.getPos(render))
+    item.setH(self.itemNode.getH(render))
+    light = loader.loadModel('Models/WallTemp')
+    light.reparentTo(item)
+    light.setScale(self.playerScale*5)
   
   #Places light item and creates a point light
   def placeLight(self):
@@ -156,7 +162,7 @@ class Player(object):
   def initCollisions(self, pusher, cHandler):
     #Collide with env
     cNode = CollisionNode('player')
-    cSphere = CollisionSphere(0, 0, 4, 10)
+    cSphere = CollisionSphere(0, 0, -2/self.playerScale, 1)
     cNode.addSolid(cSphere)
     cNodePath = self.playerNode.attachNewNode(cNode)
     cNodePath.show()
@@ -196,9 +202,9 @@ class Player(object):
       base.camera.setP(-20)
     
     rad = deg2Rad(base.camera.getP())
-    itemDist = (self.playerNode.getZ()+0.5)/-math.tan(rad)
+    itemDist = self.playerNode.getZ()/-math.tan(rad)
     self.itemNode.setPos(Vec3(0,itemDist/self.playerScale,
-                         (-1*self.playerNode.getZ()+0.5)/self.playerScale))
+                         -1*self.playerNode.getZ()/self.playerScale))
                          
   #Move player based on key movements
   def movePlayer(self, dt):
