@@ -96,7 +96,6 @@ class Player(object):
     if self.itemLoaded:
       self.placeItem()
       self.cancelKey()
-    print render.getChildren()
     
   def placeItem(self):
     if self.abilities['wall'] == 1:
@@ -149,7 +148,7 @@ class Player(object):
     self.pLightNode.setPos(Vec3(0,self.lightDist,0))
     pLight = PointLight('player-light')
     pLightNP = self.pLightNode.attachNewNode(pLight)
-    pLightNP.node().setColor(Vec4(0.1, 0.2, 0.2, 1.0))
+    pLightNP.node().setColor(Vec4(0.1, 0.1, 0.1, 1.0))
     pLightNP.node().setAttenuation(Vec3(0, 0.01, 0.0001))
     
     render.setLight(pLightNP)
@@ -208,7 +207,6 @@ class Player(object):
         forward = self.sprint
       else:
         forward = self.forward
-      print forward
       self.playerNode.setPos(self.playerNode, forward * dt * self.speed)
     elif self.keyMap['back'] == 1:
       self.playerNode.setPos(self.playerNode, self.back * dt * self.speed)
