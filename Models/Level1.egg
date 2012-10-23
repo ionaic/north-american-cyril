@@ -4,7 +4,7 @@
   "maya2egg2013 Level1.mb -o Level1.egg"
 }
 <Texture> blinn2SG {
-  "../6061.jpg"
+  "./6061.jpg"
   <Scalar> wrapu { repeat }
   <Scalar> wrapv { repeat }
   <Scalar> minfilter { linear_mipmap_linear }

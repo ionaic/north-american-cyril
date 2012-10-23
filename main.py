@@ -18,14 +18,14 @@ class World(DirectObject):
     #Turn off default mouse control
     base.disableMouse()
     base.setFrameRateMeter(True)
-    #Caps framerate for smoother play
     #Set windows properties
     props = WindowProperties()
     props.setCursorHidden(True)
+    #props.setFullscreen(1)
+    #props.setSize(int(base.pipe.getDisplayWidth()), int(base.pipe.getDisplayHeight()))
     props.setMouseMode(WindowProperties.MRelative)
     base.win.requestProperties(props)
     base.accept("escape", sys.exit)
-    
     self.loadModels()
     self.setupCollisions()
 
@@ -51,7 +51,7 @@ class World(DirectObject):
 
   def update(self, task):
     dt = globalClock.getDt()
-    self.player.move(globalClock.getDt())
+    self.player.update(globalClock.getDt())
     return task.cont
     
 w = World()
