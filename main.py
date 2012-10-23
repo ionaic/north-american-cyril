@@ -7,6 +7,10 @@ from direct.task import Task #update functions
 from Files.MapGen import *
 from Files.Player import *
 
+# multisampling
+loadPrcFileData("", "framebuffer-multisample 1")
+loadPrcFileData("", "multisamples 1")
+
 import math, sys, random
 
 class World(DirectObject):
