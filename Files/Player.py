@@ -108,7 +108,7 @@ class Player(object):
   def placeWall(self):
     item = render.attachNewNode('item-light')
     item.setPos(self.itemNode.getPos(render))
-    item.setH(self.itemNode.getH(render))
+    item.setHpr(self.itemNode.getHpr(render))
     light = loader.loadModel('Models/WallTemp')
     light.reparentTo(item)
     light.setScale(self.playerScale*5)
@@ -117,6 +117,7 @@ class Player(object):
   def placeLight(self):
     item = render.attachNewNode('item-light')
     item.setPos(self.itemNode.getPos(render))
+    item.setHpr(self.itemNode.getHpr(render))
     light = loader.loadModel('Models/sphere')
     light.reparentTo(item)
     light.setScale(self.playerScale*2)
@@ -159,15 +160,15 @@ class Player(object):
     
     render.setLight(pLightNP)
     
-  def initCollisions(self, pusher, cHandler):
+  def initCollisions(self, cHandler):
     #Collide with env
     cNode = CollisionNode('player')
     cSphere = CollisionSphere(0, 0, -2/self.playerScale, 1)
     cNode.addSolid(cSphere)
     cNodePath = self.playerNode.attachNewNode(cNode)
     cNodePath.show()
-    base.cTrav.addCollider(cNodePath, pusher)
-    pusher.addCollider(cNodePath, self.playerNode, base.drive.node())
+    base.cTrav.addCollider(cNodePath, base.pusher)
+    base.pusher.addCollider(cNodePath, self.playerNode, base.drive.node())
   
   
   #Updates player

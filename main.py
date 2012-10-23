@@ -38,14 +38,14 @@ class World(DirectObject):
   def setupCollisions(self): 
     #Make a collision traverser, set it to default   
     base.cTrav = CollisionTraverser()
-    pusher = CollisionHandlerPusher()
+    base.pusher = CollisionHandlerPusher()
     
     self.cHandler = CollisionHandlerEvent()
     #Set the pattern for the event sent on collision
     #self.cHandler.setInPattern("%fn-into-%in")
     self.cHandler.setInPattern("into")
     
-    self.player.initCollisions(pusher, self.cHandler)
+    self.player.initCollisions(self.cHandler)
     
     #base.cTrav.showCollisions(render)
 
