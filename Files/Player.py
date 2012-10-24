@@ -2,6 +2,7 @@ from pandac.PandaModules import * #basic Panda modules
 from direct.showbase.DirectObject import DirectObject #event handling
 import math
 from Files.HUD import *
+from direct.particles.ParticleEffect import ParticleEffect #particle effects
 
 class Player(object):
   def __init__(self):
@@ -26,6 +27,8 @@ class Player(object):
     self.initKeyMap()
     self.initControls()
     self.initPlayer()
+
+    base.enableParticles()
     
     hud = HUD()
        
@@ -145,6 +148,13 @@ class Player(object):
     iLightNP = iLightNode.attachNewNode(iLight)
     iLightNP.node().setColor(Vec4(0.2, 0.1, 0.1, 1.0))
     iLightNP.node().setAttenuation(Vec3(0, 0.008, 0.0001))
+    # particle effects
+    rFlame = ParticleEffect()
+    rFlame.loadConfig("Models/fire.ptf")
+    rFlame.start(item)
+    pos = item.getPos()
+    rFlame.setPos(pos[0], pos[1], pos[2])
+    rflame.setScale(0.5)
     render.setLight(iLightNP)
       
     
