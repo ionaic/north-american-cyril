@@ -206,6 +206,13 @@ class Player(object):
     itemDist = self.playerNode.getZ()/-math.tan(rad)
     self.itemNode.setPos(Vec3(0,itemDist/self.playerScale,
                          -1*self.playerNode.getZ()/self.playerScale))
+    heading = self.playerNode.getH()
+    heading = (int(heading) % 180)
+    if heading >= 45 and heading < 135:
+      self.itemNode.setH(render, 90)
+    else:
+      self.itemNode.setH(render, 0)
+    
                          
   #Move player based on key movements
   def movePlayer(self, dt):
