@@ -4,7 +4,7 @@ import math
 
 class Player(object):
   def __init__(self):
-    self.speed = 100
+    self.speed = 70
     self.playerScale = 0.05
     self.lightDist = 1
     self.forward = Vec3(0,1,0)
@@ -14,6 +14,13 @@ class Player(object):
     self.right = Vec3(1,0,0)
     self.itemNode = NodePath('item')
     self.itemLoaded = False
+    
+    self.bobTimer = 0
+    self.bobSpeed = 0.017
+    self.bobSpeedSprint = 0.033
+    self.bobAmt = 1.8
+    self.bobAmtSprint = 28
+    self.bobMid = 0
     
     self.initKeyMap()
     self.initControls()
@@ -78,8 +85,16 @@ class Player(object):
       self.itemNode = loader.loadModel('Models/WallTemp')
       self.itemNode.setColor(Vec4(0,1,0,1))
       self.itemNode.setScale(5)
+      #Collide with env
+      cNode = CollisionNode('wall')
+      cSphere = CollisionSphere(0, 0, 5, 5)
+      cNode.addSolid(cSphere)
+      cNodePath = self.itemNode.attachNewNode(cNode)
+      cNodePath.show()
+      base.cTrav.addCollider(cNodePath, base.pusher)
+      base.pusher.addCollider(cNodePath, self.itemNode, base.drive.node())
     else:
-      self.itemNode = loader.loadModel('Models/sphere')
+      self.itemNode = loader.loadModel('Models/torch')
       self.itemNode.setColor(Vec4(1,1,1,1))
       self.itemNode.setScale(2)
     #self.itemNode = loader.loadModel('Models/%s' % item)
@@ -118,7 +133,7 @@ class Player(object):
     item = render.attachNewNode('item-light')
     item.setPos(self.itemNode.getPos(render))
     item.setHpr(self.itemNode.getHpr(render))
-    light = loader.loadModel('Models/sphere')
+    light = loader.loadModel('Models/torch')
     light.reparentTo(item)
     light.setScale(self.playerScale*2)
     iLightNode = NodePath('ilight')
@@ -133,6 +148,7 @@ class Player(object):
   #Loads player node, camera, and light
   def initPlayer(self):
     self.playerNode = NodePath('player-node')
+    #setPos depends on spawn position in level
     self.playerNode.setPos(-10,-10,3)
     self.playerNode.setScale(self.playerScale)
     self.playerNode.reparentTo(render)
@@ -142,13 +158,6 @@ class Player(object):
     lens.setFov(75)
     base.cam.node().setLens(lens)
     base.camera.reparentTo(self.playerNode)
-    """
-    #Testing light location
-    self.test = loader.loadModel('Models/sphere')
-    self.test.reparentTo(self.playerNode)
-    self.test.setTwoSided(True)
-    self.test.setPos(Vec3(0,self.lightDist,0))
-    """
     #Loads artifact point light
     self.pLightNode = NodePath('light-node')
     self.pLightNode.reparentTo(self.playerNode)
@@ -163,13 +172,12 @@ class Player(object):
   def initCollisions(self, cHandler):
     #Collide with env
     cNode = CollisionNode('player')
-    cSphere = CollisionSphere(0, 0, -2/self.playerScale, 1)
+    cSphere = CollisionSphere(0, 0, -1/self.playerScale, 5)
     cNode.addSolid(cSphere)
     cNodePath = self.playerNode.attachNewNode(cNode)
     cNodePath.show()
     base.cTrav.addCollider(cNodePath, base.pusher)
     base.pusher.addCollider(cNodePath, self.playerNode, base.drive.node())
-  
   
   #Updates player
   def update(self, dt):
@@ -183,18 +191,19 @@ class Player(object):
     y = mouse.getY() 
     if base.win.movePointer(0, base.win.getXSize()/2, base.win.getYSize()/2): 
       self.playerNode.setH(self.playerNode.getH() - (x - base.win.getXSize()/2)*.1)
+      #Move camera based on if ability is toggled
       if self.itemLoaded:
         self.moveItem(y)
       else:
         cam_p = base.camera.getP() - (y - base.win.getYSize()/2)*.1
         if cam_p >= -90 and cam_p <= 90:
           base.camera.setP(cam_p)
+    #Moves pitch of player light based on camera pitch
     rad = deg2Rad(base.camera.getP())
     self.pLightNode.setPos(0,self.lightDist*math.cos(rad)/self.playerScale,
                            self.lightDist*math.sin(rad)/self.playerScale)
-    #self.test.setPos(self.pLightNode.getPos())
   
-  #Moves item and camera if toggled
+  #Moves item and camera if ability is toggled
   def moveItem(self, y):
     cam_p = base.camera.getP() - (y - base.win.getYSize()/2)*.1
     if cam_p >= -90 and cam_p <= -20:
@@ -204,21 +213,28 @@ class Player(object):
     
     rad = deg2Rad(base.camera.getP())
     itemDist = self.playerNode.getZ()/-math.tan(rad)
-    self.itemNode.setPos(Vec3(0,itemDist/self.playerScale,
+    self.itemNode.setFluidPos(Vec3(0,itemDist/self.playerScale,
                          -1*self.playerNode.getZ()/self.playerScale))
     heading = self.playerNode.getH()
     heading = (int(heading) % 180)
-    if heading >= 45 and heading < 135:
+    if (heading >= 60 and heading < 120):
       self.itemNode.setH(render, 90)
+    elif (heading >= 30 and heading < 60):
+      self.itemNode.setH(render, 45)
+    elif (heading >= 120 and heading < 150):
+      self.itemNode.setH(render, 135)
     else:
       self.itemNode.setH(render, 0)
     
-                         
   #Move player based on key movements
   def movePlayer(self, dt):
+    bobAmt = self.bobAmt
+    bobSpeed = self.bobSpeed
     if self.keyMap['forward'] == 1:
       if self.keyMap['sprint'] == 1:
         forward = self.sprint
+        bobAmt = self.bobAmtSprint
+        bobSpeed = self.bobSpeedSprint
       else:
         forward = self.forward
       self.playerNode.setPos(self.playerNode, forward * dt * self.speed)
@@ -229,5 +245,20 @@ class Player(object):
       self.playerNode.setPos(self.playerNode, self.left * dt * self.speed)
     elif self.keyMap['right'] == 1:
       self.playerNode.setPos(self.playerNode, self.right * dt * self.speed)
+      
+    #Head bobbing
+    if (self.keyMap['forward'] + self.keyMap['back'] +
+        self.keyMap['left'] + self.keyMap['right']) >= 1:
+      self.bobTimer = (self.bobTimer + bobSpeed) % (math.pi * 2)
+      self.headBob(bobAmt)
+  
+  def headBob(self, bobAmt):
+    waveslice = math.sin(self.bobTimer)
+    if waveslice != 0:
+      change = waveslice * self.bobAmt
+      base.camera.setZ(self.bobMid + change)
+    else:
+      base.camera.setZ(self.bobMid)
+    
   
     
