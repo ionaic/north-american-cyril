@@ -18,6 +18,9 @@ class World(DirectObject):
     #Turn off default mouse control
     base.disableMouse()
     base.setFrameRateMeter(True)
+    #globalClock = ClockObject.getGlobalClock()
+    #globalClock.setMode(ClockObject.MLimited)
+    #globalClock.setFrameRate(1000)
     #Set windows properties
     props = WindowProperties()
     props.setCursorHidden(True)
@@ -40,12 +43,15 @@ class World(DirectObject):
     base.cTrav = CollisionTraverser()
     base.pusher = CollisionHandlerPusher()
     
-    self.cHandler = CollisionHandlerEvent()
+    base.cHandler = CollisionHandlerEvent()
+    base.queue = CollisionHandlerQueue()
     #Set the pattern for the event sent on collision
     #self.cHandler.setInPattern("%fn-into-%in")
-    self.cHandler.setInPattern("into")
+    base.cHandler.setInPattern("into")
+    base.cHandler.setAgainPattern("%fn-into-%in")
+
     
-    self.player.initCollisions(self.cHandler)
+    self.player.initCollisions()
     
     #base.cTrav.showCollisions(render)
 

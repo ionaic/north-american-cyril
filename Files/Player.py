@@ -5,30 +5,42 @@ from Files.HUD import *
 
 class Player(object):
   def __init__(self):
-    self.speed = 70
+    self.speed = 80
     self.playerScale = 0.05
     self.lightDist = 1
     self.forward = Vec3(0,1,0)
-    self.sprint = Vec3(0,2,0)
+    self.sprint = Vec3(0,5,0)
     self.back = Vec3(0,-1,0)
     self.left = Vec3(-1,0,0)
     self.right = Vec3(1,0,0)
     self.itemNode = NodePath('item')
     self.itemLoaded = False
+    self.lights = []
+    self.timer = 0
     
     self.bobTimer = 0
-    self.bobSpeed = 0.06
-    self.bobSpeedSprint = 0.11
-    self.bobAmt = 1.4
-    self.bobAmtSprint = 5.2
+    self.bobSpeed = 0.079
+    self.bobSpeedSprint = 0.16
+    self.bobAmt = 2.7
+    self.bobAmtSprint = 36
     self.bobMid = 0
+    
+    self.bobCaution = 0.051
+    self.bobAmtCaution = 2.7
+    self.bobStand = 0.02
+    self.bobAmtStand = 1.3
     
     self.initKeyMap()
     self.initControls()
     self.initPlayer()
     
+    base.accept('ray-into-Level1', self.derp2)
+    
     hud = HUD()
        
+  def derp2(self, cEntry):
+    print cEntry
+    
   #Initializes keyMap
   def initKeyMap(self):
     self.keyMap = {}
@@ -88,21 +100,34 @@ class Player(object):
       self.itemNode = loader.loadModel('Models/WallTemp')
       self.itemNode.setColor(Vec4(0,1,0,1))
       self.itemNode.setScale(5)
+      """
       #Collide with env
       cNode = CollisionNode('wall')
-      cSphere = CollisionSphere(0, 0, 5, 5)
+      cSphere = CollisionSphere(0, 0, 6, 5)
       cNode.addSolid(cSphere)
       cNodePath = self.itemNode.attachNewNode(cNode)
       cNodePath.show()
       base.cTrav.addCollider(cNodePath, base.pusher)
       base.pusher.addCollider(cNodePath, self.itemNode, base.drive.node())
+      """
+      
     else:
-      self.itemNode = loader.loadModel('Models/torch')
+      self.itemNode = loader.loadModel('Models/light')
       self.itemNode.setColor(Vec4(1,1,1,1))
-      self.itemNode.setScale(2)
+      self.itemNode.setScale(1.6)
     #self.itemNode = loader.loadModel('Models/%s' % item)
     self.itemNode.reparentTo(self.playerNode)
     self.itemLoaded = True
+    
+    cNode = CollisionNode('ray')
+    cRay = CollisionRay(0,0,0,0,1,0)
+    cNode.addSolid(cRay)
+    cNode.setCollideMask(BitMask32.allOff())
+    cNode.setFromCollideMask(BitMask32.bit(0))
+    cNodePath = base.camera.attachNewNode(cNode)
+    cNodePath.show()
+    base.cTrav.addCollider(cNodePath, base.cHandler)
+    
     
   #Cancels ability
   def cancelKey(self):
@@ -136,16 +161,17 @@ class Player(object):
     item = render.attachNewNode('item-light')
     item.setPos(self.itemNode.getPos(render))
     item.setHpr(self.itemNode.getHpr(render))
-    light = loader.loadModel('Models/torch')
+    light = loader.loadModel('Models/light')
     light.reparentTo(item)
-    light.setScale(self.playerScale*2)
+    light.setScale(self.playerScale*1.6)
     iLightNode = NodePath('ilight')
     iLightNode.reparentTo(item)
     iLight = PointLight('item-light')
     iLightNP = iLightNode.attachNewNode(iLight)
-    iLightNP.node().setColor(Vec4(0.2, 0.1, 0.1, 1.0))
+    iLightNP.node().setColor(Vec4(0.1, 0.15, 0.2, 1.0))
     iLightNP.node().setAttenuation(Vec3(0, 0.008, 0.0001))
     render.setLight(iLightNP)
+    self.lights.append(item)
       
     
   #Loads player node, camera, and light
@@ -158,21 +184,32 @@ class Player(object):
     
     #Loads camera
     lens =  base.cam.node().getLens()
-    lens.setFov(75)
+    lens.setFov(90)
     base.cam.node().setLens(lens)
     base.camera.reparentTo(self.playerNode)
+    
+    hand = loader.loadModel('Models/hand')
+    hand.reparentTo(base.camera)
+    hand.setScale(0.8)
+    hand.setPos(7,9,-9)
+    hand.setH(90)
+    ambientLight = AmbientLight("ambientLight")
+    ambientLight.setColor((0.1, 0.1, 0.1, 1.0))
+    ambientLightNP = render.attachNewNode(ambientLight)
+    hand.setLight(ambientLightNP)
+    
     #Loads artifact point light
     self.pLightNode = NodePath('light-node')
     self.pLightNode.reparentTo(self.playerNode)
     self.pLightNode.setPos(Vec3(0,self.lightDist,0))
     pLight = PointLight('player-light')
     pLightNP = self.pLightNode.attachNewNode(pLight)
-    pLightNP.node().setColor(Vec4(0.1, 0.1, 0.1, 1.0))
+    pLightNP.node().setColor(Vec4(0.3, 0.1, 0.1, 1.0))
     pLightNP.node().setAttenuation(Vec3(0, 0.01, 0.0001))
     
     render.setLight(pLightNP)
     
-  def initCollisions(self, cHandler):
+  def initCollisions(self):
     #Collide with env
     cNode = CollisionNode('player')
     cSphere = CollisionSphere(0, 0, -1/self.playerScale, 5)
@@ -186,6 +223,8 @@ class Player(object):
   def update(self, dt):
     self.moveCam()
     self.movePlayer(dt)
+    self.moveLight()
+    self.timer += 0.05
   
   #Moves camera
   def moveCam(self):
@@ -209,15 +248,16 @@ class Player(object):
   #Moves item and camera if ability is toggled
   def moveItem(self, y):
     cam_p = base.camera.getP() - (y - base.win.getYSize()/2)*.1
-    if cam_p >= -90 and cam_p <= -20:
+    if cam_p >= -90 and cam_p <= -40:
       base.camera.setP(cam_p)
-    elif cam_p > -20:
-      base.camera.setP(-20)
+    elif cam_p > -40:
+      base.camera.setP(-40)
     
     rad = deg2Rad(base.camera.getP())
     itemDist = self.playerNode.getZ()/-math.tan(rad)
     self.itemNode.setFluidPos(Vec3(0,itemDist/self.playerScale,
                          -1*self.playerNode.getZ()/self.playerScale))
+    
     heading = self.playerNode.getH()
     heading = (int(heading) % 180)
     if (heading >= 60 and heading < 120):
@@ -263,5 +303,9 @@ class Player(object):
     else:
       base.camera.setZ(self.bobMid)
     
-  
-    
+  def moveLight(self):
+    waveslice = math.sin(self.timer)
+    for light in self.lights:
+      change = waveslice * 0.1
+      light.setZ( 1 + change)
+      light.setH( self.timer * 8)
