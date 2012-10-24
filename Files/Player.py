@@ -1,6 +1,7 @@
 from pandac.PandaModules import * #basic Panda modules
 from direct.showbase.DirectObject import DirectObject #event handling
 import math
+from Files.HUD import *
 
 class Player(object):
   def __init__(self):
@@ -16,15 +17,17 @@ class Player(object):
     self.itemLoaded = False
     
     self.bobTimer = 0
-    self.bobSpeed = 0.017
-    self.bobSpeedSprint = 0.033
-    self.bobAmt = 1.8
-    self.bobAmtSprint = 28
+    self.bobSpeed = 0.06
+    self.bobSpeedSprint = 0.11
+    self.bobAmt = 1.4
+    self.bobAmtSprint = 5.2
     self.bobMid = 0
     
     self.initKeyMap()
     self.initControls()
     self.initPlayer()
+    
+    hud = HUD()
        
   #Initializes keyMap
   def initKeyMap(self):
