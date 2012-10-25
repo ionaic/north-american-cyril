@@ -6,6 +6,7 @@ from direct.interval.IntervalGlobal import * #compound intervals
 from direct.task import Task #update functions
 from Files.MapGen import *
 from Files.Player import *
+from Files.Enemy import *
 
 # multisampling
 loadPrcFileData("", "framebuffer-multisample 1")
@@ -34,6 +35,7 @@ class World(DirectObject):
   def loadModels(self):
     self.map = MapGen()
     self.player = Player()
+    self.enemy = Enemy()
     
   def setupCollisions(self): 
     #Make a collision traverser, set it to default   
@@ -43,15 +45,17 @@ class World(DirectObject):
     self.cHandler = CollisionHandlerEvent()
     #Set the pattern for the event sent on collision
     #self.cHandler.setInPattern("%fn-into-%in")
-    self.cHandler.setInPattern("into")
+    #self.cHandler.setInPattern("into")
+    self.cHandler.setInPattern("collide-%in")
     
-    self.player.initCollisions(self.cHandler)
-    
+    self.player.initCollisions(base.pusher, self.cHandler)
+    self.enemy.initCollisions(self.cHandler, self.player)
     #base.cTrav.showCollisions(render)
 
   def update(self, task):
     dt = globalClock.getDt()
     self.player.update(globalClock.getDt())
+    self.enemy.update(globalClock.getDt(), self.player)
     return task.cont
     
 w = World()
