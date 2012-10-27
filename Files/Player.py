@@ -51,19 +51,11 @@ class Player(object):
     self.cRay1 = None
     self.cRay2 = None
     self.cRay3 = None
+
     self.initKeyMap()
     self.initControls()
     self.initPlayer()
     
-    #base.accept('ray1-again-Level1', self.itemRay)
-    #base.accept('ray2-again-Level1', self.itemRay)
-    base.accept('Wall-into-Level1', self.derp)
-    #base.accept('into', self.derp)
-    
-    hud = HUD()
-    
-  def derp(self, cEntry):
-    print cEntry
     
   #Initializes keyMap
   def initKeyMap(self):
@@ -126,18 +118,7 @@ class Player(object):
       self.itemNode.setColor(Vec4(1,1,1,0))
       self.itemNode.setScale(5)
       self.itemNode.setCollideMask(BitMask32.allOff())
-      
-      """
-      #Collide with env
-      cNode = CollisionNode('wall')
-      cSphere = CollisionSphere(0, 0, 6, 5)
-      cNode.addSolid(cSphere)
-      cNodePath = self.itemNode.attachNewNode(cNode)
-      cNodePath.show()
-      base.cTrav.addCollider(cNodePath, base.pusher)
-      base.pusher.addCollider(cNodePath, self.itemNode, base.drive.node())
-      """
-      
+            
     else:
       self.itemNode = self.lightModel
       self.itemNode.setColor(Vec4(1,1,1,1))
@@ -240,7 +221,6 @@ class Player(object):
     ambientLight.setColor((0.1, 0.1, 0.1, 1.0))
     ambientLightNP = render.attachNewNode(ambientLight)
     hand.setLight(ambientLightNP)
-    
     
     #Loads artifact point light
     mat = Material()
@@ -369,7 +349,7 @@ class Player(object):
         -1*self.playerNode.getZ()/self.playerScale)
     
     self.itemNode.setFluidPos(pos)
-    #print self.itemNode.getPos(), self.itemNode.getPos(self.playerNode)
+    
     heading = self.playerNode.getH()
     heading = (int(heading) % 180)
     if (heading >= 60 and heading < 120):
@@ -416,7 +396,6 @@ class Player(object):
       base.camera.setZ(0)
     self.bobTimer = (self.bobTimer + movement.bobSpd) % (math.pi*2)
     
-  
   def moveLight(self):
     waveslice = math.sin(self.timer)
     for light in self.lights:

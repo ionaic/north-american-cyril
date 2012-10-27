@@ -25,8 +25,8 @@ class World(DirectObject):
     #Set windows properties
     props = WindowProperties()
     props.setCursorHidden(True)
-    #props.setFullscreen(1)
-    #props.setSize(int(base.pipe.getDisplayWidth()), int(base.pipe.getDisplayHeight()))
+    props.setFullscreen(1)
+    props.setSize(int(base.pipe.getDisplayWidth()), int(base.pipe.getDisplayHeight()))
     props.setMouseMode(WindowProperties.MRelative)
     base.win.requestProperties(props)
     base.accept("escape", sys.exit)
