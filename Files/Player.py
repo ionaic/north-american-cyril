@@ -184,15 +184,28 @@ class Player(object):
     
     render.setLight(pLightNP)
     
-  def initCollisions(self, cHandler):
-    #Collide with env
+  def initCollisions(self, pusher, cHandler):
+    goodMask = BitMask32(0x1)
+    badMask = BitMask32(0x2)
+    otherMask = BitMask32(0x4)
+    
+    #Collide with enemies    
+    cSphere = CollisionSphere( 0, 0, 2, 3 )
     cNode = CollisionNode('player')
-    cSphere = CollisionSphere(0, 0, -1/self.playerScale, 5)
     cNode.addSolid(cSphere)
+    cNode.setCollideMask(goodMask)
     cNodePath = self.playerNode.attachNewNode(cNode)
-    cNodePath.show()
-    base.cTrav.addCollider(cNodePath, base.pusher)
-    base.pusher.addCollider(cNodePath, self.playerNode, base.drive.node())
+    #cNodePath.show()
+    base.cTrav.addCollider(cNodePath, cHandler)
+    
+    cNode = CollisionNode('pusherNode')
+    cNode.setCollideMask(badMask)
+    fromObject = self.playerNode.attachNewNode(cNode)
+    fromObject.node().addSolid(CollisionSphere(0,0,0,2))
+    #fromObject.show()
+    pusher = CollisionHandlerPusher()
+    pusher.addCollider(fromObject, self.playerNode)
+    base.cTrav.addCollider(fromObject, pusher)
   
   #Updates player
   def update(self, dt):
