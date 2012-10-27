@@ -25,6 +25,9 @@ class Player(object):
     self.right = Vec3(1,0,0)
     self.itemNode = NodePath('item')
     self.itemLoaded = False
+    self.itemMax = 6
+    self.itemDist = self.itemMax
+    self.sideBuffer = 0
     self.lights = []
     self.lightZ = 2
     self.timer = 0
@@ -47,19 +50,20 @@ class Player(object):
     
     self.cRay1 = None
     self.cRay2 = None
+    self.cRay3 = None
     self.initKeyMap()
     self.initControls()
     self.initPlayer()
     
-    base.accept('ray1-again-Level1', self.derp2)
-    base.accept('ray2-again-Level1', self.derp2)
+    #base.accept('ray1-again-Level1', self.itemRay)
+    #base.accept('ray2-again-Level1', self.itemRay)
+    base.accept('Wall-into-Level1', self.derp)
+    #base.accept('into', self.derp)
     
     hud = HUD()
-       
+    
   def derp(self, cEntry):
-    print 'rawr'
-  def derp2(self, cEntry):
-    print cEntry.getSurfacePoint(render)
+    print cEntry
     
   #Initializes keyMap
   def initKeyMap(self):
@@ -121,6 +125,8 @@ class Player(object):
       self.itemNode = self.wallModel
       self.itemNode.setColor(Vec4(1,1,1,0))
       self.itemNode.setScale(5)
+      self.itemNode.setCollideMask(BitMask32.allOff())
+      
       """
       #Collide with env
       cNode = CollisionNode('wall')
@@ -142,8 +148,10 @@ class Player(object):
     
     self.cRay1.reparentTo(base.camera)
     self.cRay2.reparentTo(base.camera)
-    base.cTrav.addCollider(self.cRay1, base.cHandler)
-    base.cTrav.addCollider(self.cRay2, base.cHandler)
+    self.cRay3.reparentTo(base.camera)
+    base.itemTrav.addCollider(self.cRay1, base.queue)
+    base.itemTrav.addCollider(self.cRay2, base.queue)
+    base.itemTrav.addCollider(self.cRay3, base.queue)
     
   def unloadItem(self, item):
     self.itemLoaded = False
@@ -151,6 +159,7 @@ class Player(object):
     self.itemNode.detachNode()
     self.cRay1.detachNode()
     self.cRay2.detachNode()
+    self.cRay3.detachNode()
     #base.cTrav.removeCollider(self.cRay1)
     #base.cTrav.removeCollider(self.cRay2)
     
@@ -162,6 +171,7 @@ class Player(object):
     self.itemNode.detachNode()
     self.cRay1.detachNode()
     self.cRay2.detachNode()
+    self.cRay3.detachNode()
     #for ray in base.camera.findAllMatches("*ray*"):
     #  ray.detachNode()
     
@@ -193,7 +203,6 @@ class Player(object):
     light = loader.loadModel('Models/light')
     mat = Material()
     mat.setEmission(VBase4(0.2,0.2,0.45,1))
-    mat.setShininess(10)
     light.setMaterial(mat)
     light.reparentTo(item)
     light.setScale(self.playerScale*1.6)
@@ -234,11 +243,13 @@ class Player(object):
     
     
     #Loads artifact point light
-    test = loader.loadModel('Models/sphere')
-    test.reparentTo(base.camera)
-    test.setScale(0.3)
-    test.setPos(Vec3(1.2,2.4,0))
-    
+    mat = Material()
+    mat.setEmission(VBase4(0.2,0.2,0.45,1))
+    self.test = loader.loadModel('Models/light')
+    self.test.setMaterial(mat)
+    self.test.reparentTo(base.camera)
+    self.test.setScale(0.03)
+    self.test.setPos(Vec3(1.4,1.6,-0.5))
     
     self.pLightNode = NodePath('light-node')
     self.pLightNode.reparentTo(base.camera)
@@ -277,26 +288,55 @@ class Player(object):
     base.pusher.addCollider(fromObject, self.playerNode, base.drive.node())
     
     #Item placement collision rays
-    cNode = CollisionNode('ray1')
+    cNode = CollisionNode('rayRight')
     cRay = CollisionRay(0,0,0,0.4,1,0)
     cNode.addSolid(cRay)
     cNode.setCollideMask(BitMask32.allOff())
     cNode.setFromCollideMask(BitMask32.bit(0))
     self.cRay1 = base.camera.attachNewNode(cNode)
-    
-    cNode = CollisionNode('ray2')
+    cNode = CollisionNode('rayLeft')
     cRay = CollisionRay(0,0,0,-0.4,1,0)
     cNode.addSolid(cRay)
     cNode.setCollideMask(BitMask32.allOff())
     cNode.setFromCollideMask(BitMask32.bit(0))
     self.cRay2 = base.camera.attachNewNode(cNode)
+    cNode = CollisionNode('rayMid')
+    cRay = CollisionRay(0,0,0,0,1,0)
+    cNode.addSolid(cRay)
+    cNode.setCollideMask(BitMask32.allOff())
+    cNode.setFromCollideMask(BitMask32.bit(0))
+    self.cRay3 = base.camera.attachNewNode(cNode)
   
   #Updates player
   def update(self, dt):
     self.moveCam()
     self.movePlayer(dt)
     self.moveLight()
+    if self.itemLoaded:
+      self.itemRay()
     self.timer += 0.05
+  
+  
+  def itemRay(self):
+    base.itemTrav.traverse(render)
+    base.queue.sortEntries()
+    playerPos = base.camera.getPos(render)
+    first = base.queue.getEntry(0)
+    cPos = first.getSurfacePoint(render)
+    #cPos = cEntry.getSurfacePoint(render)
+    #dist = math.sqrt((playerPos[0]-cPos[0])**2 + (playerPos[1]-cPos[1])**2)
+    #print dist
+    rayName = first.getFromNodePath().getName()
+    dist = math.sqrt((playerPos[0]-cPos[0])**2 + (playerPos[1]-cPos[1])**2)
+    self.itemDist = min(dist, self.itemMax)
+    """
+    if rayName == 'rayLeft':
+      self.sideBuffer = 0.5
+    elif rayName == 'rayRight':
+      self.sideBuffer = -0.5
+    else:
+      self.sideBuffer = 0
+    """
   
   #Moves camera
   def moveCam(self):
@@ -319,23 +359,17 @@ class Player(object):
   
   #Moves item and camera if ability is toggled
   def moveItem(self, y):
-    cam_p = base.camera.getP() - (y - base.win.getYSize()/2)*.1
-    if cam_p >= -90 and cam_p <= -40:
-      base.camera.setP(cam_p)
-    elif cam_p > -40:
-      base.camera.setP(-40)
-    
-    rad = deg2Rad(base.camera.getP())
-    itemDist = self.playerNode.getZ()/-math.tan(rad)
+    base.camera.setP(0)
+    itemDist = max(self.itemDist-0.5,1)
     if self.abilities['light'] == 1:
-      pos = Vec3(0,itemDist/self.playerScale, 
+      pos = Vec3(self.sideBuffer/self.playerScale,itemDist/self.playerScale, 
         (-1*self.playerNode.getZ()+self.lightZ)/self.playerScale)
     else:
-      pos = Vec3(0,itemDist/self.playerScale,
+      pos = Vec3(self.sideBuffer/self.playerScale,itemDist/self.playerScale,
         -1*self.playerNode.getZ()/self.playerScale)
     
     self.itemNode.setFluidPos(pos)
-    
+    #print self.itemNode.getPos(), self.itemNode.getPos(self.playerNode)
     heading = self.playerNode.getH()
     heading = (int(heading) % 180)
     if (heading >= 60 and heading < 120):
@@ -388,4 +422,6 @@ class Player(object):
     for light in self.lights:
       change = waveslice * 0.1
       light.setZ( self.lightZ + change )
-      light.setH( self.timer * 8)
+      light.setH( light.getH() + change)
+    self.test.setZ( waveslice * 0.1 - 0.5)
+    self.test.setH( self.timer * 4 )

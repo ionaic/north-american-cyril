@@ -43,6 +43,7 @@ class World(DirectObject):
   def setupCollisions(self): 
     #Make a collision traverser, set it to default   
     base.cTrav = CollisionTraverser()
+    base.itemTrav = CollisionTraverser()
     base.pusher = CollisionHandlerPusher()
     
     base.cHandler = CollisionHandlerEvent()
@@ -56,7 +57,7 @@ class World(DirectObject):
     
     #self.enemy.initCollisions(base.cHandler, self.player)
     
-    base.cTrav.showCollisions(render)
+    #base.cTrav.showCollisions(render)
 
   def update(self, task):
     dt = globalClock.getDt()
