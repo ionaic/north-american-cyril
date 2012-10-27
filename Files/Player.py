@@ -3,43 +3,63 @@ from direct.showbase.DirectObject import DirectObject #event handling
 import math
 from Files.HUD import *
 
+class Movement(object):
+  def __init__(self, speed, bobSpd, bobAmt):
+    self.speed = speed
+    self.bobSpd = bobSpd
+    self.bobAmt = bobAmt
+
 class Player(object):
   def __init__(self):
-    self.speed = 80
+    self.speed = 40
     self.playerScale = 0.05
-    self.lightDist = 1
+    self.lightDist = 0.1
+    self.movement = {}
+    self.movement['stand'] = Movement(0, 0.03, 1.3)
+    self.movement['caution'] = Movement(1, 0.051, 2.1)
+    self.movement['walk'] = Movement(2, 0.079, 2.7)
+    self.movement['sprint'] = Movement(5, 0.16, 3.6)
     self.forward = Vec3(0,1,0)
-    self.sprint = Vec3(0,5,0)
     self.back = Vec3(0,-1,0)
     self.left = Vec3(-1,0,0)
     self.right = Vec3(1,0,0)
     self.itemNode = NodePath('item')
     self.itemLoaded = False
     self.lights = []
+    self.lightZ = 2
     self.timer = 0
+    self.wallModel = loader.loadModel('Models/WallTemp')
+    self.lightModel = loader.loadModel('Models/light')
     
     self.bobTimer = 0
-    self.bobSpeed = 0.079
-    self.bobSpeedSprint = 0.16
-    self.bobAmt = 2.7
-    self.bobAmtSprint = 36
     self.bobMid = 0
     
-    self.bobCaution = 0.051
-    self.bobAmtCaution = 2.7
-    self.bobStand = 0.02
-    self.bobAmtStand = 1.3
+    """
+    self.bobStandSpd = 0.02
+    self.bobStandAmt = 1.3
+    self.bobCtnSpd = 0.051
+    self.bobCtnAmt = 2.7
+    self.bobWalkSpd = 0.079
+    self.bobWalkAmt = 2.7
+    self.bobSprintSpd = 0.16
+    self.bobSprintAmt = 36
+    """
     
+    self.cRay1 = None
+    self.cRay2 = None
     self.initKeyMap()
     self.initControls()
     self.initPlayer()
     
-    base.accept('ray-into-Level1', self.derp2)
+    base.accept('ray1-again-Level1', self.derp2)
+    base.accept('ray2-again-Level1', self.derp2)
     
     hud = HUD()
        
+  def derp(self, cEntry):
+    print 'rawr'
   def derp2(self, cEntry):
-    print cEntry
+    print cEntry.getSurfacePoint(render)
     
   #Initializes keyMap
   def initKeyMap(self):
@@ -49,6 +69,7 @@ class Player(object):
     self.keyMap['right'] = 0
     self.keyMap['back'] = 0
     self.keyMap['sprint'] = 0
+    self.keyMap['caution'] = 0
     self.abilities = {}
     self.abilities['wall'] = 0
     self.abilities['light'] = 0
@@ -67,6 +88,8 @@ class Player(object):
     #Abilities
     base.accept('shift', self.setKey, ['sprint', 1])
     base.accept('shift-up', self.setKey, ['sprint', 0])
+    base.accept('control', self.setKey, ['caution', 1])
+    base.accept('control-up', self.setKey, ['caution', 0])
     base.accept('1', self.toggleKey, ['wall'])
     base.accept('2', self.toggleKey, ['light'])
     base.accept('f', self.cancelKey)
@@ -88,17 +111,15 @@ class Player(object):
     if self.abilities[key] == 1:
       self.loadItem(key)
     else:
-      self.itemNode.detachNode()
-      self.abilities[key] = 0
-      self.itemLoaded = False
+      self.unloadItem(key)
       
   #Loads passed item
   def loadItem(self, item):
     self.itemNode.detachNode()
     #Filler model
     if item == 'wall':
-      self.itemNode = loader.loadModel('Models/WallTemp')
-      self.itemNode.setColor(Vec4(0,1,0,1))
+      self.itemNode = self.wallModel
+      self.itemNode.setColor(Vec4(1,1,1,0))
       self.itemNode.setScale(5)
       """
       #Collide with env
@@ -112,22 +133,26 @@ class Player(object):
       """
       
     else:
-      self.itemNode = loader.loadModel('Models/light')
+      self.itemNode = self.lightModel
       self.itemNode.setColor(Vec4(1,1,1,1))
       self.itemNode.setScale(1.6)
     #self.itemNode = loader.loadModel('Models/%s' % item)
     self.itemNode.reparentTo(self.playerNode)
     self.itemLoaded = True
     
-    cNode = CollisionNode('ray')
-    cRay = CollisionRay(0,0,0,0,1,0)
-    cNode.addSolid(cRay)
-    cNode.setCollideMask(BitMask32.allOff())
-    cNode.setFromCollideMask(BitMask32.bit(0))
-    cNodePath = base.camera.attachNewNode(cNode)
-    cNodePath.show()
-    base.cTrav.addCollider(cNodePath, base.cHandler)
+    self.cRay1.reparentTo(base.camera)
+    self.cRay2.reparentTo(base.camera)
+    base.cTrav.addCollider(self.cRay1, base.cHandler)
+    base.cTrav.addCollider(self.cRay2, base.cHandler)
     
+  def unloadItem(self, item):
+    self.itemLoaded = False
+    self.abilities[item] = 0
+    self.itemNode.detachNode()
+    self.cRay1.detachNode()
+    self.cRay2.detachNode()
+    #base.cTrav.removeCollider(self.cRay1)
+    #base.cTrav.removeCollider(self.cRay2)
     
   #Cancels ability
   def cancelKey(self):
@@ -135,6 +160,10 @@ class Player(object):
       self.abilities[ability] = 0
     self.itemLoaded = False
     self.itemNode.detachNode()
+    self.cRay1.detachNode()
+    self.cRay2.detachNode()
+    #for ray in base.camera.findAllMatches("*ray*"):
+    #  ray.detachNode()
     
   #Place item when clicked, then clear loaded item
   def click(self):
@@ -162,10 +191,15 @@ class Player(object):
     item.setPos(self.itemNode.getPos(render))
     item.setHpr(self.itemNode.getHpr(render))
     light = loader.loadModel('Models/light')
+    mat = Material()
+    mat.setEmission(VBase4(0.2,0.2,0.45,1))
+    mat.setShininess(10)
+    light.setMaterial(mat)
     light.reparentTo(item)
     light.setScale(self.playerScale*1.6)
     iLightNode = NodePath('ilight')
     iLightNode.reparentTo(item)
+    iLightNode.setZ(iLightNode.getZ() + 0.5)
     iLight = PointLight('item-light')
     iLightNP = iLightNode.attachNewNode(iLight)
     iLightNP.node().setColor(Vec4(0.1, 0.15, 0.2, 1.0))
@@ -198,44 +232,64 @@ class Player(object):
     ambientLightNP = render.attachNewNode(ambientLight)
     hand.setLight(ambientLightNP)
     
+    
     #Loads artifact point light
+    test = loader.loadModel('Models/sphere')
+    test.reparentTo(base.camera)
+    test.setScale(0.3)
+    test.setPos(Vec3(1.2,2.4,0))
+    
+    
     self.pLightNode = NodePath('light-node')
-    self.pLightNode.reparentTo(self.playerNode)
-    self.pLightNode.setPos(Vec3(0,self.lightDist,0))
+    self.pLightNode.reparentTo(base.camera)
+    self.pLightNode.setPos(Vec3(1.33,2.4,0))
     pLight = PointLight('player-light')
     pLightNP = self.pLightNode.attachNewNode(pLight)
-    pLightNP.node().setColor(Vec4(0.3, 0.1, 0.1, 1.0))
+    pLightNP.node().setColor(Vec4(0.1, 0.15, 0.2, 1.0))
     pLightNP.node().setAttenuation(Vec3(0, 0.01, 0.0001))
     
     render.setLight(pLightNP)
     
-<<<<<<< HEAD
-  def initCollisions(self, pusher, cHandler):
+  def initCollisions(self):
     goodMask = BitMask32(0x1)
     badMask = BitMask32(0x2)
     otherMask = BitMask32(0x4)
     
+    """
     #Collide with enemies    
     cSphere = CollisionSphere( 0, 0, 2, 3 )
-=======
-  def initCollisions(self):
-    #Collide with env
->>>>>>> Added hand and light models
     cNode = CollisionNode('player')
     cNode.addSolid(cSphere)
     cNode.setCollideMask(goodMask)
     cNodePath = self.playerNode.attachNewNode(cNode)
     #cNodePath.show()
     base.cTrav.addCollider(cNodePath, cHandler)
+    """
     
+    #Collide with env
     cNode = CollisionNode('pusherNode')
-    cNode.setCollideMask(badMask)
+    cNode.setCollideMask(BitMask32.allOff())
+    cNode.setFromCollideMask(badMask)
     fromObject = self.playerNode.attachNewNode(cNode)
-    fromObject.node().addSolid(CollisionSphere(0,0,0,2))
-    #fromObject.show()
-    pusher = CollisionHandlerPusher()
-    pusher.addCollider(fromObject, self.playerNode)
-    base.cTrav.addCollider(fromObject, pusher)
+    fromObject.node().addSolid(CollisionSphere(0,0,-2/self.playerScale,0.9/self.playerScale))
+    fromObject.show()
+    base.cTrav.addCollider(fromObject, base.pusher)
+    base.pusher.addCollider(fromObject, self.playerNode, base.drive.node())
+    
+    #Item placement collision rays
+    cNode = CollisionNode('ray1')
+    cRay = CollisionRay(0,0,0,0.4,1,0)
+    cNode.addSolid(cRay)
+    cNode.setCollideMask(BitMask32.allOff())
+    cNode.setFromCollideMask(BitMask32.bit(0))
+    self.cRay1 = base.camera.attachNewNode(cNode)
+    
+    cNode = CollisionNode('ray2')
+    cRay = CollisionRay(0,0,0,-0.4,1,0)
+    cNode.addSolid(cRay)
+    cNode.setCollideMask(BitMask32.allOff())
+    cNode.setFromCollideMask(BitMask32.bit(0))
+    self.cRay2 = base.camera.attachNewNode(cNode)
   
   #Updates player
   def update(self, dt):
@@ -273,8 +327,14 @@ class Player(object):
     
     rad = deg2Rad(base.camera.getP())
     itemDist = self.playerNode.getZ()/-math.tan(rad)
-    self.itemNode.setFluidPos(Vec3(0,itemDist/self.playerScale,
-                         -1*self.playerNode.getZ()/self.playerScale))
+    if self.abilities['light'] == 1:
+      pos = Vec3(0,itemDist/self.playerScale, 
+        (-1*self.playerNode.getZ()+self.lightZ)/self.playerScale)
+    else:
+      pos = Vec3(0,itemDist/self.playerScale,
+        -1*self.playerNode.getZ()/self.playerScale)
+    
+    self.itemNode.setFluidPos(pos)
     
     heading = self.playerNode.getH()
     heading = (int(heading) % 180)
@@ -289,46 +349,43 @@ class Player(object):
     
   #Move player based on key movements
   def movePlayer(self, dt):
-    bobAmt = self.bobAmt
-    bobSpeed = self.bobSpeed
+    #Not moving
+    if (self.keyMap['forward'] + self.keyMap['back'] +
+        self.keyMap['left'] + self.keyMap['right']) == 0:
+      move = self.movement['stand']
+    #Moving
+    elif self.keyMap['sprint'] and self.keyMap['forward'] == 1:
+      move = self.movement['sprint']
+    elif self.keyMap['caution'] == 1:
+      move = self.movement['caution']
+    else:
+      move = self.movement['walk']
+    
     if self.keyMap['forward'] == 1:
-      if self.keyMap['sprint'] == 1:
-        forward = self.sprint
-        bobAmt = self.bobAmtSprint
-        bobSpeed = self.bobSpeedSprint
-      else:
-        forward = self.forward
-      self.playerNode.setPos(self.playerNode, forward * dt * self.speed)
+      self.playerNode.setPos(self.playerNode, self.forward * dt * move.speed * self.speed)
     elif self.keyMap['back'] == 1:
-      self.playerNode.setPos(self.playerNode, self.back * dt * self.speed)
+      self.playerNode.setPos(self.playerNode, self.back * dt * move.speed * self.speed)
     
     if self.keyMap['left'] == 1:
-      self.playerNode.setPos(self.playerNode, self.left * dt * self.speed)
+      self.playerNode.setPos(self.playerNode, self.left * dt * move.speed * self.speed)
     elif self.keyMap['right'] == 1:
-      self.playerNode.setPos(self.playerNode, self.right * dt * self.speed)
+      self.playerNode.setPos(self.playerNode, self.right * dt * move.speed * self.speed)
       
-    #Head bobbing
-    if (self.keyMap['forward'] + self.keyMap['back'] +
-        self.keyMap['left'] + self.keyMap['right']) >= 1:
-      self.bobTimer = (self.bobTimer + bobSpeed) % (math.pi * 2)
-      self.headBob(bobAmt)
+    self.headBob(move)
   
-  def headBob(self, bobAmt):
+  def headBob(self, movement):
     waveslice = math.sin(self.bobTimer)
     if waveslice != 0:
-      change = waveslice * self.bobAmt
-      base.camera.setZ(self.bobMid + change)
+      change = waveslice * movement.bobAmt
+      base.camera.setZ(change)
     else:
-      base.camera.setZ(self.bobMid)
+      base.camera.setZ(0)
+    self.bobTimer = (self.bobTimer + movement.bobSpd) % (math.pi*2)
     
-<<<<<<< HEAD
   
-    
-=======
   def moveLight(self):
     waveslice = math.sin(self.timer)
     for light in self.lights:
       change = waveslice * 0.1
-      light.setZ( 1 + change)
+      light.setZ( self.lightZ + change )
       light.setH( self.timer * 8)
->>>>>>> Added hand and light models

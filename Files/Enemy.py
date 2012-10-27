@@ -27,6 +27,7 @@ class Enemy(object):
     badMask = BitMask32(0x2)
     otherMask = BitMask32(0x4)
     
+    """
     cSphere = CollisionSphere( (0,0,0), 1.25 )
     cNode = CollisionNode('enemyPusher')
     cNode.addSolid(cSphere)
@@ -34,6 +35,7 @@ class Enemy(object):
     cNodePath = self.enemyNode.attachNewNode(cNode)
     base.pusher.addCollider(cNodePath, self.enemyNode)
     base.cTrav.addCollider(cNodePath, base.pusher)
+    """
     
     cSphere = CollisionSphere( (0,0,0), 1.25 )
     cNode = CollisionNode('enemy')
