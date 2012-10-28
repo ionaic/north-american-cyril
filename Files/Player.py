@@ -34,8 +34,11 @@ class Player(object):
     self.wallModel = loader.loadModel('Models/WallTemp')
     self.lightModel = loader.loadModel('Models/light')
     
+    self.recharging = True
     self.wallsLeft = 3
     self.lightsLeft = 3
+    self.energyLeft = 100
+    self.maxEnergy = 100
     
     self.hud = HUD(self.wallsLeft, self.lightsLeft)
     
@@ -98,6 +101,9 @@ class Player(object):
     base.accept('mouse1', self.click)
         
   def setKey(self, key, value):
+    if key == 'sprint' and self.energyLeft <= 0:
+      self.keyMap['sprint'] = 0
+      return
     self.keyMap[key] = value
   
   #Toggles ability
@@ -305,6 +311,7 @@ class Player(object):
     self.moveLight()
     if self.itemLoaded:
       self.itemRay()
+    self.hud.updateEnergy(self.energyLeft)
     self.timer += 0.05
   
   
@@ -374,6 +381,7 @@ class Player(object):
     
   #Move player based on key movements
   def movePlayer(self, dt):
+    self.recharging = True
     #Not moving
     if (self.keyMap['forward'] + self.keyMap['back'] +
         self.keyMap['left'] + self.keyMap['right']) == 0:
@@ -381,6 +389,12 @@ class Player(object):
     #Moving
     elif self.keyMap['sprint'] and self.keyMap['forward'] == 1:
       move = self.movement['sprint']
+      if self.energyLeft <= 0:
+        self.energyLeft = 0
+        self.keyMap['sprint'] = 0
+      else:
+        self.energyLeft -= 0.3
+        self.recharging = False
     elif self.keyMap['caution'] == 1:
       move = self.movement['caution']
     else:
@@ -397,6 +411,9 @@ class Player(object):
       self.playerNode.setPos(self.playerNode, self.right * dt * move.speed * self.speed)
       
     self.headBob(move)
+    if self.recharging and self.energyLeft < 100:
+      self.energyLeft += 0.035
+      
   
   def headBob(self, movement):
     waveslice = math.sin(self.bobTimer)
