@@ -172,7 +172,7 @@ class Player(object):
     
     render.setLight(pLightNP)
     
-  def initCollisions(self, pusher, cHandler):
+  def initCollisions(self, pusher, cHandler, cQueue):
     goodMask = BitMask32(0x1)
     badMask = BitMask32(0x2)
     otherMask = BitMask32(0x4)
@@ -184,13 +184,20 @@ class Player(object):
     cNode.setCollideMask(goodMask)
     cNodePath = self.playerNode.attachNewNode(cNode)
     #cNodePath.show()
-    base.cTrav.addCollider(cNodePath, cHandler)
+    base.cTrav.addCollider(cNodePath, cQueue)
+    
+    #collide with enemy sight
+    cSphere = CollisionSphere( 0, 0, 2, 3 )
+    cNode = CollisionNode('playerSight')
+    cNode.addSolid(cSphere)
+    cNode.setCollideMask(BitMask32.allOff())
+    cNode.setIntoCollideMask(otherMask)
+    cNodePath = base.camera.attachNewNode(cNode)
     
     cNode = CollisionNode('pusherNode')
     cNode.setCollideMask(badMask)
     fromObject = self.playerNode.attachNewNode(cNode)
     fromObject.node().addSolid(CollisionSphere(0,0,0,2))
-    #fromObject.show()
     pusher = CollisionHandlerPusher()
     pusher.addCollider(fromObject, self.playerNode)
     base.cTrav.addCollider(fromObject, pusher)

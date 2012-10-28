@@ -43,19 +43,18 @@ class World(DirectObject):
     base.pusher = CollisionHandlerPusher()
     
     self.cHandler = CollisionHandlerEvent()
+    self.cQueue = CollisionHandlerQueue()
     #Set the pattern for the event sent on collision
-    #self.cHandler.setInPattern("%fn-into-%in")
-    #self.cHandler.setInPattern("into")
     self.cHandler.setInPattern("collide-%in")
+    self.cHandler.setAgainPattern("%fn-into-%in")
     
-    self.player.initCollisions(base.pusher, self.cHandler)
+    self.player.initCollisions(base.pusher, self.cHandler, self.cQueue)
     self.enemy.initCollisions(self.cHandler, self.player)
-    #base.cTrav.showCollisions(render)
 
   def update(self, task):
     dt = globalClock.getDt()
     self.player.update(globalClock.getDt())
-    self.enemy.update(globalClock.getDt(), self.player)
+    self.enemy.update(globalClock.getDt(), self.player, self.cQueue)
     return task.cont
     
 w = World()
