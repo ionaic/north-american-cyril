@@ -34,6 +34,11 @@ class Player(object):
     self.wallModel = loader.loadModel('Models/WallTemp')
     self.lightModel = loader.loadModel('Models/light')
     
+    self.wallsLeft = 3
+    self.lightsLeft = 3
+    
+    self.hud = HUD(self.wallsLeft, self.lightsLeft)
+    
     self.bobTimer = 0
     self.bobMid = 0
     
@@ -105,7 +110,9 @@ class Player(object):
         self.abilities[ability] = 0
     #Loads/removes item
     if self.abilities[key] == 1:
-      self.loadItem(key)
+      if ((key == 'wall' and self.wallsLeft > 0) or
+        (key == 'light' and self.lightsLeft > 0)):
+        self.loadItem(key)
     else:
       self.unloadItem(key)
       
@@ -118,8 +125,7 @@ class Player(object):
       self.itemNode.setColor(Vec4(1,1,1,0))
       self.itemNode.setScale(5)
       self.itemNode.setCollideMask(BitMask32.allOff())
-            
-    else:
+    elif item == 'light':
       self.itemNode = self.lightModel
       self.itemNode.setColor(Vec4(1,1,1,1))
       self.itemNode.setScale(1.6)
@@ -164,8 +170,11 @@ class Player(object):
   def placeItem(self):
     if self.abilities['wall'] == 1:
       self.placeWall()
+      self.wallsLeft -= 1
     elif self.abilities['light'] == 1:
       self.placeLight()
+      self.lightsLeft -= 1
+    self.hud.updateHUD(self.wallsLeft, self.lightsLeft)
   
   #Places wall
   def placeWall(self):
@@ -195,6 +204,8 @@ class Player(object):
     iLightNP.node().setColor(Vec4(0.1, 0.15, 0.2, 1.0))
     iLightNP.node().setAttenuation(Vec3(0, 0.008, 0.0001))
     render.setLight(iLightNP)
+    
+    item.setTag('startTime', '%f' % self.timer)
     self.lights.append(item)
       
     
@@ -263,7 +274,7 @@ class Player(object):
     cNode.setFromCollideMask(badMask)
     fromObject = self.playerNode.attachNewNode(cNode)
     fromObject.node().addSolid(CollisionSphere(0,0,-2/self.playerScale,0.9/self.playerScale))
-    fromObject.show()
+    #fromObject.show()
     base.cTrav.addCollider(fromObject, base.pusher)
     base.pusher.addCollider(fromObject, self.playerNode, base.drive.node())
     
@@ -401,6 +412,6 @@ class Player(object):
     for light in self.lights:
       change = waveslice * 0.1
       light.setZ( self.lightZ + change )
-      light.setH( light.getH() + change)
+      light.setH((float(light.getTag('startTime')) + self.timer) * 8 )
     self.test.setZ( waveslice * 0.1 - 0.5)
     self.test.setH( self.timer * 4 )

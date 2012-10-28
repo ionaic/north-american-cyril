@@ -25,8 +25,8 @@ class World(DirectObject):
     #Set windows properties
     props = WindowProperties()
     props.setCursorHidden(True)
-    props.setFullscreen(1)
-    props.setSize(int(base.pipe.getDisplayWidth()), int(base.pipe.getDisplayHeight()))
+    #props.setFullscreen(1)
+    #props.setSize(int(base.pipe.getDisplayWidth()), int(base.pipe.getDisplayHeight()))
     props.setMouseMode(WindowProperties.MRelative)
     base.win.requestProperties(props)
     base.accept("escape", sys.exit)
@@ -38,7 +38,7 @@ class World(DirectObject):
   def loadModels(self):
     self.map = MapGen()
     self.player = Player()
-    #self.enemy = Enemy()
+    self.enemy = Enemy()
     
   def setupCollisions(self): 
     #Make a collision traverser, set it to default   
@@ -55,14 +55,14 @@ class World(DirectObject):
     
     self.player.initCollisions()
     
-    #self.enemy.initCollisions(base.cHandler, self.player)
+    self.enemy.initCollisions(base.cHandler, self.player)
     
     #base.cTrav.showCollisions(render)
 
   def update(self, task):
     dt = globalClock.getDt()
     self.player.update(globalClock.getDt())
-    #self.enemy.update(globalClock.getDt(), self.player)
+    self.enemy.update(globalClock.getDt(), self.player)
     return task.cont
     
 w = World()
