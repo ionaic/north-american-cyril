@@ -2,6 +2,7 @@ from pandac.PandaModules import * #basic Panda modules
 from direct.showbase.DirectObject import DirectObject #event handling
 import math
 from Files.HUD import *
+from direct.particles.ParticleEffect import ParticleEffect #particle effects
 
 class Movement(object):
   def __init__(self, speed, bobSpd, bobAmt):
@@ -44,18 +45,7 @@ class Player(object):
     
     self.bobTimer = 0
     self.bobMid = 0
-    
-    """
-    self.bobStandSpd = 0.02
-    self.bobStandAmt = 1.3
-    self.bobCtnSpd = 0.051
-    self.bobCtnAmt = 2.7
-    self.bobWalkSpd = 0.079
-    self.bobWalkAmt = 2.7
-    self.bobSprintSpd = 0.16
-    self.bobSprintAmt = 36
-    """
-    
+        
     self.cRay1 = None
     self.cRay2 = None
     self.cRay3 = None
@@ -63,6 +53,8 @@ class Player(object):
     self.initKeyMap()
     self.initControls()
     self.initPlayer()
+
+    base.enableParticles()
     
     
   #Initializes keyMap
@@ -209,6 +201,15 @@ class Player(object):
     iLightNP = iLightNode.attachNewNode(iLight)
     iLightNP.node().setColor(Vec4(0.1, 0.15, 0.2, 1.0))
     iLightNP.node().setAttenuation(Vec3(0, 0.008, 0.0001))
+    iLightNP.setZ(iLightNP.getZ() + 0.6)
+    # particle effects
+    rFlame = ParticleEffect()
+    rFlame.loadConfig("Models/fire.ptf")
+    rFlame.start(item)
+    rFlame.setScale(0.1)
+    pos = iLightNP.getPos()
+    #rFlame.setPos(pos[0], pos[1], pos[2] + 0.4)
+    rFlame.setPos(pos[0], pos[1], pos[2] - 0.2)
     render.setLight(iLightNP)
     
     item.setTag('startTime', '%f' % self.timer)
@@ -258,12 +259,12 @@ class Player(object):
     
     render.setLight(pLightNP)
     
+    
   def initCollisions(self):
     goodMask = BitMask32(0x1)
     badMask = BitMask32(0x2)
     otherMask = BitMask32(0x4)
     
-    """
     #Collide with enemies    
     cSphere = CollisionSphere( 0, 0, 2, 3 )
     cNode = CollisionNode('player')
@@ -271,8 +272,15 @@ class Player(object):
     cNode.setCollideMask(goodMask)
     cNodePath = self.playerNode.attachNewNode(cNode)
     #cNodePath.show()
-    base.cTrav.addCollider(cNodePath, cHandler)
-    """
+    base.cTrav.addCollider(cNodePath, base.queue)
+    
+    #collide with enemy sight
+    cSphere = CollisionSphere( 0, 0, 2, 3 )
+    cNode = CollisionNode('playerSight')
+    cNode.addSolid(cSphere)
+    cNode.setCollideMask(BitMask32.allOff())
+    cNode.setIntoCollideMask(otherMask)
+    cNodePath = base.camera.attachNewNode(cNode)
     
     #Collide with env
     cNode = CollisionNode('pusherNode')
@@ -283,7 +291,7 @@ class Player(object):
     #fromObject.show()
     base.cTrav.addCollider(fromObject, base.pusher)
     base.pusher.addCollider(fromObject, self.playerNode, base.drive.node())
-    
+        
     #Item placement collision rays
     cNode = CollisionNode('rayRight')
     cRay = CollisionRay(0,0,0,0.4,1,0)
