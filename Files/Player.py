@@ -12,7 +12,9 @@ class Movement(object):
 
 class Player(object):
   #Initializes player
-  def __init__(self):
+  def __init__(self, parent):
+    self.parent = parent
+    self.level = 1
     #Movement data
     self.speed = 40
     self.playerScale = 0.05
@@ -37,20 +39,20 @@ class Player(object):
     self.itemDist = self.itemMax
     self.sideBuffer = 0
     self.wallModel = loader.loadModel('Models/WallTemp')
+    self.walls = []
     self.lightModel = loader.loadModel('Models/light')
     self.lights = []
     self.lightZ = 2
     self.cRay1 = None
     self.cRay2 = None
     self.cRay3 = None
+    self.hud = HUD(0,0)
     
     self.timer = 0
         
     self.initKeyMap()
     self.initControls()
     self.initPlayer()
-    #Spawn/reset using spawn (spawn pos, max walls, max lights)
-    self.spawn((-10,-10,3), 3, 3)
     base.enableParticles()
     
   #Initializes keyMap
@@ -176,6 +178,7 @@ class Player(object):
     light = loader.loadModel('Models/WallTemp')
     light.reparentTo(item)
     light.setScale(self.playerScale*5)
+    self.walls.append(item)
   
   #Places light item and creates a point light
   def placeLight(self):
@@ -198,6 +201,7 @@ class Player(object):
     iLightNP.node().setColor(Vec4(0.1, 0.15, 0.2, 1.0))
     iLightNP.node().setAttenuation(Vec3(0, 0.008, 0.0001))
     iLightNP.setZ(iLightNP.getZ() + 0.6)
+    """
     #Not for light ability?
     # particle effects
     rFlame = ParticleEffect()
@@ -207,6 +211,7 @@ class Player(object):
     pos = iLightNP.getPos()
     #rFlame.setPos(pos[0], pos[1], pos[2] + 0.4)
     rFlame.setPos(pos[0], pos[1], pos[2] - 0.2)
+    """
     render.setLight(iLightNP)
     #Sets placement time for rotating
     item.setTag('startTime', '%f' % self.timer)
@@ -216,8 +221,6 @@ class Player(object):
   def initPlayer(self):
     self.playerNode = NodePath('player-node')
     #setPos depends on spawn position in level
-    self.playerNode.setPos(-10,-10,3)
-    self.playerNode.setP(0)
     self.playerNode.setScale(self.playerScale)
     self.playerNode.reparentTo(render)
     
@@ -233,7 +236,7 @@ class Player(object):
     hand.setScale(0.8)
     hand.setPos(7,9,-9)
     hand.setH(90)
-    ambientLight = AmbientLight("ambientLight")
+    ambientLight = AmbientLight("handLight")
     ambientLight.setColor((0.1, 0.1, 0.1, 1.0))
     ambientLightNP = render.attachNewNode(ambientLight)
     hand.setLight(ambientLightNP)
@@ -255,21 +258,24 @@ class Player(object):
     pLightNP.node().setAttenuation(Vec3(0, 0.01, 0.0001))
     render.setLight(pLightNP)
     
+  #Spawn plays at given pos with walls and lights
   def spawn(self, pos, walls, lights):
-    print 'spawning'
     self.spawnPos = pos
     self.maxWalls = walls
     self.maxLights = lights
     self.playerNode.setPos(pos)
     self.wallsLeft = walls
+    self.walls = []
     self.lightsLeft = lights
+    self.lights = []
     self.energyLeft = 100
     self.bobTimer = 0
     #HUD
     self.hud = HUD(self.wallsLeft, self.lightsLeft)
     
   def die(self, cEntry):
-    self.spawn(self.spawnPos, self.maxWalls, self.maxLights)
+    self.parent.togglePause()
+    self.parent.startLevel(self.level)
     
     
   #Initialize collisions
@@ -280,7 +286,7 @@ class Player(object):
     clearSightMask = BitMask32(0x4)
     
     #Collide with enemies    
-    cSphere = CollisionSphere( 0, 0, 2, 5 )
+    cSphere = CollisionSphere( 0, 0, 2, 3 )
     cNode = CollisionNode('player')
     cNode.addSolid(cSphere)
     cNode.setCollideMask(BitMask32.allOff())
@@ -455,3 +461,9 @@ class Player(object):
       light.setH((float(light.getTag('startTime')) + self.timer) * 8 )
     self.test.setZ( waveslice * 0.1 - 0.5)
     self.test.setH( self.timer * 4 )
+
+  def clearItems(self):
+    for light in self.lights:
+      light.removeNode()
+    for wall in self.walls:
+      wall.removeNode()

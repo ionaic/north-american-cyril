@@ -38,13 +38,13 @@ class Enemy(object):
     base.cTrav.addCollider(cNodePath, base.pusher)
     
     #collides with the player
-    cSphere = CollisionSphere( (0,0,0), 2 )
+    cSphere = CollisionSphere( (0,0,0), 1.5 )
     cNode = CollisionNode('enemy')
     cNode.addSolid(cSphere)
     cNode.setCollideMask(BitMask32.allOff())
     cNode.setFromCollideMask(deathMask)
     cNodePath = self.enemyNode.attachNewNode(cNode)
-    #cNodePath.show()
+    cNodePath.show()
     base.cTrav.addCollider(cNodePath, base.cHandler)
     
     #collides with the player to determine if the player is in the enemie's cone of vision

@@ -3,8 +3,6 @@ from direct.showbase.DirectObject import DirectObject
 from direct.task import Task
 from Play import *
 
-
-#TODO: pass pause to game class 
 class InGame(DirectObject):
   def __init__(self, parent):
     self.active = False
