@@ -4,7 +4,6 @@ from direct.gui.OnscreenText import OnscreenText
 class HUD(object):
   def __init__(self, walls, lights):
     self.initHUD(walls, lights)
-    self.initEnergy()
     
   def initHUD(self, walls, lights):
     self.wallsText = OnscreenText(text = 'Walls:', pos = (-1.1, 0.86),
@@ -21,15 +20,17 @@ class HUD(object):
     self.energyLeft = OnscreenText(text = '100', pos = (1.1, -0.86),
       scale = 0.08, fg = (1,1,1,1), mayChange = True)
       
-  def initEnergy(self):
-    self.gen = MeshDrawer2D()
-    self.gen.setBudget(500)
-    self.genNode = self.gen.getRoot()
-    self.genNode.reparentTo(render)
-      
   def updateHUD(self, walls, lights):
     self.wallsLeft.setText(str(walls))
     self.lightsLeft.setText(str(lights))
     
   def updateEnergy(self, energy):
     self.energyLeft.setText(str(int(energy)))
+    
+  def __del__(self):
+    self.wallsText.destroy()
+    self.lightsText.destroy()
+    self.wallsLeft.destroy()
+    self.lightsLeft.destroy()
+    self.energyText.destroy()
+    self.energyLeft.destroy()

@@ -31,7 +31,7 @@ class Play(DirectObject):
     base.win.requestProperties(self.props)
     self.parent = parent
     base.accept("escape", self.togglePause)
-    self.loadModels()
+    self.initModels()
     self.setupCollisions()
 
     self.task = taskMgr.add(self.update, "updateTask")
@@ -51,10 +51,25 @@ class Play(DirectObject):
       self.parent.mainFrame.show()
       self.parent.paused = True
   
-  def loadModels(self):
+  def initModels(self):
     self.map = MapGen()
-    self.player = Player()
+    self.player = Player(self)
+    self.startLevel(1)
     self.enemy = Enemy()
+    
+  def startLevel(self, level):
+    #Clear render
+    self.player.clearItems()
+    #print render.getChildren()
+    #Load new level (if new level)
+    
+    pos = (-10,-10,3) #level.spawnPos
+    walls = 3 #level.walls
+    lights = 3 #level.lights
+    #Spawn player using spawn (spawn pos, max walls, max lights)
+    self.player.spawn(pos,walls,lights)
+    #Spawn enemies
+    
     
   def setupCollisions(self): 
     #Make a collision traverser, set it to default   
