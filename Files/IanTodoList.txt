@@ -1,0 +1,6 @@
+levers
+resetting start position when dying
+enemy positions
+exit
+level transitioning
+player start positioning
