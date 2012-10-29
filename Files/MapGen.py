@@ -1,16 +1,20 @@
 from pandac.PandaModules import * #basic Panda modules
 from direct.showbase.DirectObject import DirectObject #event handling
 
+import Level
+
 class MapGen(object):
   def __init__(self):
     self.initMap()
     self.initLight()
+    self.curLev = 1
     
   def initMap(self):
     #Creates grass/sky environment
-    self.env = loader.loadModel("Models/Level1")
-    self.env.setTwoSided(True)
-    self.env.reparentTo(render)
+    #self.env = loader.loadModel("Models/Level1")
+    #self.env.setTwoSided(True)
+    #self.env.reparentTo(render)
+    self.env = Level.Level(self.curLev)
   
   def initLight(self):
     #Loads ambient lighting
