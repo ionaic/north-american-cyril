@@ -275,7 +275,7 @@ class Player(object):
     
   def die(self, cEntry):
     self.parent.togglePause()
-    self.parent.startLevel(self.level)
+    self.parent.startLevel(self.level, False)
     
     
   #Initialize collisions
