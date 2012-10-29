@@ -30,17 +30,26 @@ class Play(DirectObject):
     #props.setSize(int(base.pipe.getDisplayWidth()), int(base.pipe.getDisplayHeight()))
     self.props.setMouseMode(WindowProperties.MRelative)
     base.win.requestProperties(self.props)
-    base.accept("escape", self.pause)
+    base.accept("escape", self.togglePause)
     self.loadModels()
     self.setupCollisions()
 
-    taskMgr.add(self.update, "updateTask")
+    self.task = taskMgr.add(self.update, "updateTask")
   
-  def pause(self):
-    self.props.setCursorHidden(False)
-    base.win.requestProperties(self.props)
-    taskMgr.remove('updateTask')
-    self.parent.pause()
+  def togglePause(self):
+    if self.parent.paused:
+      self.props.setCursorHidden(True)
+      base.win.requestProperties(self.props)
+      base.win.movePointer(0, base.win.getXSize()/2, base.win.getYSize()/2)
+      taskMgr.add(self.task)
+      self.parent.mainFrame.hide()
+      self.parent.paused = False 
+    else:
+      self.props.setCursorHidden(False)
+      base.win.requestProperties(self.props)
+      taskMgr.remove(self.task)
+      self.parent.mainFrame.show()
+      self.parent.paused = True
   
   def loadModels(self):
     self.map = MapGen()
