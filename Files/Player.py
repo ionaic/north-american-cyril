@@ -40,28 +40,18 @@ class Player(object):
     self.lightModel = loader.loadModel('Models/light')
     self.lights = []
     self.lightZ = 2
-    self.wallsLeft = 3
-    self.lightsLeft = 3
     self.cRay1 = None
     self.cRay2 = None
     self.cRay3 = None
-    #HUD
-    self.hud = HUD(self.wallsLeft, self.lightsLeft)
     
     self.timer = 0
         
     self.initKeyMap()
     self.initControls()
     self.initPlayer()
+    #Spawn/reset using spawn (spawn pos, max walls, max lights)
+    self.spawn((-10,-10,3), 3, 3)
     base.enableParticles()
-    
-  def respawn(self):
-    print 'died'
-    self.wallsLeft = 3
-    self.lightsLeft = 3
-    self.energyLeft = 100
-    self.bobTimer = 0
-    self.playerNode.setPos(-10,-10,3)
     
   #Initializes keyMap
   def initKeyMap(self):
@@ -265,6 +255,23 @@ class Player(object):
     pLightNP.node().setAttenuation(Vec3(0, 0.01, 0.0001))
     render.setLight(pLightNP)
     
+  def spawn(self, pos, walls, lights):
+    print 'spawning'
+    self.spawnPos = pos
+    self.maxWalls = walls
+    self.maxLights = lights
+    self.playerNode.setPos(pos)
+    self.wallsLeft = walls
+    self.lightsLeft = lights
+    self.energyLeft = 100
+    self.bobTimer = 0
+    #HUD
+    self.hud = HUD(self.wallsLeft, self.lightsLeft)
+    
+  def die(self, cEntry):
+    self.spawn(self.spawnPos, self.maxWalls, self.maxLights)
+    
+    
   #Initialize collisions
   def initCollisions(self):
     envMask = BitMask32(0x1)
@@ -273,10 +280,11 @@ class Player(object):
     clearSightMask = BitMask32(0x4)
     
     #Collide with enemies    
-    cSphere = CollisionSphere( 0, 0, 2, 3 )
+    cSphere = CollisionSphere( 0, 0, 2, 5 )
     cNode = CollisionNode('player')
     cNode.addSolid(cSphere)
     cNode.setCollideMask(BitMask32.allOff())
+    cNode.setIntoCollideMask(deathMask)
     cNodePath = self.playerNode.attachNewNode(cNode)
     #cNodePath.show()
     base.cTrav.addCollider(cNodePath, base.queue)
@@ -321,7 +329,7 @@ class Player(object):
     cNode.setFromCollideMask(envMask)
     self.cRay3 = base.camera.attachNewNode(cNode)
     
-    base.accept('enemy-into-player', self.respawn)
+    base.accept('enemy-into-player', self.die)
   
   #Updates player
   def update(self, dt):

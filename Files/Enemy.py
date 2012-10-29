@@ -45,6 +45,7 @@ class Enemy(object):
     cNode.setFromCollideMask(deathMask)
     cNodePath = self.enemyNode.attachNewNode(cNode)
     #cNodePath.show()
+    base.cTrav.addCollider(cNodePath, base.cHandler)
     
     #collides with the player to determine if the player is in the enemie's cone of vision
     cTube = CollisionTube (0,-4,0,0,-6,0, 6)
