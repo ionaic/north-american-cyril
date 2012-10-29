@@ -18,37 +18,42 @@ class Enemy(object):
   def initEnemy(self):
     self.enemyNode = loader.loadModel('smiley')
     self.enemyNode.setPos(0,0,3)
+    self.enemyNode.setScale(0.5)
     self.enemyNode.reparentTo(render)
     
   def initCollisions(self, player):
     envMask = BitMask32(0x1)
     sightMask = BitMask32(0x2)
     deathMask = BitMask32(0x3)
+    clearSightMask = BitMask32(0x4)
     
     #collides with walls
     cSphere = CollisionSphere( (0,0,0), 1.25 )
     cNode = CollisionNode('enemyPusher')
     cNode.addSolid(cSphere)
-    cNode.setCollideMask(envMask)
+    cNode.setCollideMask(BitMask32.allOff())
+    cNode.setFromCollideMask(envMask)
     cNodePath = self.enemyNode.attachNewNode(cNode)
     base.pusher.addCollider(cNodePath, self.enemyNode)
     base.cTrav.addCollider(cNodePath, base.pusher)
     
     #collides with the player
-    cSphere = CollisionSphere( (0,0,0), 1.25 )
+    cSphere = CollisionSphere( (0,0,0), 2 )
     cNode = CollisionNode('enemy')
     cNode.addSolid(cSphere)
     cNode.setCollideMask(BitMask32.allOff())
     cNode.setFromCollideMask(deathMask)
     cNodePath = self.enemyNode.attachNewNode(cNode)
+    #cNodePath.show()
     
     #collides with the player to determine if the player is in the enemie's cone of vision
     cTube = CollisionTube (0,-4,0,0,-6,0, 6)
     cNode = CollisionNode('vision')
     cNode.addSolid(cTube)
     cNode.setCollideMask(BitMask32.allOff())
-    cNode.setFromCollideMask(sightMask)
+    cNode.setIntoCollideMask(sightMask)
     cNodePath = self.enemyNode.attachNewNode(cNode)
+    #cNodePath.show()
     
     #checks to see if there is anything blocking the enemie's line of sight to the player
     self.queue = CollisionHandlerQueue()
@@ -56,9 +61,21 @@ class Enemy(object):
     self.cNode = CollisionNode('sight')
     self.cNode.addSolid(cRay)
     self.cNode.setCollideMask(BitMask32.allOff())
-    self.cNode.setFromCollideMask(envMask)
+    self.cNode.setFromCollideMask(envMask|clearSightMask)
     cNodePath = base.render.attachNewNode(self.cNode)
     base.cTrav.addCollider(cNodePath, self.queue)
+    
+    base.accept('playerSight-again-vision', self.inSight)
+    
+  def inSight(self, cEntry):
+    #print 'seen'
+    if not self.foundPlayer and not self.sightBlocked:
+      #print 'found'
+      self.foundPlayer = True
+      self.foundPlayerTime = time.time()
+    if time.time() > self.foundPlayerTime + 5:
+      self.foundPlayerTime -= 1
+      self.foundPlayer = False
     
   def initAI(self):
     self.AIworld = AIWorld(render)
@@ -86,14 +103,18 @@ class Enemy(object):
     #checks the first element that the enemy sees between the player
     #if the first object it sees is not the player then it doesn't chase towards it
     self.queue.sortEntries()
+    #print self.queue
     if self.queue.getNumEntries() > 0:
         entry = self.queue.getEntry(0)
         type = entry.getIntoNode().getName()
         if type == 'playerSight':
             self.sightBlocked = False
+            #print 'in sight'
         else:
             self.sightBlocked = True
+            #print 'not in sight'
     
+    """
     #checks to see if the player is in the enemie's vision cone and not blocked
     for i in range(base.eQueue.getNumEntries()):
         if base.eQueue.getEntry(i).getIntoNode().getName() == 'vision' and self.foundPlayer == False and self.sightBlocked == False:
@@ -104,10 +125,11 @@ class Enemy(object):
     if time.time() > self.foundPlayerTime + 5:
         self.foundPlayerTime = -1
         self.foundPlayer = False
+    """
     
     #if the player is found then moves towards them
     #otherwise continues patrolling
-    if self.foundPlayer == True:
+    if self.foundPlayer:
         self.move(dt, player)
     else:
         self.AIworld.update()  

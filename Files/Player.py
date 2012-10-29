@@ -55,6 +55,14 @@ class Player(object):
     self.initPlayer()
     base.enableParticles()
     
+  def respawn(self):
+    print 'died'
+    self.wallsLeft = 3
+    self.lightsLeft = 3
+    self.energyLeft = 100
+    self.bobTimer = 0
+    self.playerNode.setPos(-10,-10,3)
+    
   #Initializes keyMap
   def initKeyMap(self):
     self.keyMap = {}
@@ -219,6 +227,7 @@ class Player(object):
     self.playerNode = NodePath('player-node')
     #setPos depends on spawn position in level
     self.playerNode.setPos(-10,-10,3)
+    self.playerNode.setP(0)
     self.playerNode.setScale(self.playerScale)
     self.playerNode.reparentTo(render)
     
@@ -261,6 +270,7 @@ class Player(object):
     envMask = BitMask32(0x1)
     sightMask = BitMask32(0x2)
     deathMask = BitMask32(0x3)
+    clearSightMask = BitMask32(0x4)
     
     #Collide with enemies    
     cSphere = CollisionSphere( 0, 0, 2, 3 )
@@ -276,8 +286,10 @@ class Player(object):
     cNode = CollisionNode('playerSight')
     cNode.addSolid(cSphere)
     cNode.setCollideMask(BitMask32.allOff())
-    cNode.setIntoCollideMask(sightMask)
+    cNode.setFromCollideMask(sightMask)
+    cNode.setIntoCollideMask(clearSightMask)
     cNodePath = self.playerNode.attachNewNode(cNode)
+    base.cTrav.addCollider(cNodePath, base.cHandler)
     
     #Collide with env
     cSphere = CollisionSphere(0,0,-2/self.playerScale,0.9/self.playerScale)
@@ -285,7 +297,7 @@ class Player(object):
     cNode.addSolid(cSphere)
     cNode.setCollideMask(envMask)
     cNodePath = self.playerNode.attachNewNode(cNode)
-    cNodePath.show()
+    #cNodePath.show()
     base.cTrav.addCollider(cNodePath, base.pusher)
     base.pusher.addCollider(cNodePath, self.playerNode, base.drive.node())
         
@@ -308,6 +320,8 @@ class Player(object):
     cNode.setCollideMask(BitMask32.allOff())
     cNode.setFromCollideMask(envMask)
     self.cRay3 = base.camera.attachNewNode(cNode)
+    
+    base.accept('enemy-into-player', self.respawn)
   
   #Updates player
   def update(self, dt):
