@@ -11,51 +11,49 @@ class Movement(object):
     self.bobAmt = bobAmt
 
 class Player(object):
+  #Initializes player
   def __init__(self):
+    #Movement data
     self.speed = 40
     self.playerScale = 0.05
     self.lightDist = 0.1
     self.movement = {}
     self.movement['stand'] = Movement(0, 0.03, 1.3)
     self.movement['caution'] = Movement(1, 0.051, 2.1)
-    self.movement['walk'] = Movement(2, 0.079, 2.7)
-    self.movement['sprint'] = Movement(5, 0.16, 3.6)
+    self.movement['walk'] = Movement(1.5, 0.079, 2.7)
+    self.movement['sprint'] = Movement(4, 0.16, 3.6)
     self.forward = Vec3(0,1,0)
     self.back = Vec3(0,-1,0)
     self.left = Vec3(-1,0,0)
     self.right = Vec3(1,0,0)
+    self.bobTimer = 0
+    self.recharging = True
+    self.energyLeft = 100
+    self.maxEnergy = 100
+    #Ability data
     self.itemNode = NodePath('item')
     self.itemLoaded = False
     self.itemMax = 6
     self.itemDist = self.itemMax
     self.sideBuffer = 0
-    self.lights = []
-    self.lightZ = 2
-    self.timer = 0
     self.wallModel = loader.loadModel('Models/WallTemp')
     self.lightModel = loader.loadModel('Models/light')
-    
-    self.recharging = True
+    self.lights = []
+    self.lightZ = 2
     self.wallsLeft = 3
     self.lightsLeft = 3
-    self.energyLeft = 100
-    self.maxEnergy = 100
-    
-    self.hud = HUD(self.wallsLeft, self.lightsLeft)
-    
-    self.bobTimer = 0
-    self.bobMid = 0
-        
     self.cRay1 = None
     self.cRay2 = None
     self.cRay3 = None
-
+    #HUD
+    self.hud = HUD(self.wallsLeft, self.lightsLeft)
+    
+    self.timer = 0
+        
     self.initKeyMap()
     self.initControls()
     self.initPlayer()
-
     base.enableParticles()
-    
     
   #Initializes keyMap
   def initKeyMap(self):
@@ -89,9 +87,9 @@ class Player(object):
     base.accept('1', self.toggleKey, ['wall'])
     base.accept('2', self.toggleKey, ['light'])
     base.accept('f', self.cancelKey)
-    
     base.accept('mouse1', self.click)
         
+  #Sets key values
   def setKey(self, key, value):
     if key == 'sprint' and self.energyLeft <= 0:
       self.keyMap['sprint'] = 0
@@ -116,8 +114,8 @@ class Player(object):
       
   #Loads passed item
   def loadItem(self, item):
+    #Clears and resets itemNode to toggled ability
     self.itemNode.detachNode()
-    #Filler model
     if item == 'wall':
       self.itemNode = self.wallModel
       self.itemNode.setColor(Vec4(1,1,1,0))
@@ -127,10 +125,10 @@ class Player(object):
       self.itemNode = self.lightModel
       self.itemNode.setColor(Vec4(1,1,1,1))
       self.itemNode.setScale(1.6)
-    #self.itemNode = loader.loadModel('Models/%s' % item)
     self.itemNode.reparentTo(self.playerNode)
     self.itemLoaded = True
     
+    #Attach collisionRays to prevent items from going into env
     self.cRay1.reparentTo(base.camera)
     self.cRay2.reparentTo(base.camera)
     self.cRay3.reparentTo(base.camera)
@@ -138,6 +136,7 @@ class Player(object):
     base.itemTrav.addCollider(self.cRay2, base.queue)
     base.itemTrav.addCollider(self.cRay3, base.queue)
     
+  #Removes item when toggled off
   def unloadItem(self, item):
     self.itemLoaded = False
     self.abilities[item] = 0
@@ -145,8 +144,6 @@ class Player(object):
     self.cRay1.detachNode()
     self.cRay2.detachNode()
     self.cRay3.detachNode()
-    #base.cTrav.removeCollider(self.cRay1)
-    #base.cTrav.removeCollider(self.cRay2)
     
   #Cancels ability
   def cancelKey(self):
@@ -157,8 +154,6 @@ class Player(object):
     self.cRay1.detachNode()
     self.cRay2.detachNode()
     self.cRay3.detachNode()
-    #for ray in base.camera.findAllMatches("*ray*"):
-    #  ray.detachNode()
     
   #Place item when clicked, then clear loaded item
   def click(self):
@@ -172,6 +167,7 @@ class Player(object):
     elif self.abilities['light'] == 1:
       self.placeLight()
       self.lightsLeft -= 1
+    #Update HUD when ability is used
     self.hud.updateHUD(self.wallsLeft, self.lightsLeft)
   
   #Places wall
@@ -189,11 +185,13 @@ class Player(object):
     item.setPos(self.itemNode.getPos(render))
     item.setHpr(self.itemNode.getHpr(render))
     light = loader.loadModel('Models/light')
+    #Adds emission material to placed light
     mat = Material()
     mat.setEmission(VBase4(0.2,0.2,0.45,1))
     light.setMaterial(mat)
     light.reparentTo(item)
     light.setScale(self.playerScale*1.6)
+    #Attach point light to light ability item
     iLightNode = NodePath('ilight')
     iLightNode.reparentTo(item)
     iLightNode.setZ(iLightNode.getZ() + 0.5)
@@ -202,6 +200,7 @@ class Player(object):
     iLightNP.node().setColor(Vec4(0.1, 0.15, 0.2, 1.0))
     iLightNP.node().setAttenuation(Vec3(0, 0.008, 0.0001))
     iLightNP.setZ(iLightNP.getZ() + 0.6)
+    #Not for light ability?
     # particle effects
     rFlame = ParticleEffect()
     rFlame.loadConfig("Models/fire.ptf")
@@ -211,11 +210,10 @@ class Player(object):
     #rFlame.setPos(pos[0], pos[1], pos[2] + 0.4)
     rFlame.setPos(pos[0], pos[1], pos[2] - 0.2)
     render.setLight(iLightNP)
-    
+    #Sets placement time for rotating
     item.setTag('startTime', '%f' % self.timer)
     self.lights.append(item)
       
-    
   #Loads player node, camera, and light
   def initPlayer(self):
     self.playerNode = NodePath('player-node')
@@ -230,6 +228,7 @@ class Player(object):
     base.cam.node().setLens(lens)
     base.camera.reparentTo(self.playerNode)
     
+    #Loads hand
     hand = loader.loadModel('Models/hand')
     hand.reparentTo(base.camera)
     hand.setScale(0.8)
@@ -248,7 +247,6 @@ class Player(object):
     self.test.reparentTo(base.camera)
     self.test.setScale(0.03)
     self.test.setPos(Vec3(1.4,1.6,-0.5))
-    
     self.pLightNode = NodePath('light-node')
     self.pLightNode.reparentTo(base.camera)
     self.pLightNode.setPos(Vec3(1.33,2.4,0))
@@ -256,10 +254,9 @@ class Player(object):
     pLightNP = self.pLightNode.attachNewNode(pLight)
     pLightNP.node().setColor(Vec4(0.1, 0.15, 0.2, 1.0))
     pLightNP.node().setAttenuation(Vec3(0, 0.01, 0.0001))
-    
     render.setLight(pLightNP)
     
-    
+  #Initialize collisions
   def initCollisions(self):
     goodMask = BitMask32(0x1)
     badMask = BitMask32(0x2)
@@ -280,7 +277,7 @@ class Player(object):
     cNode.addSolid(cSphere)
     cNode.setCollideMask(BitMask32.allOff())
     cNode.setIntoCollideMask(otherMask)
-    cNodePath = base.camera.attachNewNode(cNode)
+    cNodePath = self.playerNode.attachNewNode(cNode)
     
     #Collide with env
     cNode = CollisionNode('pusherNode')
@@ -322,16 +319,12 @@ class Player(object):
     self.hud.updateEnergy(self.energyLeft)
     self.timer += 0.05
   
-  
   def itemRay(self):
     base.itemTrav.traverse(render)
     base.queue.sortEntries()
     playerPos = base.camera.getPos(render)
     first = base.queue.getEntry(0)
     cPos = first.getSurfacePoint(render)
-    #cPos = cEntry.getSurfacePoint(render)
-    #dist = math.sqrt((playerPos[0]-cPos[0])**2 + (playerPos[1]-cPos[1])**2)
-    #print dist
     rayName = first.getFromNodePath().getName()
     dist = math.sqrt((playerPos[0]-cPos[0])**2 + (playerPos[1]-cPos[1])**2)
     self.itemDist = min(dist, self.itemMax)
