@@ -1,0 +1,297 @@
+<CoordinateSystem> { Y-Up }
+
+<Comment> {
+  "maya2egg2012 -p -bface -keep-uvs -round-uvs -tbnall -a none -cs y-up -uo cm -trans all -o C:/Users/ionaic/Dropbox/GameDev/panda-project/north-american-cyril/Models/lv1.egg C:/Users/ionaic/Dropbox/GameDev/panda-project/north-american-cyril/Models/levels1_temp.mb"
+}
+<Group> groundPlane_transform {
+  <Transform> {
+    <Matrix4> {
+      12 0 0 0
+      0 0 12 0
+      0 -1 0 0
+      0 0 0 1
+    }
+  }
+}
+<Group> pCube1 {
+  <Transform> {
+    <Matrix4> {
+      1 0 0 0
+      0 1 0 0
+      0 0 1 0
+      -5.7988 2.91464 3.94219 1
+    }
+  }
+  <VertexPool> pCubeShape1.verts {
+    <Vertex> 0 {
+      -9.4023 0 -0.596492
+      <UV> {
+        0.125 0
+        <Tangent> { 0 0 1 }
+        <Binormal> { 0 1 0 }
+      }
+      <Normal> { -1 0 0 }
+      <RGBA> { 0.5 0.5 0.5 1 }
+    }
+    <Vertex> 1 {
+      -9.4023 0 -0.596492
+      <UV> {
+        0.375 0.75
+        <Tangent> { 1 0 0 }
+        <Binormal> { 0 0 1 }
+      }
+      <Normal> { 0 -1 0 }
+      <RGBA> { 0.5 0.5 0.5 1 }
+    }
+    <Vertex> 2 {
+      -9.4023 0 -0.596492
+      <UV> {
+        0.375 0.75
+        <Tangent> { 1 0 0 }
+        <Binormal> { 0 -1 0 }
+      }
+      <Normal> { 0 0 -1 }
+      <RGBA> { 0.5 0.5 0.5 1 }
+    }
+    <Vertex> 3 {
+      -9.4023 0 8.48086
+      <UV> {
+        0.375 0
+        <Tangent> { 0 0 1 }
+        <Binormal> { 0 1 0 }
+      }
+      <Normal> { -1 0 0 }
+      <RGBA> { 0.5 0.5 0.5 1 }
+    }
+    <Vertex> 4 {
+      -9.4023 0 8.48086
+      <UV> {
+        0.375 1
+        <Tangent> { 1 0 0 }
+        <Binormal> { 0 0 1 }
+      }
+      <Normal> { 0 -1 0 }
+      <RGBA> { 0.5 0.5 0.5 1 }
+    }
+    <Vertex> 5 {
+      -9.4023 0 8.48086
+      <UV> {
+        0.375 0
+        <Tangent> { 1 0 0 }
+        <Binormal> { 0 1 0 }
+      }
+      <Normal> { 0 0 1 }
+      <RGBA> { 0.5 0.5 0.5 1 }
+    }
+    <Vertex> 6 {
+      -9.4023 5.82928 -0.596492
+      <UV> {
+        0.125 0.25
+        <Tangent> { 0 0 1 }
+        <Binormal> { 0 1 0 }
+      }
+      <Normal> { -1 0 0 }
+      <RGBA> { 0.5 0.5 0.5 1 }
+    }
+    <Vertex> 7 {
+      -9.4023 5.82928 -0.596492
+      <UV> {
+        0.375 0.5
+        <Tangent> { 1 0 0 }
+        <Binormal> { 0 -1 0 }
+      }
+      <Normal> { 0 0 -1 }
+      <RGBA> { 0.5 0.5 0.5 1 }
+    }
+    <Vertex> 8 {
+      -9.4023 5.82928 -0.596492
+      <UV> {
+        0.375 0.5
+        <Tangent> { 1 0 0 }
+        <Binormal> { 0 0 -1 }
+      }
+      <Normal> { 0 1 0 }
+      <RGBA> { 0.5 0.5 0.5 1 }
+    }
+    <Vertex> 9 {
+      -9.4023 5.82928 8.48086
+      <UV> {
+        0.375 0.25
+        <Tangent> { 0 0 1 }
+        <Binormal> { 0 1 0 }
+      }
+      <Normal> { -1 0 0 }
+      <RGBA> { 0.5 0.5 0.5 1 }
+    }
+    <Vertex> 10 {
+      -9.4023 5.82928 8.48086
+      <UV> {
+        0.375 0.25
+        <Tangent> { 1 0 0 }
+        <Binormal> { 0 1 0 }
+      }
+      <Normal> { 0 0 1 }
+      <RGBA> { 0.5 0.5 0.5 1 }
+    }
+    <Vertex> 11 {
+      -9.4023 5.82928 8.48086
+      <UV> {
+        0.375 0.25
+        <Tangent> { 1 0 0 }
+        <Binormal> { 0 0 -1 }
+      }
+      <Normal> { 0 1 0 }
+      <RGBA> { 0.5 0.5 0.5 1 }
+    }
+    <Vertex> 12 {
+      -2.19529 0 -0.596492
+      <UV> {
+        0.625 0.75
+        <Tangent> { 1 0 0 }
+        <Binormal> { 0 0 1 }
+      }
+      <Normal> { 0 -1 0 }
+      <RGBA> { 0.5 0.5 0.5 1 }
+    }
+    <Vertex> 13 {
+      -2.19529 0 -0.596492
+      <UV> {
+        0.625 0.75
+        <Tangent> { 1 0 0 }
+        <Binormal> { 0 -1 0 }
+      }
+      <Normal> { 0 0 -1 }
+      <RGBA> { 0.5 0.5 0.5 1 }
+    }
+    <Vertex> 14 {
+      -2.19529 0 -0.596492
+      <UV> {
+        0.875 0
+        <Tangent> { 0 0 -1 }
+        <Binormal> { 0 1 0 }
+      }
+      <Normal> { 1 0 0 }
+      <RGBA> { 0.5 0.5 0.5 1 }
+    }
+    <Vertex> 15 {
+      -2.19529 0 8.48086
+      <UV> {
+        0.625 1
+        <Tangent> { 1 0 0 }
+        <Binormal> { 0 0 1 }
+      }
+      <Normal> { 0 -1 0 }
+      <RGBA> { 0.5 0.5 0.5 1 }
+    }
+    <Vertex> 16 {
+      -2.19529 0 8.48086
+      <UV> {
+        0.625 0
+        <Tangent> { 1 0 0 }
+        <Binormal> { 0 1 0 }
+      }
+      <Normal> { 0 0 1 }
+      <RGBA> { 0.5 0.5 0.5 1 }
+    }
+    <Vertex> 17 {
+      -2.19529 0 8.48086
+      <UV> {
+        0.625 0
+        <Tangent> { 0 0 -1 }
+        <Binormal> { 0 1 0 }
+      }
+      <Normal> { 1 0 0 }
+      <RGBA> { 0.5 0.5 0.5 1 }
+    }
+    <Vertex> 18 {
+      -2.19529 5.82928 -0.596492
+      <UV> {
+        0.625 0.5
+        <Tangent> { 1 0 0 }
+        <Binormal> { 0 -1 0 }
+      }
+      <Normal> { 0 0 -1 }
+      <RGBA> { 0.5 0.5 0.5 1 }
+    }
+    <Vertex> 19 {
+      -2.19529 5.82928 -0.596492
+      <UV> {
+        0.625 0.5
+        <Tangent> { 1 0 0 }
+        <Binormal> { 0 0 -1 }
+      }
+      <Normal> { 0 1 0 }
+      <RGBA> { 0.5 0.5 0.5 1 }
+    }
+    <Vertex> 20 {
+      -2.19529 5.82928 -0.596492
+      <UV> {
+        0.875 0.25
+        <Tangent> { 0 0 -1 }
+        <Binormal> { 0 1 0 }
+      }
+      <Normal> { 1 0 0 }
+      <RGBA> { 0.5 0.5 0.5 1 }
+    }
+    <Vertex> 21 {
+      -2.19529 5.82928 8.48086
+      <UV> {
+        0.625 0.25
+        <Tangent> { 1 0 0 }
+        <Binormal> { 0 1 0 }
+      }
+      <Normal> { 0 0 1 }
+      <RGBA> { 0.5 0.5 0.5 1 }
+    }
+    <Vertex> 22 {
+      -2.19529 5.82928 8.48086
+      <UV> {
+        0.625 0.25
+        <Tangent> { 1 0 0 }
+        <Binormal> { 0 0 -1 }
+      }
+      <Normal> { 0 1 0 }
+      <RGBA> { 0.5 0.5 0.5 1 }
+    }
+    <Vertex> 23 {
+      -2.19529 5.82928 8.48086
+      <UV> {
+        0.625 0.25
+        <Tangent> { 0 0 -1 }
+        <Binormal> { 0 1 0 }
+      }
+      <Normal> { 1 0 0 }
+      <RGBA> { 0.5 0.5 0.5 1 }
+    }
+  }
+  <Polygon> {
+    <Normal> { 0 0 1 }
+    <BFace> { 1 }
+    <VertexRef> { 5 16 21 10 <Ref> { pCubeShape1.verts } }
+  }
+  <Polygon> {
+    <Normal> { 0 1 0 }
+    <BFace> { 1 }
+    <VertexRef> { 11 22 19 8 <Ref> { pCubeShape1.verts } }
+  }
+  <Polygon> {
+    <Normal> { 0 0 -1 }
+    <BFace> { 1 }
+    <VertexRef> { 7 18 13 2 <Ref> { pCubeShape1.verts } }
+  }
+  <Polygon> {
+    <Normal> { 0 -1 0 }
+    <BFace> { 1 }
+    <VertexRef> { 1 12 15 4 <Ref> { pCubeShape1.verts } }
+  }
+  <Polygon> {
+    <Normal> { 1 0 0 }
+    <BFace> { 1 }
+    <VertexRef> { 17 14 20 23 <Ref> { pCubeShape1.verts } }
+  }
+  <Polygon> {
+    <Normal> { -1 0 0 }
+    <BFace> { 1 }
+    <VertexRef> { 0 3 9 6 <Ref> { pCubeShape1.verts } }
+  }
+}
