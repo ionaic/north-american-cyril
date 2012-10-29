@@ -258,15 +258,15 @@ class Player(object):
     
   #Initialize collisions
   def initCollisions(self):
-    goodMask = BitMask32(0x1)
-    badMask = BitMask32(0x2)
-    otherMask = BitMask32(0x4)
+    envMask = BitMask32(0x1)
+    sightMask = BitMask32(0x2)
+    deathMask = BitMask32(0x3)
     
     #Collide with enemies    
     cSphere = CollisionSphere( 0, 0, 2, 3 )
     cNode = CollisionNode('player')
     cNode.addSolid(cSphere)
-    cNode.setCollideMask(goodMask)
+    cNode.setCollideMask(BitMask32.allOff())
     cNodePath = self.playerNode.attachNewNode(cNode)
     #cNodePath.show()
     base.cTrav.addCollider(cNodePath, base.queue)
@@ -276,37 +276,37 @@ class Player(object):
     cNode = CollisionNode('playerSight')
     cNode.addSolid(cSphere)
     cNode.setCollideMask(BitMask32.allOff())
-    cNode.setIntoCollideMask(otherMask)
+    cNode.setIntoCollideMask(sightMask)
     cNodePath = self.playerNode.attachNewNode(cNode)
     
     #Collide with env
+    cSphere = CollisionSphere(0,0,-2/self.playerScale,0.9/self.playerScale)
     cNode = CollisionNode('pusherNode')
-    cNode.setCollideMask(BitMask32.allOff())
-    cNode.setFromCollideMask(badMask)
-    fromObject = self.playerNode.attachNewNode(cNode)
-    fromObject.node().addSolid(CollisionSphere(0,0,-2/self.playerScale,0.9/self.playerScale))
-    #fromObject.show()
-    base.cTrav.addCollider(fromObject, base.pusher)
-    base.pusher.addCollider(fromObject, self.playerNode, base.drive.node())
+    cNode.addSolid(cSphere)
+    cNode.setCollideMask(envMask)
+    cNodePath = self.playerNode.attachNewNode(cNode)
+    cNodePath.show()
+    base.cTrav.addCollider(cNodePath, base.pusher)
+    base.pusher.addCollider(cNodePath, self.playerNode, base.drive.node())
         
     #Item placement collision rays
     cNode = CollisionNode('rayRight')
     cRay = CollisionRay(0,0,0,0.4,1,0)
     cNode.addSolid(cRay)
     cNode.setCollideMask(BitMask32.allOff())
-    cNode.setFromCollideMask(BitMask32.bit(0))
+    cNode.setFromCollideMask(envMask)
     self.cRay1 = base.camera.attachNewNode(cNode)
     cNode = CollisionNode('rayLeft')
     cRay = CollisionRay(0,0,0,-0.4,1,0)
     cNode.addSolid(cRay)
     cNode.setCollideMask(BitMask32.allOff())
-    cNode.setFromCollideMask(BitMask32.bit(0))
+    cNode.setFromCollideMask(envMask)
     self.cRay2 = base.camera.attachNewNode(cNode)
     cNode = CollisionNode('rayMid')
     cRay = CollisionRay(0,0,0,0,1,0)
     cNode.addSolid(cRay)
     cNode.setCollideMask(BitMask32.allOff())
-    cNode.setFromCollideMask(BitMask32.bit(0))
+    cNode.setFromCollideMask(envMask)
     self.cRay3 = base.camera.attachNewNode(cNode)
   
   #Updates player

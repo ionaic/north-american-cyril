@@ -21,15 +21,15 @@ class Enemy(object):
     self.enemyNode.reparentTo(render)
     
   def initCollisions(self, player):
-    goodMask = BitMask32(0x1)
-    badMask = BitMask32(0x2)
-    otherMask = BitMask32(0x4)
+    envMask = BitMask32(0x1)
+    sightMask = BitMask32(0x2)
+    deathMask = BitMask32(0x3)
     
     #collides with walls
     cSphere = CollisionSphere( (0,0,0), 1.25 )
     cNode = CollisionNode('enemyPusher')
     cNode.addSolid(cSphere)
-    cNode.setCollideMask(BitMask32(0x8))
+    cNode.setCollideMask(envMask)
     cNodePath = self.enemyNode.attachNewNode(cNode)
     base.pusher.addCollider(cNodePath, self.enemyNode)
     base.cTrav.addCollider(cNodePath, base.pusher)
@@ -38,15 +38,17 @@ class Enemy(object):
     cSphere = CollisionSphere( (0,0,0), 1.25 )
     cNode = CollisionNode('enemy')
     cNode.addSolid(cSphere)
-    cNode.setIntoCollideMask(badMask)
+    cNode.setCollideMask(BitMask32.allOff())
+    cNode.setFromCollideMask(deathMask)
     cNodePath = self.enemyNode.attachNewNode(cNode)
     
     #collides with the player to determine if the player is in the enemie's cone of vision
     cTube = CollisionTube (0,-4,0,0,-6,0, 6)
     cNode = CollisionNode('vision')
     cNode.addSolid(cTube)
+    cNode.setCollideMask(BitMask32.allOff())
+    cNode.setFromCollideMask(sightMask)
     cNodePath = self.enemyNode.attachNewNode(cNode)
-    cNode.setIntoCollideMask(goodMask)
     
     #checks to see if there is anything blocking the enemie's line of sight to the player
     self.queue = CollisionHandlerQueue()
@@ -54,7 +56,7 @@ class Enemy(object):
     self.cNode = CollisionNode('sight')
     self.cNode.addSolid(cRay)
     self.cNode.setCollideMask(BitMask32.allOff())
-    self.cNode.setFromCollideMask(otherMask)
+    self.cNode.setFromCollideMask(envMask)
     cNodePath = base.render.attachNewNode(self.cNode)
     base.cTrav.addCollider(cNodePath, self.queue)
     
