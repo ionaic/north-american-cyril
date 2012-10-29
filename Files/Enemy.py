@@ -24,12 +24,13 @@ class Enemy(object):
     
   #AIpath is a list of vertices
   def initAI(self, AIpath):
+    
     self.AIworld = AIWorld(render)
- 
+    
     self.AIchar = AICharacter('enemyNode',self.enemyNode, 120, 0.05, 5)
+    
     self.AIworld.addAiChar(self.AIchar)
     self.AIbehaviors = self.AIchar.getAiBehaviors()        
-
     #Path follow (note the order is reveresed)
     self.AIbehaviors.pathFollow(1.0)
     
@@ -44,8 +45,8 @@ class Enemy(object):
   def initCollisions(self, player):
     envMask = BitMask32(0x1)
     sightMask = BitMask32(0x2)
-    deathMask = BitMask32(0x3)
-    clearSightMask = BitMask32(0x4)
+    deathMask = BitMask32(0x4)
+    clearSightMask = BitMask32(0x8)
     
     #collides with walls
     cSphere = CollisionSphere( (0,0,0), 1.25 )
@@ -89,9 +90,7 @@ class Enemy(object):
     base.accept('playerSight-again-vision', self.inSight)
     
   def inSight(self, cEntry):
-    #print 'seen'
     if not self.foundPlayer and not self.sightBlocked:
-      #print 'found'
       self.foundPlayer = True
       self.foundPlayerTime = time.time()
     if time.time() > self.foundPlayerTime + 5:

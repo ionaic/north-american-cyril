@@ -61,13 +61,12 @@ class Play(DirectObject):
   def startLevel(self, level, next = True):
     #Clear render
     self.player.clearItems()
-    #print render.getChildren()
     
-    #If new level, load level map
+    #If next level, load level map
     
       #and initialize enemies
     if next:
-      enemy = Enemy( (0,0,3), [(0,10,3), (0,-10,3)] )
+      enemy = Enemy( (0,0,3), [(0,-10,3), (0,10,3)] )
       self.enemies.append(enemy)
     
     pos = (-10,-10,3) #level.spawnPos
