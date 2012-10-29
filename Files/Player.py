@@ -352,7 +352,6 @@ class Player(object):
     base.queue.sortEntries()
     playerPos = base.camera.getPos(render)
     first = base.queue.getEntry(0)
-    print first
     cPos = first.getSurfacePoint(render)
     rayName = first.getFromNodePath().getName()
     dist = math.sqrt((playerPos[0]-cPos[0])**2 + (playerPos[1]-cPos[1])**2)

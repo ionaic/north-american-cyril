@@ -11,6 +11,7 @@ class Enemy(object):
     self.foundPlayer = False
     self.foundPlayerTime = -1
     self.spawnPos = spawnPos
+    self.spawnH = 0
     
     self.initEnemy()
     self.initAI(AIpath)
@@ -41,6 +42,8 @@ class Enemy(object):
    
   def respawn(self):
     self.enemyNode.setPos(self.spawnPos)
+    self.enemyNode.setH(self.spawnH)
+    self.foundPlayer = False
     
   def initCollisions(self, player):
     envMask = BitMask32(0x1)
