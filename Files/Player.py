@@ -222,6 +222,9 @@ class Player(object):
     item.setTag('startTime', '%f' % self.timer)
     self.lights.append(item)
       
+  def setPlayerPos(self, pos):
+    self.playerNode.setPos(pos)
+
   #Loads player node, camera, and light
   def initPlayer(self):
     self.playerNode = NodePath('player-node')
