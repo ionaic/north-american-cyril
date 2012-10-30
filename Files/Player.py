@@ -86,8 +86,22 @@ class Player(object):
     #Abilities
     base.accept('shift', self.setKey, ['sprint', 1])
     base.accept('shift-up', self.setKey, ['sprint', 0])
+    base.accept('shift-w', self.setKey, ['sprint', 1]) 
+    base.accept('shift-w', self.setKey, ['forward', 1]) 
+    base.accept('shift-a', self.setKey, ['left', 1])
+    base.accept('shift-d', self.setKey, ['right', 1])
+    base.accept('shift-s', self.setKey, ['back', 1])
+    
     base.accept('control', self.setKey, ['caution', 1])
     base.accept('control-up', self.setKey, ['caution', 0])
+    base.accept('control-w', self.setKey, ['caution', 1]) 
+    base.accept('control-w', self.setKey, ['forward', 1]) 
+    base.accept('control-a', self.setKey, ['caution', 1])
+    base.accept('control-a', self.setKey, ['left', 1])
+    base.accept('control-d', self.setKey, ['caution', 1])
+    base.accept('control-d', self.setKey, ['right', 1])
+    base.accept('control-s', self.setKey, ['caution', 1])
+    base.accept('control-s', self.setKey, ['back', 1])
     base.accept('1', self.toggleKey, ['wall'])
     base.accept('2', self.toggleKey, ['light'])
     base.accept('f', self.cancelKey)
@@ -99,6 +113,10 @@ class Player(object):
       self.keyMap['sprint'] = 0
       return
     self.keyMap[key] = value
+    
+  def sprint(self):
+    self.keyMap['sprint'] = 1
+    self.keyMap['forward'] = 1
   
   #Toggles ability
   def toggleKey(self, key):
