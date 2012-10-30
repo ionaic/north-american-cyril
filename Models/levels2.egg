@@ -1,7 +1,7 @@
 <CoordinateSystem> { Y-Up }
 
 <Comment> {
-  "maya2egg2012 -p -bface -keep-uvs -round-uvs -tbnall -a none -cs y-up -uo cm -trans all -o C:/Users/ionaic/Dropbox/GameDev/panda-project/north-american-cyril/Models/lv4.egg C:/Users/ionaic/Dropbox/GameDev/panda-project/north-american-cyril/Models/lv4_temp.mb"
+  "maya2egg2012 -p -bface -keep-uvs -round-uvs -tbnall -a none -cs y-up -uo cm -trans all -o C:/Users/ionaic/Dropbox/GameDev/panda-project/north-american-cyril/Models/levels2.egg C:/Users/ionaic/Dropbox/GameDev/panda-project/north-american-cyril/Models/levels2_temp.mb"
 }
 <Texture> lambert4SG {
   wall.png
