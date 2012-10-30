@@ -5,7 +5,7 @@ import Level
 
 class MapGen(object):
   def __init__(self):
-    self.curLev = 1
+    self.curLev = 5
     self.initMap()
     self.initLight()
     

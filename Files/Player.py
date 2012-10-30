@@ -120,12 +120,12 @@ class Player(object):
       self.itemNode = self.wallModel
       self.itemNode.setColor(Vec4(1,1,1,0))
       self.itemNode.setScale(5)
-      self.itemNode.setCollideMask(BitMask32.allOff())
     elif item == 'light':
       self.itemNode = self.lightModel
       self.itemNode.setColor(Vec4(1,1,1,1))
       self.itemNode.setScale(1.6)
     self.itemNode.reparentTo(self.playerNode)
+    self.itemNode.setCollideMask(BitMask32.allOff())
     self.itemLoaded = True
     
     #Attach collisionRays to prevent items from going into env
@@ -286,14 +286,15 @@ class Player(object):
     
   def die(self, cEntry):
     self.parent.togglePause()
-    self.parent.startLevel(self.level)
+    self.parent.startLevel(self.level, False)
+    
     
   #Initialize collisions
   def initCollisions(self):
     envMask = BitMask32(0x1)
     sightMask = BitMask32(0x2)
-    deathMask = BitMask32(0x3)
-    clearSightMask = BitMask32(0x4)
+    deathMask = BitMask32(0x4)
+    clearSightMask = BitMask32(0x8)
     
     #Collide with enemies    
     cSphere = CollisionSphere( 0, 0, 2, 3 )

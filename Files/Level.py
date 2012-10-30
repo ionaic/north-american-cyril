@@ -10,8 +10,7 @@ class Level:
         self.startPos = [0, 0, 0]
         self.startDir = [0, 0, 0]
         self.loadPlayer()
-        self.numLights = 3
-        self.numWalls = 3
+        self.setItems(3,3)
 
     def loadLevel(self, levelNum):
         if levelNum == 1:
@@ -24,10 +23,11 @@ class Level:
             self.env = loader.loadModel("Models/lv4")
         elif levelNum == 5:
             self.env = loader.loadModel("Models/lv5")
-            self.env.setScale(2)
         else:
             self.env = loader.loadModel("Models/lv1")
 
+        # environments are small, make them larger
+        self.env.setScale(15)
         self.env.setTwoSided(True)
         self.env.reparentTo(render)
    
@@ -49,3 +49,7 @@ class Level:
         
     def spawnPlayer(self):
         self.player.setPos(pos)
+    
+    def setItems(self, lights, walls):
+        self.numLights = lights
+        self.numWalls = walls

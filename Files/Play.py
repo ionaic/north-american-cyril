@@ -54,21 +54,30 @@ class Play(DirectObject):
   def initModels(self):
     self.map = MapGen()
     self.player = Player(self)
+    self.enemies = []
     self.startLevel(1)
-    self.enemy = Enemy()
-    
-  def startLevel(self, level):
+  
+  #level number, next = true if next level (false = respawning)
+  def startLevel(self, level, next = True):
     #Clear render
     self.player.clearItems()
-    #print render.getChildren()
-    #Load new level (if new level)
+    
+    #If next level, load level map
+    
+      #and initialize enemies
+    if next:
+      enemy = Enemy( (0,0,3), [(0,-10,3), (0,10,3)] )
+      self.enemies.append(enemy)
     
     pos = (-10,-10,3) #level.spawnPos
     walls = 3 #level.walls
     lights = 3 #level.lights
     #Spawn player using spawn (spawn pos, max walls, max lights)
     self.player.spawn(pos,walls,lights)
-    #Spawn enemies
+    if not next:
+      #enemies = list of enemies in level
+      for enemy in self.enemies:
+        enemy.respawn()
     
     
   def setupCollisions(self): 
@@ -86,13 +95,15 @@ class Play(DirectObject):
 
     
     self.player.initCollisions()
-    self.enemy.initCollisions(self.player)
+    for enemy in self.enemies:
+      enemy.initCollisions(self.player)
     
     #base.cTrav.showCollisions(render)
 
   def update(self, task):
     dt = globalClock.getDt()
     self.player.update(globalClock.getDt())
-    self.enemy.update(globalClock.getDt(), self.player)
+    for enemy in self.enemies:
+      enemy.update(globalClock.getDt(), self.player)
     return task.cont
     

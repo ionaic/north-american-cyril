@@ -4,28 +4,52 @@ from panda3d.ai import * #panda AI
 import math, time
 
 class Enemy(object):
-  def __init__(self):
+  def __init__(self, spawnPos, AIpath):
     self.speed = .03
     
     self.sightBlocked = True
     self.foundPlayer = False
     self.foundPlayerTime = -1
+    self.spawnPos = spawnPos
+    self.spawnH = 0
     
     self.initEnemy()
-    self.initAI()
+    self.initAI(AIpath)
     
   #Loads player node, camera, and light
   def initEnemy(self):
     self.enemyNode = loader.loadModel('smiley')
-    self.enemyNode.setPos(0,0,3)
+    self.enemyNode.setPos(self.spawnPos)
     self.enemyNode.setScale(0.5)
     self.enemyNode.reparentTo(render)
+    
+  #AIpath is a list of vertices
+  def initAI(self, AIpath):
+    
+    self.AIworld = AIWorld(render)
+    
+    self.AIchar = AICharacter('enemyNode',self.enemyNode, 120, 0.05, 5)
+    
+    self.AIworld.addAiChar(self.AIchar)
+    self.AIbehaviors = self.AIchar.getAiBehaviors()        
+    #Path follow (note the order is reveresed)
+    self.AIbehaviors.pathFollow(1.0)
+    
+    for point in AIpath:
+      self.AIbehaviors.addToPath(point)
+ 
+    self.AIbehaviors.startFollow()
+   
+  def respawn(self):
+    self.enemyNode.setPos(self.spawnPos)
+    self.enemyNode.setH(self.spawnH)
+    self.foundPlayer = False
     
   def initCollisions(self, player):
     envMask = BitMask32(0x1)
     sightMask = BitMask32(0x2)
-    deathMask = BitMask32(0x3)
-    clearSightMask = BitMask32(0x4)
+    deathMask = BitMask32(0x4)
+    clearSightMask = BitMask32(0x8)
     
     #collides with walls
     cSphere = CollisionSphere( (0,0,0), 1.25 )
@@ -69,29 +93,12 @@ class Enemy(object):
     base.accept('playerSight-again-vision', self.inSight)
     
   def inSight(self, cEntry):
-    #print 'seen'
     if not self.foundPlayer and not self.sightBlocked:
-      #print 'found'
       self.foundPlayer = True
       self.foundPlayerTime = time.time()
     if time.time() > self.foundPlayerTime + 5:
       self.foundPlayerTime -= 1
       self.foundPlayer = False
-    
-  def initAI(self):
-    self.AIworld = AIWorld(render)
- 
-    self.AIchar = AICharacter('enemyNode',self.enemyNode, 120, 0.05, 5)
-    self.AIworld.addAiChar(self.AIchar)
-    self.AIbehaviors = self.AIchar.getAiBehaviors()        
-
-    #Path follow (note the order is reveresed)
-    self.AIbehaviors.pathFollow(1.0)
-    
-    self.AIbehaviors.addToPath((0,10,3))
-    self.AIbehaviors.addToPath((0,-10,3))
- 
-    self.AIbehaviors.startFollow()
     
   def update(self, dt, player):
     if self.AIchar.getVelocity() == LVecBase3f(0, 0, 0):
