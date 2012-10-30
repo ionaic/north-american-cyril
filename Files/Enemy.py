@@ -4,7 +4,7 @@ from panda3d.ai import * #panda AI
 import math, time
 
 class Enemy(object):
-  def __init__(self, spawnPos, AIpath):
+  def __init__(self, parent, spawnPos, AIpath):
     self.speed = .03
     
     self.sightBlocked = True
@@ -13,7 +13,10 @@ class Enemy(object):
     self.spawnPos = spawnPos
     self.spawnH = 0
     
+    self.parent = parent
+    
     self.initEnemy()
+    ##############################self.initSounds()
     self.initAI(AIpath)
     
   #Loads player node, camera, and light
@@ -22,6 +25,13 @@ class Enemy(object):
     self.enemyNode.setPos(self.spawnPos)
     self.enemyNode.setScale(0.5)
     self.enemyNode.reparentTo(render)
+    
+  def initSounds(self):
+    self.stompSfx = base.loadSfx('Sounds/stomp.wav')
+    self.stompSfx.setLoopCount(0)
+    self.chaseSfx = base.loadSfx('Sounds/chase.wav')
+    self.chaseSfx.setLoopCount(0)
+    self.movementSfx = None
     
   #AIpath is a list of vertices
   def initAI(self, AIpath):
@@ -68,7 +78,7 @@ class Enemy(object):
     cNode.setCollideMask(BitMask32.allOff())
     cNode.setFromCollideMask(deathMask)
     cNodePath = self.enemyNode.attachNewNode(cNode)
-    cNodePath.show()
+    #cNodePath.show()
     base.cTrav.addCollider(cNodePath, base.cHandler)
     
     #collides with the player to determine if the player is in the enemie's cone of vision
@@ -78,7 +88,7 @@ class Enemy(object):
     cNode.setCollideMask(BitMask32.allOff())
     cNode.setIntoCollideMask(sightMask)
     cNodePath = self.enemyNode.attachNewNode(cNode)
-    #cNodePath.show()
+    cNodePath.show()
     
     #checks to see if there is anything blocking the enemie's line of sight to the player
     self.queue = CollisionHandlerQueue()
@@ -97,7 +107,6 @@ class Enemy(object):
       self.foundPlayer = True
       self.foundPlayerTime = time.time()
     if time.time() > self.foundPlayerTime + 5:
-      self.foundPlayerTime -= 1
       self.foundPlayer = False
     
   def update(self, dt, player):
@@ -111,37 +120,35 @@ class Enemy(object):
     #checks the first element that the enemy sees between the player
     #if the first object it sees is not the player then it doesn't chase towards it
     self.queue.sortEntries()
-    #print self.queue
     if self.queue.getNumEntries() > 0:
         entry = self.queue.getEntry(0)
         type = entry.getIntoNode().getName()
         if type == 'playerSight':
             self.sightBlocked = False
-            #print 'in sight'
         else:
             self.sightBlocked = True
-            #print 'not in sight'
-    
-    """
-    #checks to see if the player is in the enemie's vision cone and not blocked
-    for i in range(base.eQueue.getNumEntries()):
-        if base.eQueue.getEntry(i).getIntoNode().getName() == 'vision' and self.foundPlayer == False and self.sightBlocked == False:
-            self.foundPlayer = True
-            self.foundPlayerTime = time.time()
         
-    #after chasing for 5 seconds, goes back to the normal pattern
-    if time.time() > self.foundPlayerTime + 5:
-        self.foundPlayerTime = -1
-        self.foundPlayer = False
-    """
-    
     #if the player is found then moves towards them
     #otherwise continues patrolling
     if self.foundPlayer:
         self.move(dt, player)
+        self.parent.chaseBGM(True)
     else:
-        self.AIworld.update()  
+        self.AIworld.update() 
+        self.parent.chaseBGM(False)
     
+    ##########################Movement SFX
+    """
+    if self.foundPlayer and self.movementSfx != self.chaseSfx:
+      self.movementSfx.stop()
+      self.movementSfx = self.chaseSfx
+      self.movementSfx.play()
+    elif not self.foundPlayer and self.movementSfx != self.stompSfx:
+      self.movementSfx.stop()
+      self.movementSfx = self.stompSfx
+      self.movementSfx.play()
+    """
+      
   #Moves player
   def move(self, dt, player):
     hypotenuse = math.sqrt( (player.playerNode.getX() - self.enemyNode.getX())**2 + (player.playerNode.getY() - self.enemyNode.getY())**2 ) 
