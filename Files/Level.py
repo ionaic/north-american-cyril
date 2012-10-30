@@ -1,4 +1,4 @@
-# TODO python and panda imports
+# TODO python and panda imports 
 from pandac.PandaModules import * #basic panda
 from direct.showbase.DirectObject import DirectObject #event handling
 
@@ -7,10 +7,13 @@ import Player
 class Level:
     def __init__(self, levelNum):
         self.loadLevel(levelNum)
-        self.startPos = [0, 0, 0]
+        # self.start = [0, 0, 0]
+        self.setItems(levelNum)
         self.startDir = [0, 0, 0]
-        self.loadPlayer()
-        self.setItems(3,3)
+        self.setStart(self.startDir)
+        temp = Player.Player(self.env)
+        self.loadPlayer(temp)
+        
 
     def loadLevel(self, levelNum):
         if levelNum == 1:
@@ -32,24 +35,60 @@ class Level:
         self.env.reparentTo(render)
    
     # load the player into the world 
-    def loadPlayer(self):
-        #self.player = Player()
+    def loadPlayer(self, player):
+        self.player = player
+        self.player.spawn(self.start, self.numWalls, self.numLights)
         return
 
     def loadLights(self):
         return
 
-    def setStart(self, pos, direction):
-        self.startPos = pos
+    def setStart(self, direction):
+        self.start = self.loadColObj(self.env, "start").node().getSolid(0).getCollisionOrigin()
         self.startDir = direction
    
     # replace self.end = pos with collision object? 
-    def setEnd(self, pos):
-        self.end = pos
+    def setEnd(self):
+        self.end = self.loadColObj(self.env, "exit")
+        self.endNP = self.env.attachNewNode(self.end)
+        base.cTrav.addCollider(self.endNP, base.cHandler)
+
         
-    def spawnPlayer(self):
-        self.player.setPos(pos)
+    def loadColObj(self, model, name):
+        cNode = model.find("**/"+name)
+        if cNode.getNumNodes() < 1:
+            raise ValueError("Couldn't find " + name + " in " + model.getName())
+        elif cNode.node().isGeomNode():
+            raise ValueError(name + " is a geometry node!")
+        else:
+            collider = model.attachNewNode(CollisionNode(name))
+
+            collider.setPos(cNode.getPos())
+            collider.node().addSolid(cNode.node().getSolid(0))
+            origin = cNode.node().getSolid(0).getCollisionOrigin()
+            return collider
     
-    def setItems(self, lights, walls):
-        self.numLights = lights
-        self.numWalls = walls
+    # def nextLevel(self):
+        # if 1:
+    
+    def setItems(self, levelNum):#, lights, walls):
+        if levelNum == 1:
+            self.numLights = 5
+            self.numWalls = 5
+        elif levelNum == 2:
+            self.numLights = 5
+            self.numWalls = 5
+        elif levelNum == 3:
+            self.numLights = 5
+            self.numWalls = 5
+        elif levelNum == 4:
+            self.numLights = 5
+            self.numWalls = 5
+        elif levelNum == 5:
+            self.numLights = 5
+            self.numWalls = 5
+        else:
+            self.numLights = 5
+            self.numWalls = 5
+        # self.numLights = lights
+        # self.numWalls = walls
