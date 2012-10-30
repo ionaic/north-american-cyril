@@ -54,6 +54,7 @@ class Player(object):
     self.initKeyMap()
     self.initControls()
     self.initPlayer()
+    #################################self.initSounds()
     base.enableParticles()
     
     base.accept('enemy-into-player', self.die)
@@ -182,6 +183,7 @@ class Player(object):
     light.reparentTo(item)
     light.setScale(self.playerScale*5)
     self.walls.append(item)
+    ###########################self.wallSfx.play()
   
   #Places light item and creates a point light
   def placeLight(self):
@@ -204,21 +206,12 @@ class Player(object):
     iLightNP.node().setColor(Vec4(0.1, 0.15, 0.2, 1.0))
     iLightNP.node().setAttenuation(Vec3(0, 0.008, 0.0001))
     iLightNP.setZ(iLightNP.getZ() + 0.6)
-    """
-    #Not for light ability?
-    # particle effects
-    rFlame = ParticleEffect()
-    rFlame.loadConfig("Models/fire.ptf")
-    rFlame.start(item)
-    rFlame.setScale(0.1)
-    pos = iLightNP.getPos()
-    #rFlame.setPos(pos[0], pos[1], pos[2] + 0.4)
-    rFlame.setPos(pos[0], pos[1], pos[2] - 0.2)
-    """
+    
     render.setLight(iLightNP)
     #Sets placement time for rotating
     item.setTag('startTime', '%f' % self.timer)
     self.lights.append(item)
+    ###############################self.magicSfx.play()
       
   #Loads player node, camera, and light
   def initPlayer(self):
@@ -340,6 +333,18 @@ class Player(object):
     cNode.setFromCollideMask(envMask)
     self.cRay3 = base.camera.attachNewNode(cNode)
     
+  ########################################################
+  def initSounds(self):
+    self.walkSfx = base.loadSfx('Sounds/footstep.wav')
+    self.walkSfx.setLoopCount(0)
+    self.runSfx = base.loadSfx('Sounds/run.wav')
+    self.runSfx.setLoopCount(0)
+    self.movementSfx = None
+    self.wallSfx = base.loadSfx('Sounds/wall.wav')
+    self.magicSfx = base.loadSfx('Sounds/magic.wav')
+    self.doorOpenSfx = base.loadSfx('Sounds/door_open.wav')
+    self.doorCloseSfx = base.loadSfx('Sounds/door_close.wav')
+    self.fireSfx = base.loadSfx('Sounds/fire.wav')
   
   #Updates player
   def update(self, dt):
@@ -422,14 +427,15 @@ class Player(object):
         self.keyMap['left'] + self.keyMap['right']) == 0:
       move = self.movement['stand']
     #Moving
-    elif self.keyMap['sprint'] and self.keyMap['forward'] == 1:
-      move = self.movement['sprint']
+    elif self.keyMap['sprint'] == 1 and self.keyMap['forward'] == 1:
       if self.energyLeft <= 0:
         self.energyLeft = 0
         self.keyMap['sprint'] = 0
+        move = self.movement['walk']
       else:
         self.energyLeft -= 0.3
         self.recharging = False
+        move = self.movement['sprint']
     elif self.keyMap['caution'] == 1:
       move = self.movement['caution']
     else:
@@ -445,10 +451,27 @@ class Player(object):
     elif self.keyMap['right'] == 1:
       self.playerNode.setPos(self.playerNode, self.right * dt * move.speed * self.speed)
       
+    ##########################Movement SFX
+    """
+    if move == self.movement['sprint'] and self.movementSfx != self.runSfx:
+      self.movementSfx.stop()
+      self.movementSfx = self.runSfx
+      self.movementSfx.play()
+    elif move == self.movement['walk'] and self.movementSfx != self.walkSfx:
+      self.movementSfx.stop()
+      self.movementSfx = self.walkSfx
+      self.movementSfx.play()
+    elif self.movementSfx = None:
+      pass
+    elif move != self.movement['sprint'] or move != self.movement['walk']:
+      self.movementSfx.stop()
+      self.movementSfx = None
+    """
+        
     self.headBob(move)
     if self.recharging and self.energyLeft < 100:
       self.energyLeft += 0.035
-      
+        
   
   def headBob(self, movement):
     waveslice = math.sin(self.bobTimer)

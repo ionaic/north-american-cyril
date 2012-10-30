@@ -27,7 +27,7 @@ class Level:
             self.env = loader.loadModel("Models/lv1")
 
         # environments are small, make them larger
-        self.env.setScale(15)
+        self.env.setScale(5)
         self.env.setTwoSided(True)
         self.env.reparentTo(render)
    
