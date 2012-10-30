@@ -31,9 +31,9 @@ class Play(DirectObject):
     base.win.requestProperties(self.props)
     self.parent = parent
     base.accept("escape", self.togglePause)
+    self.setupSounds()
     self.initModels()
     self.setupCollisions()
-    self.setupSounds()
 
     self.task = taskMgr.add(self.update, "updateTask")
   
@@ -45,13 +45,29 @@ class Play(DirectObject):
       taskMgr.add(self.task)
       self.parent.mainFrame.hide()
       self.parent.paused = False 
+      self.playingBGM.setTime(self.bgmTime) 
+      self.playingBGM.play()
     else:
       self.props.setCursorHidden(False)
       base.win.requestProperties(self.props)
       taskMgr.remove(self.task)
       self.parent.mainFrame.show()
       self.parent.paused = True
+      self.bgmTime = self.playingBGM.getTime() 
+      self.playingBGM.stop()
   
+  def chaseBGM(self, chasing = False):
+    if chasing and self.playingBGM != self.bgFast:
+      self.playingBGM.stop()
+      self.playingBGM = self.bgFast
+      self.bgmTime = 0
+      self.playingBGM.play()
+    elif not chasing and self.playingBGM != self.bgSlow:
+      self.playingBGM.stop()
+      self.playingBGM = self.bgSlow
+      self.bgmTime = 0
+      self.playingBGM.play()
+    
   def initModels(self):
     self.map = MapGen()
     self.player = Player(self)
@@ -67,7 +83,7 @@ class Play(DirectObject):
     
       #and initialize enemies
     if next:
-      enemy = Enemy( (0,0,3), [(0,-10,3), (0,10,3)] )
+      enemy = Enemy( self, (0,0,3), [(0,-10,3), (0,10,3)] )
       self.enemies.append(enemy)
     
     pos = (-10,-10,3) #level.spawnPos
@@ -79,6 +95,9 @@ class Play(DirectObject):
       #enemies = list of enemies in level
       for enemy in self.enemies:
         enemy.respawn()
+    
+    self.playingBGM = self.bgSlow
+    self.playingBGM.play()
     
     
   def setupCollisions(self): 
@@ -93,7 +112,7 @@ class Play(DirectObject):
     #Set the pattern for the event sent on collision
     base.cHandler.setAgainPattern("%fn-again-%in")
     base.cHandler.setInPattern("%fn-into-%in")
-
+    base.cHandler.setOutPattern("%fn-out-%in")
     
     self.player.initCollisions()
     for enemy in self.enemies:
@@ -101,13 +120,15 @@ class Play(DirectObject):
     
     #base.cTrav.showCollisions(render)
 
+  #Set up BGM
   def setupSounds(self):
+    ######################slow music############################
     self.bgSlow = base.loadMusic("Sounds/musicbox.ogg")
     self.bgSlow.setLoopCount(0)
-    self.bgSlowTime = 0
-    self.bgFast = base.loadMusic("Sounds/musicbox.ogg")
+    ######################fast music############################
+    self.bgFast = base.loadMusic("Sounds/openclose.ogg")
     self.bgFast.setLoopCount(0)
-    self.bgFastTime = 0
+    self.playingBGM = self.bgSlow    
     
   def update(self, task):
     dt = globalClock.getDt()

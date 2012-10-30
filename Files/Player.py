@@ -24,7 +24,7 @@ class Player(object):
     self.movement['stand'] = Movement(0, 0.03, 1.3)
     self.movement['caution'] = Movement(1, 0.051, 2.1)
     self.movement['walk'] = Movement(1.5, 0.079, 2.7)
-    self.movement['sprint'] = Movement(4, 0.16, 3.6)
+    self.movement['sprint'] = Movement(10, 0.16, 3.6)
     self.forward = Vec3(0,1,0)
     self.back = Vec3(0,-1,0)
     self.left = Vec3(-1,0,0)
@@ -55,6 +55,8 @@ class Player(object):
     self.initControls()
     self.initPlayer()
     base.enableParticles()
+    
+    base.accept('enemy-into-player', self.die)
     
   #Initializes keyMap
   def initKeyMap(self):
@@ -277,8 +279,8 @@ class Player(object):
     self.hud = HUD(self.wallsLeft, self.lightsLeft)
     
   def die(self, cEntry):
-    self.parent.togglePause()
     self.parent.startLevel(self.level, False)
+    self.parent.togglePause()
     
     
   #Initialize collisions
@@ -338,7 +340,6 @@ class Player(object):
     cNode.setFromCollideMask(envMask)
     self.cRay3 = base.camera.attachNewNode(cNode)
     
-    base.accept('enemy-into-player', self.die)
   
   #Updates player
   def update(self, dt):

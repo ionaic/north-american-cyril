@@ -4,7 +4,7 @@ from panda3d.ai import * #panda AI
 import math, time
 
 class Enemy(object):
-  def __init__(self, spawnPos, AIpath):
+  def __init__(self, parent, spawnPos, AIpath):
     self.speed = .03
     
     self.sightBlocked = True
@@ -12,6 +12,8 @@ class Enemy(object):
     self.foundPlayerTime = -1
     self.spawnPos = spawnPos
     self.spawnH = 0
+    
+    self.parent = parent
     
     self.initEnemy()
     self.initAI(AIpath)
@@ -68,7 +70,7 @@ class Enemy(object):
     cNode.setCollideMask(BitMask32.allOff())
     cNode.setFromCollideMask(deathMask)
     cNodePath = self.enemyNode.attachNewNode(cNode)
-    cNodePath.show()
+    #cNodePath.show()
     base.cTrav.addCollider(cNodePath, base.cHandler)
     
     #collides with the player to determine if the player is in the enemie's cone of vision
@@ -78,7 +80,7 @@ class Enemy(object):
     cNode.setCollideMask(BitMask32.allOff())
     cNode.setIntoCollideMask(sightMask)
     cNodePath = self.enemyNode.attachNewNode(cNode)
-    #cNodePath.show()
+    cNodePath.show()
     
     #checks to see if there is anything blocking the enemie's line of sight to the player
     self.queue = CollisionHandlerQueue()
@@ -97,7 +99,6 @@ class Enemy(object):
       self.foundPlayer = True
       self.foundPlayerTime = time.time()
     if time.time() > self.foundPlayerTime + 5:
-      self.foundPlayerTime -= 1
       self.foundPlayer = False
     
   def update(self, dt, player):
@@ -139,8 +140,10 @@ class Enemy(object):
     #otherwise continues patrolling
     if self.foundPlayer:
         self.move(dt, player)
+        self.parent.chaseBGM(True)
     else:
-        self.AIworld.update()  
+        self.AIworld.update() 
+        self.parent.chaseBGM(False)
     
   #Moves player
   def move(self, dt, player):
