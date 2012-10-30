@@ -14,11 +14,13 @@ class MainMenu:
                               pos = (-1,0,0.4),
                               frameColor = (1,1,1,0),
                               frameSize = (-1,3,-1,1),
-                              text = 'Start', text_fg = (1,0,0,1),
+                              text = 'Start',
+                              text_fg = (1,0,0,1),
                               scale = 0.1,
                               command = main.startGame)
     self.start.guiItem.setActive(True) 
     self.start.bind(DGG.WITHIN, self.mouseOver, [self.start])
+    self.start.bind(DGG.WITHOUT, self.mouseOut, [self.start])
     
     self.exit = DirectButton(parent = self.mainFrame,
                               pos = (-1,0,0),
@@ -29,10 +31,12 @@ class MainMenu:
                               command = main.exit)
     self.exit.guiItem.setActive(True) 
     self.exit.bind(DGG.WITHIN, self.mouseOver, [self.exit])
-    
+    self.exit.bind(DGG.WITHOUT, self.mouseOut, [self.exit])
     
   def mouseOver(self, frame, mousePos):
-    frame._optionInfo['text'][0] = (0,0,0,1)
+    frame['text_fg'] = (0,1,0,1)
+  def mouseOut(self, frame, mousePos):
+    frame['text_fg'] = (1,0,0,1)
     
   def hide(self):
       self.mainFrame.hide()
