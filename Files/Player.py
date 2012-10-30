@@ -14,7 +14,7 @@ class Player(object):
   #Initializes player
   def __init__(self, parent):
     self.parent = parent
-    #self.level = 1
+    self.level = 1
     #Movement data
     self.speed = 40
     self.playerScale = 0.05
@@ -362,11 +362,12 @@ class Player(object):
     base.itemTrav.traverse(render)
     base.queue.sortEntries()
     playerPos = base.camera.getPos(render)
-    first = base.queue.getEntry(0)
-    cPos = first.getSurfacePoint(render)
-    rayName = first.getFromNodePath().getName()
-    dist = math.sqrt((playerPos[0]-cPos[0])**2 + (playerPos[1]-cPos[1])**2)
-    self.itemDist = min(dist, self.itemMax)
+    if base.queue.getNumEntries() > 0:
+        first = base.queue.getEntry(0)
+        cPos = first.getSurfacePoint(render)
+        rayName = first.getFromNodePath().getName()
+        dist = math.sqrt((playerPos[0]-cPos[0])**2 + (playerPos[1]-cPos[1])**2)
+        self.itemDist = min(dist, self.itemMax)
     """
     if rayName == 'rayLeft':
       self.sideBuffer = 0.5

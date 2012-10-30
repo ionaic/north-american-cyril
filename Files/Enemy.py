@@ -13,6 +13,11 @@ class Enemy(object):
     self.spawnPos = spawnPos
     self.spawnH = 0
     
+    self.startH = -1
+    self.blocked = False
+    self.justUnblocked = False
+    self.timeUnblocked = -1
+    
     self.initEnemy()
     self.initAI(AIpath)
     
@@ -90,6 +95,17 @@ class Enemy(object):
     cNodePath = base.render.attachNewNode(self.cNode)
     base.cTrav.addCollider(cNodePath, self.queue)
     
+    #checks to see if it is blocked by a wall while patrolling
+    self.wallQueue = CollisionHandlerQueue()
+    cRay = CollisionRay(0, 0, 0, 0, -1, 0)
+    cNode = CollisionNode('wallSight')
+    cNode.addSolid(cRay)
+    cNode.setCollideMask(BitMask32.allOff())
+    cNode.setFromCollideMask(envMask|clearSightMask)
+    cNodePath = self.enemyNode.attachNewNode(cNode)
+    cNodePath.show()
+    base.cTrav.addCollider(cNodePath, self.wallQueue)
+    
     base.accept('playerSight-again-vision', self.inSight)
     
   def inSight(self, cEntry):
@@ -108,6 +124,24 @@ class Enemy(object):
     self.cNode.modifySolid(0).setOrigin(LPoint3f (self.enemyNode.getX(), self.enemyNode.getY(), self.enemyNode.getZ()))
     self.cNode.modifySolid(0).setDirection(LVector3f ((self.enemyNode.getX() - player.playerNode.getX()) * -1, (self.enemyNode.getY() - player.playerNode.getY()) * -1, 0))
     
+    self.wallQueue.sortEntries()
+    if self.wallQueue.getNumEntries() > 0:
+        entry = self.wallQueue.getEntry(0)
+        type = entry.getIntoNode().getName()
+        if type == 'Wall':
+            if self.blocked == False:
+                self.startH = self.enemyNode.getH()
+            self.blocked = True
+        else:
+            self.blocked = False
+            self.justUnblocked = True
+            self.timeUnblocked = time.time()
+    else:
+        if self.blocked == True:
+            self.blocked = False
+            self.justUnblocked = True
+            self.timeUnblocked = time.time()
+            
     #checks the first element that the enemy sees between the player
     #if the first object it sees is not the player then it doesn't chase towards it
     self.queue.sortEntries()
@@ -140,7 +174,39 @@ class Enemy(object):
     if self.foundPlayer:
         self.move(dt, player)
     else:
-        self.AIworld.update()  
+        if self.blocked == True:
+            self.enemyNode.setH(self.enemyNode.getH() - 15)
+        elif self.justUnblocked == True:
+            if self.timeUnblocked + 3.0 < time.time():
+                self.justUnblocked = False
+                self.timeUnblocked = -1
+            else:
+                x_adjustment = 1
+                y_adjustment = 1
+
+                measure_against = self.startH % 360
+                if self.enemyNode.getH() < 0:
+                    measure_against = 360 - measure_against
+                    
+                if measure_against >=0 and measure_against < 90:
+                    x_adjustment = 1
+                    y_adjustment = -1
+                if measure_against >=90 and measure_against < 180:
+                    x_adjustment = 1
+                    y_adjustment = 1
+                if measure_against >= 180 and measure_against < 270:
+                    x_adjustment = -1    
+                    y_adjustment = 1
+                if measure_against >= 270 and measure_against < 360:
+                    x_adjustment = -1
+                    y_adjustment = -1
+    
+                angle = self.startH - self.enemyNode.getH()
+                self.enemyNode.setX(self.enemyNode.getX() + x_adjustment * math.fabs(math.sin(math.radians(angle))) * self.speed)
+                self.enemyNode.setY(self.enemyNode.getY() + y_adjustment * math.fabs(math.cos(math.radians(angle))) * self.speed)
+        else:
+            self.AIworld.update()  
+    
     
   #Moves player
   def move(self, dt, player):
