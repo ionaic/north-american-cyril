@@ -113,7 +113,7 @@ class Enemy(object):
     cNode.setCollideMask(BitMask32.allOff())
     cNode.setFromCollideMask(envMask|clearSightMask)
     cNodePath = self.enemyNode.attachNewNode(cNode)
-    cNodePath.show()
+    #cNodePath.show()
     base.cTrav.addCollider(cNodePath, self.wallQueue)
     
     base.accept('playerSight-again-vision', self.inSight)
@@ -202,7 +202,6 @@ class Enemy(object):
                 self.enemyNode.setX(self.enemyNode.getX() + x_adjustment * math.fabs(math.sin(math.radians(angle))) * self.speed)
                 self.enemyNode.setY(self.enemyNode.getY() + y_adjustment * math.fabs(math.cos(math.radians(angle))) * self.speed)
         else:
-            print "patrolling"
             self.AIworld.update()  
     
     ##########################Movement SFX
