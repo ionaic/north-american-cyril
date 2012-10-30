@@ -72,6 +72,7 @@ class Play(DirectObject):
     self.map = MapGen()
     self.player = Player(self)
     self.enemies = []
+    self.level = 1
     self.startLevel(1)
   
   #level number, next = true if next level (false = respawning)
@@ -85,6 +86,7 @@ class Play(DirectObject):
     if next:
       enemy = Enemy( self, (0,0,3), [(0,-10,3), (0,10,3)] )
       self.enemies.append(enemy)
+      self.level += 1
     
     pos = (-10,-10,3) #level.spawnPos
     walls = 3 #level.walls

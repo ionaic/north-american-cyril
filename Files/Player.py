@@ -271,7 +271,7 @@ class Player(object):
     #HUD
     self.hud = HUD(self.wallsLeft, self.lightsLeft)
     
-  def die(self, cEntry):
+  def die(self, cEntry = True):
     self.parent.startLevel(self.level, False)
     self.parent.togglePause()
     
