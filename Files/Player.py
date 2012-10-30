@@ -1,8 +1,9 @@
 from pandac.PandaModules import * #basic Panda modules
 from direct.showbase.DirectObject import DirectObject #event handling
-import math
-from Files.HUD import *
 from direct.particles.ParticleEffect import ParticleEffect #particle effects
+from direct.actor.Actor import Actor
+from Files.HUD import *
+import math
 
 class Movement(object):
   def __init__(self, speed, bobSpd, bobAmt):
@@ -14,7 +15,7 @@ class Player(object):
   #Initializes player
   def __init__(self, parent):
     self.parent = parent
-    #self.level = 1
+    self.level = 1
     #Movement data
     self.speed = 40
     self.playerScale = 0.05
@@ -231,26 +232,17 @@ class Player(object):
     base.camera.reparentTo(self.playerNode)
     
     #Loads hand
-    hand = loader.loadModel('Models/hand')
-    hand.reparentTo(base.camera)
-    hand.setScale(0.8)
-    hand.setPos(7,9,-9)
-    hand.setH(90)
+    self.hand = Actor('Models/handActor', {'handAnim':'Models/handAnimate'})
+    self.hand.reparentTo(base.camera)
+    self.hand.setScale(0.8)
+    self.hand.setPos(7,9,-9)
+    self.hand.setH(90)
+    self.hand.setPlayRate(1.2, 'handAnim')
+    self.hand.loop('handAnim')
     ambientLight = AmbientLight("handLight")
     ambientLight.setColor((0.1, 0.1, 0.1, 1.0))
     ambientLightNP = render.attachNewNode(ambientLight)
-    hand.setLight(ambientLightNP)
-    
-    #Loads hand
-    hand = loader.loadModel('Models/hand')
-    hand.reparentTo(base.camera)
-    hand.setScale(0.8)
-    hand.setPos(7,9,-9)
-    hand.setH(90)
-    ambientLight = AmbientLight("ambientLight")
-    ambientLight.setColor((0.1, 0.1, 0.1, 1.0))
-    ambientLightNP = render.attachNewNode(ambientLight)
-    hand.setLight(ambientLightNP)
+    self.hand.setLight(ambientLightNP)
     
     #Loads artifact point light
     mat = Material()
@@ -360,6 +352,8 @@ class Player(object):
   
   def itemRay(self):
     base.itemTrav.traverse(render)
+    if base.queue.getNumEntries() == 0:
+      return
     base.queue.sortEntries()
     playerPos = base.camera.getPos(render)
     first = base.queue.getEntry(0)

@@ -33,6 +33,7 @@ class Play(DirectObject):
     base.accept("escape", self.togglePause)
     self.initModels()
     self.setupCollisions()
+    self.setupSounds()
 
     self.task = taskMgr.add(self.update, "updateTask")
   
@@ -100,6 +101,14 @@ class Play(DirectObject):
     
     #base.cTrav.showCollisions(render)
 
+  def setupSounds(self):
+    self.bgSlow = base.loadMusic("Sounds/musicbox.ogg")
+    self.bgSlow.setLoopCount(0)
+    self.bgSlowTime = 0
+    self.bgFast = base.loadMusic("Sounds/musicbox.ogg")
+    self.bgFast.setLoopCount(0)
+    self.bgFastTime = 0
+    
   def update(self, task):
     dt = globalClock.getDt()
     self.player.update(globalClock.getDt())

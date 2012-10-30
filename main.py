@@ -1,4 +1,5 @@
 import direct.directbase.DirectStart
+from panda3d.core import ConfigVariableString
 from direct.showbase.DirectObject import DirectObject
 from direct.gui.DirectGui import *
 from direct.task import Task
@@ -16,10 +17,13 @@ class World(DirectObject):
     #globalClock.setMode(ClockObject.MLimited)
     #globalClock.setFrameRate(1000)
     #Set windows properties
-    #props = WindowProperties()
+    props = WindowProperties()
     #props.setFullscreen(1)
     #props.setSize(int(base.pipe.getDisplayWidth()), int(base.pipe.getDisplayHeight()))
-    #base.win.requestProperties(props)
+    base.win.requestProperties(props)
+    
+    #mySound = ConfigVariableString('audio-library-name', 'p3fmod_audio')
+    
     
     self.activeMenu = None
     self.mainMenu = MainMenu(self)
