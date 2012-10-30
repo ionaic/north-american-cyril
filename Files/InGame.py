@@ -41,7 +41,7 @@ class InGame(DirectObject):
     self.exit.guiItem.setActive(True) 
     self.exit.bind(DGG.WITHIN, self.mouseOver, [self.exit])
     self.exit.bind(DGG.WITHOUT, self.mouseOut, [self.exit])
-    
+        
     self.deactivate()
 
   #Change text color on mouseover
@@ -53,7 +53,7 @@ class InGame(DirectObject):
   def activate(self):
     self.active = True
     self.paused = False
-    self.run = Play(self)
+    self.play = Play(self)
   
   def deactivate(self):
     self.mainFrame.hide()
@@ -61,10 +61,11 @@ class InGame(DirectObject):
     self.paused = True
     
   def togglePause(self):
-    self.run.togglePause()
+    self.play.togglePause()
     
   def restart(self):
-    self.run.player.die()
+    self.togglePause()
+    self.play.player.die(self.play.level)
     
   def __del__(self):
     self.cont.destroy()

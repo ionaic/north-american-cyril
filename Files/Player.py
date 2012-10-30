@@ -54,7 +54,7 @@ class Player(object):
     self.initKeyMap()
     self.initControls()
     self.initPlayer()
-    #################################self.initSounds()
+    self.initSounds()
     base.enableParticles()
     
     base.accept('enemy-into-player', self.die)
@@ -290,8 +290,7 @@ class Player(object):
     self.hud = HUD(self.wallsLeft, self.lightsLeft)
     
   def die(self, cEntry = True):
-    self.parent.startLevel(self.level, False)
-    self.parent.togglePause()
+    self.parent.die(self.level, False)
     
     
   #Initialize collisions
@@ -353,16 +352,18 @@ class Player(object):
     
   ########################################################
   def initSounds(self):
-    self.walkSfx = base.loadSfx('Sounds/footstep.wav')
+    self.walkSfx = base.loadSfx('Sounds/footstep.WAV')
     self.walkSfx.setLoopCount(0)
-    self.runSfx = base.loadSfx('Sounds/run.wav')
+    self.runSfx = base.loadSfx('Sounds/run.WAV')
     self.runSfx.setLoopCount(0)
     self.movementSfx = None
-    self.wallSfx = base.loadSfx('Sounds/wall.wav')
-    self.magicSfx = base.loadSfx('Sounds/magic.wav')
+    
+    self.wallSfx = base.loadSfx('Sounds/wall.WAV')
+    self.magicSfx = base.loadSfx('Sounds/magic.WAV')
     self.doorOpenSfx = base.loadSfx('Sounds/door_open.wav')
     self.doorCloseSfx = base.loadSfx('Sounds/door_close.wav')
-    self.fireSfx = base.loadSfx('Sounds/fire.wav')
+    self.fireSfx = base.loadSfx('Sounds/fire.WAV')
+    
   
   #Updates player
   def update(self, dt):

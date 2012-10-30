@@ -1,9 +1,11 @@
 import direct.directbase.DirectStart #starts Panda
 from pandac.PandaModules import * #basic Panda modules
 from direct.showbase.DirectObject import DirectObject #event handling
+from direct.showbase.Transitions import Transitions
 from direct.actor.Actor import Actor #animated models
 from direct.interval.IntervalGlobal import * #compound intervals
 from direct.task import Task #update functions
+import time
 from MapGen import *
 from Player import *
 from Enemy import *
@@ -29,12 +31,15 @@ class Play(DirectObject):
     #props.setSize(int(base.pipe.getDisplayWidth()), int(base.pipe.getDisplayHeight()))
     self.props.setMouseMode(WindowProperties.MRelative)
     base.win.requestProperties(self.props)
+    
+    self.transition = Transitions(loader)
+    self.transition.setFadeColor(0,0,0)
+
     self.parent = parent
     base.accept("escape", self.togglePause)
     self.setupSounds()
     self.initModels()
     self.setupCollisions()
-
     self.task = taskMgr.add(self.update, "updateTask")
   
   def togglePause(self):
@@ -77,6 +82,7 @@ class Play(DirectObject):
   
   #level number, next = true if next level (false = respawning)
   def startLevel(self, level, next = True):
+    self.transition.fadeOut(2)
     #Clear render
     self.player.clearItems()
     
@@ -98,9 +104,15 @@ class Play(DirectObject):
       for enemy in self.enemies:
         enemy.respawn()
     
+    time.sleep(1)
+    self.transition.fadeIn(2)
+    
     self.playingBGM = self.bgSlow
     self.playingBGM.play()
     
+    
+  def die(self, level, next = True):
+    self.startLevel(level, next)
     
   def setupCollisions(self): 
     #Make a collision traverser, set it to default   
