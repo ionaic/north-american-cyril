@@ -5,9 +5,9 @@ import Level
 
 class MapGen(object):
   def __init__(self):
+    self.curLev = 1
     self.initMap()
     self.initLight()
-    self.curLev = 1
     
   def initMap(self):
     #Creates grass/sky environment

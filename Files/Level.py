@@ -24,6 +24,7 @@ class Level:
             self.env = loader.loadModel("Models/lv4")
         elif levelNum == 5:
             self.env = loader.loadModel("Models/lv5")
+            self.env.setScale(2)
         else:
             self.env = loader.loadModel("Models/lv1")
 
