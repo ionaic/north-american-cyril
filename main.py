@@ -29,7 +29,7 @@ class World(DirectObject):
     self.mainMenu = MainMenu(self)
     self.inGame = InGame(self)
     
-  def startGame(self):
+  def startGame(self, mousePos = None):
     self.mainMenu.hide()
     self.inGame.activate()
   

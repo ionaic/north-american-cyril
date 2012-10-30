@@ -10,9 +10,14 @@ class InGame(DirectObject):
     
     self.parent = parent
     
-    self.mainFrame = DirectFrame(frameColor=(0,0,0,1) , frameSize=(-0.2,0.2,0.9,-0.2 ))
-    self.cont = DirectButton(parent = self.mainFrame, text = ("continue"), pos = (0,0,0.8),scale=.05,command=self.togglePause)
-    self.exit = DirectButton(parent = self.mainFrame, text = ("Exit"), pos = (0,0,0),scale=.05,command=parent.exit)
+    self.mainFrame = DirectFrame(frameColor=(0,0,0,0),
+                                 frameSize=(-0.2,0.2,0.4,-0.4 ))
+    self.cont = DirectButton(parent = self.mainFrame, text = ("Continue"),
+                             pos = (0,0,0.2),scale=.1, frameColor = (1,1,1,0),
+                             text_fg = (1,0,0,1), command=self.togglePause)
+    self.exit = DirectButton(parent = self.mainFrame, text = ("Exit"),
+                             pos = (0,0,-0.2),scale=.1, frameColor = (1,1,1,0),
+                             text_fg = (1,0,0,1), command=parent.exit)
     
     self.deactivate()
 
