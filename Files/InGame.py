@@ -10,12 +10,46 @@ class InGame(DirectObject):
     
     self.parent = parent
     
-    self.mainFrame = DirectFrame(frameColor=(0,0,0,1) , frameSize=(-0.2,0.2,0.9,-0.2 ))
-    self.cont = DirectButton(parent = self.mainFrame, text = ("continue"), pos = (0,0,0.8),scale=.05,command=self.togglePause)
-    self.exit = DirectButton(parent = self.mainFrame, text = ("Exit"), pos = (0,0,0),scale=.05,command=parent.exit)
+    self.mainFrame = DirectFrame(frameColor=(0,0,0,0),
+                                 frameSize=(-0.2,0.2,0.4,-0.4 ))
+    self.cont = DirectButton(parent = self.mainFrame,
+                             text = ("Continue"),
+                             pos = (0,0,0.3), scale=.1,
+                             frameColor = (1,1,1,0),
+                             text_fg = (1,0,0,1),
+                             command = self.togglePause)
+    self.cont.guiItem.setActive(True) 
+    self.cont.bind(DGG.WITHIN, self.mouseOver, [self.cont])
+    self.cont.bind(DGG.WITHOUT, self.mouseOut, [self.cont])
+    
+    self.restart = DirectButton(parent = self.mainFrame,
+                             text = ("Restart"),
+                             pos = (0,0,0.1), scale=.1,
+                             frameColor = (1,1,1,0),
+                             text_fg = (1,0,0,1),
+                             command = self.restart)
+    self.restart.guiItem.setActive(True) 
+    self.restart.bind(DGG.WITHIN, self.mouseOver, [self.restart])
+    self.restart.bind(DGG.WITHOUT, self.mouseOut, [self.restart])
+    
+    self.exit = DirectButton(parent = self.mainFrame,
+                             text = ("Exit"),
+                             pos = (0,0,-0.1), scale=.1,
+                             frameColor = (1,1,1,0),
+                             text_fg = (1,0,0,1),
+                             command = parent.exit)
+    self.exit.guiItem.setActive(True) 
+    self.exit.bind(DGG.WITHIN, self.mouseOver, [self.exit])
+    self.exit.bind(DGG.WITHOUT, self.mouseOut, [self.exit])
     
     self.deactivate()
 
+  #Change text color on mouseover
+  def mouseOver(self, frame, mousePos):
+    frame['text_fg'] = (0,1,0,1)
+  def mouseOut(self, frame, mousePos):
+    frame['text_fg'] = (1,0,0,1)
+    
   def activate(self):
     self.active = True
     self.paused = False
@@ -28,6 +62,9 @@ class InGame(DirectObject):
     
   def togglePause(self):
     self.run.togglePause()
+    
+  def restart(self):
+    self.run.player.die()
     
   def __del__(self):
     self.cont.destroy()

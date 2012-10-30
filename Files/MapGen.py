@@ -4,6 +4,8 @@ from direct.showbase.DirectObject import DirectObject #event handling
 import Level
 
 class MapGen(object):
+  maxLevel = 5
+  
   def __init__(self):
     self.curLev = 5
     self.initMap()
@@ -24,3 +26,9 @@ class MapGen(object):
     self.ambientLightNP = render.attachNewNode(self.ambientLight)
     #the node that calls setLight is what's illuminated by the given light
     render.setLight(self.ambientLightNP)
+    
+  def nextLevel(self):
+    if self.curLev < MapGen.maxLevel:
+        self.curLev += 1
+        self.initMap()
+        self.initLight()

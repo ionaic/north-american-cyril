@@ -1,8 +1,9 @@
 from pandac.PandaModules import * #basic Panda modules
 from direct.showbase.DirectObject import DirectObject #event handling
-import math
-from Files.HUD import *
 from direct.particles.ParticleEffect import ParticleEffect #particle effects
+from direct.actor.Actor import Actor
+from Files.HUD import *
+import math
 
 class Movement(object):
   def __init__(self, speed, bobSpd, bobAmt):
@@ -23,7 +24,7 @@ class Player(object):
     self.movement['stand'] = Movement(0, 0.03, 1.3)
     self.movement['caution'] = Movement(1, 0.051, 2.1)
     self.movement['walk'] = Movement(1.5, 0.079, 2.7)
-    self.movement['sprint'] = Movement(4, 0.16, 3.6)
+    self.movement['sprint'] = Movement(10, 0.16, 3.6)
     self.forward = Vec3(0,1,0)
     self.back = Vec3(0,-1,0)
     self.left = Vec3(-1,0,0)
@@ -53,7 +54,10 @@ class Player(object):
     self.initKeyMap()
     self.initControls()
     self.initPlayer()
+    #################################self.initSounds()
     base.enableParticles()
+    
+    base.accept('enemy-into-player', self.die)
     
   #Initializes keyMap
   def initKeyMap(self):
@@ -82,8 +86,22 @@ class Player(object):
     #Abilities
     base.accept('shift', self.setKey, ['sprint', 1])
     base.accept('shift-up', self.setKey, ['sprint', 0])
+    base.accept('shift-w', self.setKey, ['sprint', 1]) 
+    base.accept('shift-w', self.setKey, ['forward', 1]) 
+    base.accept('shift-a', self.setKey, ['left', 1])
+    base.accept('shift-d', self.setKey, ['right', 1])
+    base.accept('shift-s', self.setKey, ['back', 1])
+    
     base.accept('control', self.setKey, ['caution', 1])
     base.accept('control-up', self.setKey, ['caution', 0])
+    base.accept('control-w', self.setKey, ['caution', 1]) 
+    base.accept('control-w', self.setKey, ['forward', 1]) 
+    base.accept('control-a', self.setKey, ['caution', 1])
+    base.accept('control-a', self.setKey, ['left', 1])
+    base.accept('control-d', self.setKey, ['caution', 1])
+    base.accept('control-d', self.setKey, ['right', 1])
+    base.accept('control-s', self.setKey, ['caution', 1])
+    base.accept('control-s', self.setKey, ['back', 1])
     base.accept('1', self.toggleKey, ['wall'])
     base.accept('2', self.toggleKey, ['light'])
     base.accept('f', self.cancelKey)
@@ -95,6 +113,10 @@ class Player(object):
       self.keyMap['sprint'] = 0
       return
     self.keyMap[key] = value
+    
+  def sprint(self):
+    self.keyMap['sprint'] = 1
+    self.keyMap['forward'] = 1
   
   #Toggles ability
   def toggleKey(self, key):
@@ -179,6 +201,7 @@ class Player(object):
     light.reparentTo(item)
     light.setScale(self.playerScale*5)
     self.walls.append(item)
+    ###########################self.wallSfx.play()
   
   #Places light item and creates a point light
   def placeLight(self):
@@ -201,21 +224,12 @@ class Player(object):
     iLightNP.node().setColor(Vec4(0.1, 0.15, 0.2, 1.0))
     iLightNP.node().setAttenuation(Vec3(0, 0.008, 0.0001))
     iLightNP.setZ(iLightNP.getZ() + 0.6)
-    """
-    #Not for light ability?
-    # particle effects
-    rFlame = ParticleEffect()
-    rFlame.loadConfig("Models/fire.ptf")
-    rFlame.start(item)
-    rFlame.setScale(0.1)
-    pos = iLightNP.getPos()
-    #rFlame.setPos(pos[0], pos[1], pos[2] + 0.4)
-    rFlame.setPos(pos[0], pos[1], pos[2] - 0.2)
-    """
+    
     render.setLight(iLightNP)
     #Sets placement time for rotating
     item.setTag('startTime', '%f' % self.timer)
     self.lights.append(item)
+    ###############################self.magicSfx.play()
       
   #Loads player node, camera, and light
   def initPlayer(self):
@@ -231,26 +245,17 @@ class Player(object):
     base.camera.reparentTo(self.playerNode)
     
     #Loads hand
-    hand = loader.loadModel('Models/hand')
-    hand.reparentTo(base.camera)
-    hand.setScale(0.8)
-    hand.setPos(7,9,-9)
-    hand.setH(90)
+    self.hand = Actor('Models/handActor', {'handAnim':'Models/handAnimate'})
+    self.hand.reparentTo(base.camera)
+    self.hand.setScale(0.8)
+    self.hand.setPos(7,9,-9)
+    self.hand.setH(90)
+    self.hand.setPlayRate(1.2, 'handAnim')
+    self.hand.loop('handAnim')
     ambientLight = AmbientLight("handLight")
     ambientLight.setColor((0.1, 0.1, 0.1, 1.0))
     ambientLightNP = render.attachNewNode(ambientLight)
-    hand.setLight(ambientLightNP)
-    
-    #Loads hand
-    hand = loader.loadModel('Models/hand')
-    hand.reparentTo(base.camera)
-    hand.setScale(0.8)
-    hand.setPos(7,9,-9)
-    hand.setH(90)
-    ambientLight = AmbientLight("ambientLight")
-    ambientLight.setColor((0.1, 0.1, 0.1, 1.0))
-    ambientLightNP = render.attachNewNode(ambientLight)
-    hand.setLight(ambientLightNP)
+    self.hand.setLight(ambientLightNP)
     
     #Loads artifact point light
     mat = Material()
@@ -284,9 +289,9 @@ class Player(object):
     #HUD
     self.hud = HUD(self.wallsLeft, self.lightsLeft)
     
-  def die(self, cEntry):
-    self.parent.togglePause()
+  def die(self, cEntry = True):
     self.parent.startLevel(self.level, False)
+    self.parent.togglePause()
     
     
   #Initialize collisions
@@ -346,7 +351,18 @@ class Player(object):
     cNode.setFromCollideMask(envMask)
     self.cRay3 = base.camera.attachNewNode(cNode)
     
-    base.accept('enemy-into-player', self.die)
+  ########################################################
+  def initSounds(self):
+    self.walkSfx = base.loadSfx('Sounds/footstep.wav')
+    self.walkSfx.setLoopCount(0)
+    self.runSfx = base.loadSfx('Sounds/run.wav')
+    self.runSfx.setLoopCount(0)
+    self.movementSfx = None
+    self.wallSfx = base.loadSfx('Sounds/wall.wav')
+    self.magicSfx = base.loadSfx('Sounds/magic.wav')
+    self.doorOpenSfx = base.loadSfx('Sounds/door_open.wav')
+    self.doorCloseSfx = base.loadSfx('Sounds/door_close.wav')
+    self.fireSfx = base.loadSfx('Sounds/fire.wav')
   
   #Updates player
   def update(self, dt):
@@ -360,6 +376,8 @@ class Player(object):
   
   def itemRay(self):
     base.itemTrav.traverse(render)
+    if base.queue.getNumEntries() == 0:
+      return
     base.queue.sortEntries()
     playerPos = base.camera.getPos(render)
     if base.queue.getNumEntries() > 0:
@@ -428,14 +446,15 @@ class Player(object):
         self.keyMap['left'] + self.keyMap['right']) == 0:
       move = self.movement['stand']
     #Moving
-    elif self.keyMap['sprint'] and self.keyMap['forward'] == 1:
-      move = self.movement['sprint']
+    elif self.keyMap['sprint'] == 1 and self.keyMap['forward'] == 1:
       if self.energyLeft <= 0:
         self.energyLeft = 0
         self.keyMap['sprint'] = 0
+        move = self.movement['walk']
       else:
         self.energyLeft -= 0.3
         self.recharging = False
+        move = self.movement['sprint']
     elif self.keyMap['caution'] == 1:
       move = self.movement['caution']
     else:
@@ -451,10 +470,27 @@ class Player(object):
     elif self.keyMap['right'] == 1:
       self.playerNode.setPos(self.playerNode, self.right * dt * move.speed * self.speed)
       
+    ##########################Movement SFX
+    """
+    if move == self.movement['sprint'] and self.movementSfx != self.runSfx:
+      self.movementSfx.stop()
+      self.movementSfx = self.runSfx
+      self.movementSfx.play()
+    elif move == self.movement['walk'] and self.movementSfx != self.walkSfx:
+      self.movementSfx.stop()
+      self.movementSfx = self.walkSfx
+      self.movementSfx.play()
+    elif self.movementSfx = None:
+      pass
+    elif move != self.movement['sprint'] or move != self.movement['walk']:
+      self.movementSfx.stop()
+      self.movementSfx = None
+    """
+        
     self.headBob(move)
     if self.recharging and self.energyLeft < 100:
       self.energyLeft += 0.035
-      
+        
   
   def headBob(self, movement):
     waveslice = math.sin(self.bobTimer)
