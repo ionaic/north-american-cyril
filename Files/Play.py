@@ -86,7 +86,7 @@ class Play(DirectObject):
       self.playingBGM.play()
     
   def initModels(self):
-    #self.map = MapGen(self)
+    self.map = MapGen(self)
     self.player = Player(self)
     self.level = Level()
     self.enemies = []
@@ -106,6 +106,7 @@ class Play(DirectObject):
     
       #and initialize enemies
     if next:
+      print 'next level \n\n\n'
       level += 1
       self.player.level = level
       self.level.loadLevel(level)
@@ -113,16 +114,19 @@ class Play(DirectObject):
         print enemy[0], enemy[1]
         enemySpawn = Enemy( self, enemy[0], enemy[1] )
         self.enemies.append(enemySpawn)
+      print 'yes \n\n\n'
     
     playerPos = self.level.playerPos #level.spawnPos
     walls = self.level.numWalls
     lights = self.level.numLights
     #Spawn player using spawn (spawn pos, max walls, max lights)
     self.player.spawn(playerPos,walls,lights)
+    print 'derp'
     if not next:
       #enemies = list of enemies in level
       for enemy in self.enemies:
         enemy.respawn()
+    print 'derp2'
     
     self.playingBGM = self.bgSlow
     self.playingBGM.play()
@@ -153,7 +157,7 @@ class Play(DirectObject):
 
   #Set up BGM
   def setupSounds(self):
-    ######################slow music############################
+    ######################slow music##########################
     self.bgSlow = base.loadMusic("sounds/slow.ogg")
     self.bgSlow.setLoopCount(0)
     ######################fast music############################
@@ -164,6 +168,8 @@ class Play(DirectObject):
   def update(self, task):
     dt = globalClock.getDt()
     self.player.update(globalClock.getDt())
+    if self.player.newLevel:
+      return task.cont
     for enemy in self.enemies:
       enemy.update(globalClock.getDt(), self.player)
     return task.cont

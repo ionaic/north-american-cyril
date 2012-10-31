@@ -16,6 +16,7 @@ class Player(object):
   def __init__(self, parent):
     self.parent = parent
     self.level = 0
+    self.newLevel = False
     #Movement data
     self.speed = 40
     self.playerScale = 0.05
@@ -281,12 +282,14 @@ class Player(object):
     self.pLightNode.setPos(Vec3(1.33,2.4,0))
     pLight = PointLight('player-light')
     pLightNP = self.pLightNode.attachNewNode(pLight)
-    pLightNP.node().setColor(Vec4(0.1, 0.15, 0.2, 1.0))
+    # pLightNP.node().setColor(Vec4(0.1, 0.15, 0.2, 1.0))
+    pLightNP.node().setColor(Vec4(0.001, 0.0015, 0.002, 1.0))
     pLightNP.node().setAttenuation(Vec3(0, 0.0005, 0.000005))
     render.setLight(pLightNP)
     
   #Spawn plays at given pos with walls and lights
   def spawn(self, pos, walls, lights):
+    self.newLevel = False
     self.spawnPos = pos
     self.maxWalls = walls
     self.maxLights = lights
