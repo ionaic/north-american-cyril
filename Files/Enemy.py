@@ -99,7 +99,7 @@ class Enemy(object):
     cNode.setCollideMask(BitMask32.allOff())
     cNode.setIntoCollideMask(sightMask)
     cNodePath = self.enemyNode.attachNewNode(cNode)
-    cNodePath.show()
+    #cNodePath.show()
     
     #checks to see if there is anything blocking the enemie's line of sight to the player
     self.queue = CollisionHandlerQueue()

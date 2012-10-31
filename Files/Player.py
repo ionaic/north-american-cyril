@@ -24,7 +24,7 @@ class Player(object):
     self.movement['stand'] = Movement(0, 0.03, 1.3)
     self.movement['caution'] = Movement(1, 0.051, 2.1)
     self.movement['walk'] = Movement(1.5, 0.079, 2.7)
-    self.movement['sprint'] = Movement(10, 0.16, 3.6)
+    self.movement['sprint'] = Movement(30, 0.16, 3.6)
     self.forward = Vec3(0,1,0)
     self.back = Vec3(0,-1,0)
     self.left = Vec3(-1,0,0)
@@ -58,6 +58,7 @@ class Player(object):
     base.enableParticles()
     
     base.accept('enemy-into-player', self.die)
+    base.accept('playerEnv-into-exit', self.nextLevel)
     
   #Initializes keyMap
   def initKeyMap(self):
@@ -301,6 +302,9 @@ class Player(object):
   def die(self, cEntry = True):
     self.parent.die(self.level, False)
     
+  def nextLevel(self, cEntry):
+    self.newLevel = True
+    self.parent.die(self.level, True)
     
   #Initialize collisions
   def initCollisions(self):

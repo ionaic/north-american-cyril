@@ -49,11 +49,11 @@ class Level:
     self.enemies = []
     enemies = self.env.findAllMatches('*/enemy?')
     for enemy in enemies:
-      eSpawn = enemy.getPos() * self.envScale
+      eSpawn = LPoint3f(enemy.getX(), enemy.getY(), 0) * self.envScale
       ePath = self.env.findAllMatches("*/%s?"%enemy.getName())
       AiPath = [eSpawn]
       for vertex in ePath:
-        pos = LPoint3f(vertex.getX(), vertex.getY(), 0.)
+        pos = LPoint3f(vertex.getX(), vertex.getY(), 0)
         AiPath.append(pos * self.envScale)
       eTuple = (eSpawn, AiPath)
       print eTuple
