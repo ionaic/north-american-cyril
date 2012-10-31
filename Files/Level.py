@@ -54,6 +54,7 @@ class Level:
         self.end.setIntoCollideMask(BitMask32.allOn())
         self.endNP = self.env.attachNewNode(self.end)
         base.cTrav.addCollider(self.endNP, base.cHandler)
+        # base.accept("player-into-exit", 
 
         
     def loadColObj(self, model, name):
@@ -68,6 +69,7 @@ class Level:
             collider.setPos(cNode.getPos())
             collider.node().addSolid(cNode.node().getSolid(0))
             origin = cNode.node().getSolid(0).getCollisionOrigin()
+            collider.show()
             return collider
     
     # def nextLevel(self):

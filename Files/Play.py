@@ -42,7 +42,7 @@ class Play(DirectObject):
     self.setupCollisions()
     self.task = taskMgr.add(self.update, "updateTask")
     
-    base.accept("player-node-into-exit", self.map.nextLevel)
+    base.accept("player-into-exit", self.map.nextLevel)
   
   def fadeOut(self):
     self.transition.fadeOut(1)
