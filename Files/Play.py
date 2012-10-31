@@ -110,6 +110,7 @@ class Play(DirectObject):
       self.player.level = level
       self.level.loadLevel(level)
       for enemy in self.level.enemies:
+        print enemy[0], enemy[1]
         enemySpawn = Enemy( self, enemy[0], enemy[1] )
         self.enemies.append(enemySpawn)
     
