@@ -38,7 +38,7 @@ class Play(DirectObject):
     self.parent = parent
     base.accept("escape", self.togglePause)
     self.setupSounds()
-    self.initModels()
+    self.startLevel(0, True)
     self.task = taskMgr.add(self.update, "updateTask")
   
   def fadeOut(self):
@@ -89,7 +89,6 @@ class Play(DirectObject):
     # self.player = Player(self)
     # self.level = Level()
     self.enemies = []
-    self.startLevel(0, True)
   
   def transitionFunc(self, level, next = False):
     tSequence = Sequence(Func(self.fadeOut), Wait(1), Func(self.startLevel, level, next), 
@@ -106,7 +105,8 @@ class Play(DirectObject):
           print node.getName()
           node.removeNode()
         
-      self.map = MapGen(self)
+
+      # self.map = MapGen(self)
       # self.player = Player(self)
       # self.level = Level()
       self.enemies = []
