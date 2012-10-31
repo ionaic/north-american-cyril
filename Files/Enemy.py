@@ -8,7 +8,7 @@ class Enemy(object):
   def __init__(self, parent, spawnPos, AIpath):
     self.speed = .1
     
-    self.sightBlocked = True
+    self.sightBlocked = False
     self.foundPlayer = False
     self.foundPlayerTime = -1
     self.spawnPos = spawnPos
@@ -72,7 +72,7 @@ class Enemy(object):
     clearSightMask = BitMask32(0x8)
     
     #collides with walls
-    cSphere = CollisionSphere( (0,0,0), 1.25 )
+    cSphere = CollisionSphere( (0,0,20), 10)
     cNode = CollisionNode('enemyPusher')
     cNode.addSolid(cSphere)
     cNode.setCollideMask(BitMask32.allOff())
@@ -80,16 +80,17 @@ class Enemy(object):
     cNodePath = self.enemyNode.attachNewNode(cNode)
     base.pusher.addCollider(cNodePath, self.enemyNode)
     base.cTrav.addCollider(cNodePath, base.pusher)
+    #cNodePath.show()
     
     #collides with the player
-    cSphere = CollisionSphere( (0,0,0), 1.5 )
+    cSphere = CollisionSphere( (0,0,20), 20 )
     cNode = CollisionNode('enemy')
     cNode.addSolid(cSphere)
     cNode.setCollideMask(BitMask32.allOff())
     cNode.setFromCollideMask(deathMask)
     cNodePath = self.enemyNode.attachNewNode(cNode)
-    #cNodePath.show()
     base.cTrav.addCollider(cNodePath, base.cHandler)
+    #cNodePath.show()
     
     #collides with the player to determine if the player is in the enemie's cone of vision
     cTube = CollisionTube (0,-40,0,0,-60,0, 60)
@@ -98,28 +99,29 @@ class Enemy(object):
     cNode.setCollideMask(BitMask32.allOff())
     cNode.setIntoCollideMask(sightMask)
     cNodePath = self.enemyNode.attachNewNode(cNode)
-    cNodePath.show()
+    #cNodePath.show()
     
     #checks to see if there is anything blocking the enemie's line of sight to the player
     self.queue = CollisionHandlerQueue()
-    cRay = CollisionRay(self.enemyNode.getX(), self.enemyNode.getY(), self.enemyNode.getZ(), self.enemyNode.getX() - player.playerNode.getX(), self.enemyNode.getY() - player.playerNode.getY(), self.enemyNode.getZ() - player.playerNode.getZ())
+    cRay = CollisionRay(self.enemyNode.getX(), self.enemyNode.getY(), self.enemyNode.getZ() + 5, self.enemyNode.getX() - player.playerNode.getX(), self.enemyNode.getY() - player.playerNode.getY(), self.enemyNode.getZ() - player.playerNode.getZ())
     self.cNode = CollisionNode('sight')
     self.cNode.addSolid(cRay)
     self.cNode.setCollideMask(BitMask32.allOff())
     self.cNode.setFromCollideMask(envMask|clearSightMask)
     cNodePath = base.render.attachNewNode(self.cNode)
     base.cTrav.addCollider(cNodePath, self.queue)
+    #cNodePath.show()
     
     #checks to see if it is blocked by a wall while patrolling
     self.wallQueue = CollisionHandlerQueue()
-    cRay = CollisionRay(0, 0, 0, 0, -1, 0)
+    cRay = CollisionRay(0, 0, 10, 0, -1, 0)
     cNode = CollisionNode('wallSight')
     cNode.addSolid(cRay)
     cNode.setCollideMask(BitMask32.allOff())
     cNode.setFromCollideMask(envMask|clearSightMask)
     cNodePath = self.enemyNode.attachNewNode(cNode)
-    #cNodePath.show()
     base.cTrav.addCollider(cNodePath, self.wallQueue)
+    #cNodePath.show()
     
     base.accept('playerSight-again-vision', self.inSight)
     
@@ -134,14 +136,14 @@ class Enemy(object):
         self.AIbehaviors.startFollow()
     
     #updates the enemie's vision ray towards the player
-    self.cNode.modifySolid(0).setOrigin(LPoint3f (self.enemyNode.getX(), self.enemyNode.getY(), self.enemyNode.getZ()))
+    self.cNode.modifySolid(0).setOrigin(LPoint3f (self.enemyNode.getX(), self.enemyNode.getY(), self.enemyNode.getZ() + 5))
     self.cNode.modifySolid(0).setDirection(LVector3f ((self.enemyNode.getX() - player.playerNode.getX()) * -1, (self.enemyNode.getY() - player.playerNode.getY()) * -1, 0))
     
     self.wallQueue.sortEntries()
     if self.wallQueue.getNumEntries() > 0:
         entry = self.wallQueue.getEntry(0)
         type = entry.getIntoNode().getName()
-
+        
         if type == 'enemy1':
             entry.getIntoNode().setIntoCollideMask(BitMask32.allOff())
         if type == 'Wall':
@@ -160,13 +162,13 @@ class Enemy(object):
             
     #checks the first element that the enemy sees between the player
     #if the first object it sees is not the player then it doesn't chase towards it
-    self.queue.sortEntries()
     if self.queue.getNumEntries() > 0:
         entry = self.queue.getEntry(0)
         type = entry.getIntoNode().getName()
+
         if type == 'playerSight':
             self.sightBlocked = False
-        else:
+        elif type == 'Wall':
             self.sightBlocked = True
         
     #if the player is found then moves towards them
@@ -231,7 +233,7 @@ class Enemy(object):
     my_cos = (player.playerNode.getX() - self.enemyNode.getX()) / hypotenuse
     my_sin = (player.playerNode.getY() - self.enemyNode.getY()) / hypotenuse
     self.enemyNode.setPos(self.enemyNode.getX() + my_cos * self.speed, self.enemyNode.getY() + my_sin * self.speed, self.enemyNode.getZ())
-    self.enemyNode.lookAt(player.playerNode)
+    self.enemyNode.lookAt(player.playerNode.getX(), player.playerNode.getY(), self.enemyNode.getZ())
     self.enemyNode.setH(self.enemyNode.getH() - 180)
     
     #if the enemy is near enough to the player, it will keep looking
