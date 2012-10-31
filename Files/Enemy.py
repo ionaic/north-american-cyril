@@ -140,36 +140,56 @@ class Enemy(object):
     self.cNode.modifySolid(0).setDirection(LVector3f ((self.enemyNode.getX() - player.playerNode.getX()) * -1, (self.enemyNode.getY() - player.playerNode.getY()) * -1, 0))
     
     self.wallQueue.sortEntries()
-    if self.wallQueue.getNumEntries() > 0:
-        entry = self.wallQueue.getEntry(0)
-        type = entry.getIntoNode().getName()
-        
-        if type == 'enemy1':
-            entry.getIntoNode().setIntoCollideMask(BitMask32.allOff())
-        if type == 'Wall':
-            if self.blocked == False:
-                self.startH = self.enemyNode.getH()
-            self.blocked = True
+    wallSearch = True
+    wallSearchIndex = 0
+    while wallSearch == True:
+        if self.wallQueue.getNumEntries() > 0 and wallSearchIndex < self.wallQueue.getNumEntries():
+            entry = self.wallQueue.getEntry(wallSearchIndex)
+            type = entry.getIntoNode().getName()
+            
+            if type == 'start' or type == 'exit' or ('enemy' in type and type != 'enemyPusher'):
+                wallSearchIndex = wallSearchIndex + 1
+                continue
+                
+            wallSearch = False
+            
+            if type == 'Wall':
+                if self.blocked == False:
+                    self.startH = self.enemyNode.getH()
+                self.blocked = True
+            else:
+                self.blocked = False
+                self.justUnblocked = True
+                self.timeUnblocked = time.time()
         else:
-            self.blocked = False
-            self.justUnblocked = True
-            self.timeUnblocked = time.time()
-    else:
-        if self.blocked == True:
-            self.blocked = False
-            self.justUnblocked = True
-            self.timeUnblocked = time.time()
+            wallSearch = False
+            if self.blocked == True:
+                self.blocked = False
+                self.justUnblocked = True
+                self.timeUnblocked = time.time()
             
     #checks the first element that the enemy sees between the player
     #if the first object it sees is not the player then it doesn't chase towards it
-    if self.queue.getNumEntries() > 0:
-        entry = self.queue.getEntry(0)
-        type = entry.getIntoNode().getName()
-
-        if type == 'playerSight':
-            self.sightBlocked = False
-        elif type == 'Wall':
-            self.sightBlocked = True
+    self.queue.sortEntries()
+    sightSearch = True
+    sightSearchIndex = 0
+    while sightSearch == True:
+        if self.queue.getNumEntries() > 0 and sightSearchIndex < self.queue.getNumEntries():
+            entry = self.queue.getEntry(sightSearchIndex)
+            type = entry.getIntoNode().getName()
+            
+            if type == 'start' or type == 'exit' or ('enemy' in type and type != 'enemyPusher'):
+                sightSearchIndex = sightSearchIndex + 1
+                continue
+                
+            sightSearch = False
+            
+            if type == 'playerSight':
+                self.sightBlocked = False
+            else:
+                self.sightBlocked = True
+        else:
+            sightSearch = False
         
     #if the player is found then moves towards them
     #otherwise continues patrolling
