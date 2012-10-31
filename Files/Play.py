@@ -90,7 +90,7 @@ class Play(DirectObject):
     self.player = Player(self)
     self.level = Level()
     self.enemies = []
-    self.startLevel(1, True)
+    self.startLevel(0, True)
   
   def transitionFunc(self, level, next = False):
     tSequence = Sequence(Func(self.fadeOut), Wait(1), Func(self.startLevel, level, next), 
@@ -106,22 +106,26 @@ class Play(DirectObject):
     
       #and initialize enemies
     if next:
+      print 'next level \n\n\n'
       level += 1
       self.player.level = level
       self.level.loadLevel(level)
       for enemy in self.level.enemies:
         enemySpawn = Enemy( self, enemy[0], enemy[1] )
         self.enemies.append(enemySpawn)
+      print 'yes \n\n\n'
     
     playerPos = self.level.playerPos #level.spawnPos
     walls = self.level.numWalls
     lights = self.level.numLights
     #Spawn player using spawn (spawn pos, max walls, max lights)
     self.player.spawn(playerPos,walls,lights)
+    print 'derp'
     if not next:
       #enemies = list of enemies in level
       for enemy in self.enemies:
         enemy.respawn()
+    print 'derp2'
     
     self.playingBGM = self.bgSlow
     self.playingBGM.play()
@@ -163,6 +167,8 @@ class Play(DirectObject):
   def update(self, task):
     dt = globalClock.getDt()
     self.player.update(globalClock.getDt())
+    if self.player.newLevel:
+      return task.cont
     for enemy in self.enemies:
       enemy.update(globalClock.getDt(), self.player)
     return task.cont
