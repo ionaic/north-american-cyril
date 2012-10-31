@@ -86,7 +86,7 @@ class Play(DirectObject):
       self.playingBGM.play()
     
   def initModels(self):
-    #self.map = MapGen(self)
+    self.map = MapGen(self)
     self.player = Player(self)
     self.level = Level()
     self.enemies = []
@@ -152,7 +152,7 @@ class Play(DirectObject):
 
   #Set up BGM
   def setupSounds(self):
-    ######################slow music############################
+    ######################slow music##########################
     self.bgSlow = base.loadMusic("sounds/slow.ogg")
     self.bgSlow.setLoopCount(0)
     ######################fast music############################

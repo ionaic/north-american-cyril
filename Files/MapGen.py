@@ -16,7 +16,8 @@ class MapGen(object):
     #self.env = loader.loadModel("Models/Level1")
     #self.env.setTwoSided(True)
     #self.env.reparentTo(render)
-    self.env = Level(self.curLev, player)
+    # self.env = Level(self.curLev, player)
+    self.env = Level()
   
   def initLight(self):
     #Loads ambient lighting
