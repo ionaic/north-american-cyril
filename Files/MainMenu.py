@@ -52,7 +52,6 @@ class MainMenu:
     
   def start(self):
     self.hide()
-    print 'hideen'
     self.main.startGame()
 
   def __del__(self):
