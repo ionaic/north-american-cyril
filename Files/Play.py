@@ -41,6 +41,8 @@ class Play(DirectObject):
     self.initModels()
     self.setupCollisions()
     self.task = taskMgr.add(self.update, "updateTask")
+    
+    base.accept("player-node-into-exit", self.map.nextLevel)
   
   def fadeOut(self):
     self.transition.fadeOut(1)
@@ -80,8 +82,8 @@ class Play(DirectObject):
       self.playingBGM.play()
     
   def initModels(self):
-    self.map = MapGen(self)
     self.player = Player(self)
+    self.map = MapGen(self.player)
     self.enemies = []
     self.level = 1
     self.startLevel(1)
