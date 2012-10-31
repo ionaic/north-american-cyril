@@ -1,6 +1,6 @@
 //Maya ASCII 2013 scene
 //Name: World_1.ma
-//Last modified: Wed, Oct 31, 2012 03:02:56 AM
+//Last modified: Wed, Oct 31, 2012 04:25:23 AM
 //Codeset: 1252
 requires maya "2013";
 requires "stereoCamera" "10.0";
@@ -13,12 +13,12 @@ fileInfo "osv" "Microsoft Windows 7 Enterprise Edition, 64-bit Windows 7  (Build
 fileInfo "license" "student";
 createNode transform -s -n "persp";
 	setAttr ".v" no;
-	setAttr ".t" -type "double3" -11.99556350454081 2.3895055264864036 -6.8127746198696251 ;
-	setAttr ".r" -type "double3" -6.9383527295698544 -474.99999999980577 0 ;
+	setAttr ".t" -type "double3" -35.329273197224751 8.3250979437650265 -0.31907752280718049 ;
+	setAttr ".r" -type "double3" -11.738352729564671 -450.59999999980261 7.6333312355124402e-014 ;
 createNode camera -s -n "perspShape" -p "persp";
 	setAttr -k off ".v" no;
 	setAttr ".fl" 34.999999999999993;
-	setAttr ".coi" 16.430210431977166;
+	setAttr ".coi" 38.931763229847341;
 	setAttr ".imn" -type "string" "persp";
 	setAttr ".den" -type "string" "persp_depth";
 	setAttr ".man" -type "string" "persp_mask";
