@@ -11,8 +11,8 @@ class Level:
         self.setItems(levelNum)
         self.startDir = [0, 0, 0]
         self.setStart(self.startDir)
-        temp = Player.Player(self.env)
-        self.loadPlayer(temp)
+        temp = player
+        #self.loadPlayer(temp)
         
 
     def loadLevel(self, levelNum):
@@ -36,8 +36,8 @@ class Level:
    
     # load the player into the world 
     def loadPlayer(self, player):
-        self.player = player
-        self.player.spawn(self.start, self.numWalls, self.numLights)
+        #self.player = player
+        #self.player.spawn(self.start, self.numWalls, self.numLights)
         return
 
     def loadLights(self):

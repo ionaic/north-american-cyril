@@ -1,7 +1,7 @@
 from pandac.PandaModules import * #basic Panda modules
 from direct.showbase.DirectObject import DirectObject #event handling
 
-import Level
+from Level import *
 
 class MapGen(object):
   maxLevel = 5
@@ -16,7 +16,7 @@ class MapGen(object):
     #self.env = loader.loadModel("Models/Level1")
     #self.env.setTwoSided(True)
     #self.env.reparentTo(render)
-    self.env = Level.Level(self.curLev, player)
+    self.env = Level(self.curLev, player)
   
   def initLight(self):
     #Loads ambient lighting

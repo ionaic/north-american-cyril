@@ -19,12 +19,10 @@ class HUD(object):
       scale = 0.08, fg = (1,1,1,1))
     self.energyLeft = OnscreenText(text = '100', pos = (1.1, -0.86),
       scale = 0.08, fg = (1,1,1,1), mayChange = True)
-      
-  def updateHUD(self, walls, lights):
+            
+  def updateHUD(self, walls, lights, energy):
     self.wallsLeft.setText(str(walls))
     self.lightsLeft.setText(str(lights))
-    
-  def updateEnergy(self, energy):
     self.energyLeft.setText(str(int(energy)))
     
   def __del__(self):

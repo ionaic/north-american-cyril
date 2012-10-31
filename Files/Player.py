@@ -189,8 +189,6 @@ class Player(object):
     elif self.abilities['light'] == 1:
       self.placeLight()
       self.lightsLeft -= 1
-    #Update HUD when ability is used
-    self.hud.updateHUD(self.wallsLeft, self.lightsLeft)
   
   #Places wall
   def placeWall(self):
@@ -258,6 +256,7 @@ class Player(object):
     self.hand.setLight(ambientLightNP)
     
     #Loads artifact point light
+    """
     mat = Material()
     mat.setEmission(VBase4(0.2,0.2,0.45,1))
     self.test = loader.loadModel('Models/light')
@@ -265,6 +264,7 @@ class Player(object):
     self.test.reparentTo(base.camera)
     self.test.setScale(0.03)
     self.test.setPos(Vec3(1.4,1.6,-0.5))
+    """
     self.pLightNode = NodePath('light-node')
     self.pLightNode.reparentTo(base.camera)
     self.pLightNode.setPos(Vec3(1.33,2.4,0))
@@ -286,12 +286,9 @@ class Player(object):
     self.lights = []
     self.energyLeft = 100
     self.bobTimer = 0
-    #HUD
-    self.hud = HUD(self.wallsLeft, self.lightsLeft)
     
   def die(self, cEntry = True):
-    self.parent.startLevel(self.level, False)
-    self.parent.togglePause()
+    self.parent.die(self.level, False)
     
     
   #Initialize collisions
@@ -372,7 +369,7 @@ class Player(object):
     self.moveLight()
     if self.itemLoaded:
       self.itemRay()
-    self.hud.updateEnergy(self.energyLeft)
+    self.hud.updateHUD(self.wallsLeft, self.lightsLeft, self.energyLeft)
     self.timer += 0.05
   
   def itemRay(self):
@@ -507,8 +504,8 @@ class Player(object):
       change = waveslice * 0.1
       light.setZ( self.lightZ + change )
       light.setH((float(light.getTag('startTime')) + self.timer) * 8 )
-    self.test.setZ( waveslice * 0.1 - 0.5)
-    self.test.setH( self.timer * 4 )
+    #self.test.setZ( waveslice * 0.1 - 0.5)
+    #self.test.setH( self.timer * 4 )
 
   def clearItems(self):
     for light in self.lights:
