@@ -267,7 +267,7 @@ class Player(object):
     hLightNode.setPos(Vec3(1.33, 2.4, 0))
     handLight = PointLight("handLight")
     hLightNP = hLightNode.attachNewNode(handLight)
-    hLightNP.node().setColor((0.005, 0.005, 0.005, 1.0))
+    hLightNP.node().setColor((0.002, 0.002, 0.002, 1.0))
     hLightNP.node().setAttenuation(Vec3(0, 0.0005, 0.000005))
     
     # ambientLight = AmbientLight("handLight")
