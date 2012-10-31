@@ -114,14 +114,14 @@ class Enemy(object):
     
     #checks to see if it is blocked by a wall while patrolling
     self.wallQueue = CollisionHandlerQueue()
-    cRay = CollisionRay(0, 0, 10, 0, -1, 0)
+    cRay = CollisionRay(2, 0, 10, 0, -1, 0)
     cNode = CollisionNode('wallSight')
     cNode.addSolid(cRay)
     cNode.setCollideMask(BitMask32.allOff())
     cNode.setFromCollideMask(envMask|clearSightMask)
     cNodePath = self.enemyNode.attachNewNode(cNode)
     base.cTrav.addCollider(cNodePath, self.wallQueue)
-    #cNodePath.show()
+    cNodePath.show()
     
     base.accept('playerSight-again-vision', self.inSight)
     
@@ -181,7 +181,7 @@ class Enemy(object):
             if type == 'start' or type == 'exit' or ('enemy' in type and type != 'enemyPusher'):
                 sightSearchIndex = sightSearchIndex + 1
                 continue
-                
+            
             sightSearch = False
             
             if type == 'playerSight':
