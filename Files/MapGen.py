@@ -6,17 +6,17 @@ import Level
 class MapGen(object):
   maxLevel = 5
   
-  def __init__(self):
-    self.curLev = 5
-    self.initMap()
+  def __init__(self, player):
+    self.curLev = 4
+    self.initMap(player)
     self.initLight()
     
-  def initMap(self):
+  def initMap(self, player):
     #Creates grass/sky environment
     #self.env = loader.loadModel("Models/Level1")
     #self.env.setTwoSided(True)
     #self.env.reparentTo(render)
-    self.env = Level.Level(self.curLev)
+    self.env = Level.Level(self.curLev, player)
   
   def initLight(self):
     #Loads ambient lighting
@@ -32,3 +32,7 @@ class MapGen(object):
         self.curLev += 1
         self.initMap()
         self.initLight()
+        print("nextlevel")
+    else:
+        print("maxed out level!")
+        # win screen?
