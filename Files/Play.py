@@ -86,8 +86,8 @@ class Play(DirectObject):
     
   def initModels(self):
     self.map = MapGen(self)
-    self.player = Player(self)
-    self.level = Level()
+    # self.player = Player(self)
+    # self.level = Level()
     self.enemies = []
   
   def transitionFunc(self, level, next = False):
@@ -105,8 +105,10 @@ class Play(DirectObject):
           print node.getName()
           node.removeNode()
         
-      self.player = Player(self)
-      self.level = Level()
+
+      # self.map = MapGen(self)
+      # self.player = Player(self)
+      # self.level = Level()
       self.enemies = []
     else:
       #Clear render
