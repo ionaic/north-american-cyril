@@ -113,29 +113,24 @@ class Play(DirectObject):
       self.level = Level()
       self.enemies = []
       self.player.level = level
-<<<<<<< HEAD
+
       self.level.loadLevel(level)
-      for enemy in self.level.enemies:
-        enemySpawn = Enemy( self, enemy[0], enemy[1] )
-        self.enemies.append(enemySpawn)
-      print 'yes \n\n\n'
-=======
-      self.level.loadLevel(level)      
->>>>>>> codennis
+      # for enemy in self.level.enemies:
+        # enemySpawn = Enemy( self, enemy[0], enemy[1] )
+        # self.enemies.append(enemySpawn)
+      # print 'yes \n\n\n'
     
     playerPos = self.level.playerPos #level.spawnPos
     walls = self.level.numWalls
     lights = self.level.numLights
     #Spawn player using spawn (spawn pos, max walls, max lights)
     self.player.spawn(playerPos,walls,lights)
-<<<<<<< HEAD
-    print 'derp'
-=======
+
     if next:
       for enemy in self.level.enemies:
         enemySpawn = Enemy( self, enemy[0], enemy[1] )
         self.enemies.append(enemySpawn)
->>>>>>> codennis
+
     if not next:
       for enemy in self.enemies:
         enemy.respawn()

@@ -42,10 +42,8 @@ class Level:
     self.env.reparentTo(render)
  
   def setStart(self):
-<<<<<<< HEAD
-    print 'setStart\n\n\n', self.env
-=======
->>>>>>> codennis
+    # print 'setStart\n\n\n', self.env
+
     playerSpawn = self.env.find('*/start')
     pos = LPoint3f(playerSpawn.getX(), playerSpawn.getY(), 0.)
     self.playerPos = playerSpawn.getPos() * self.envScale
