@@ -16,6 +16,7 @@ class Player(object):
   def __init__(self, parent):
     self.parent = parent
     self.level = 0
+    self.newLevel = False
     #Movement data
     self.speed = 40
     self.playerScale = 0.05
@@ -58,6 +59,7 @@ class Player(object):
     base.enableParticles()
     
     base.accept('enemy-into-player', self.die)
+    base.accept('playerEnv-into-exit', self.nextLevel)
     
   #Initializes keyMap
   def initKeyMap(self):
@@ -286,6 +288,7 @@ class Player(object):
     
   #Spawn plays at given pos with walls and lights
   def spawn(self, pos, walls, lights):
+    self.newLevel = False
     self.spawnPos = pos
     self.maxWalls = walls
     self.maxLights = lights
@@ -301,6 +304,9 @@ class Player(object):
   def die(self, cEntry = True):
     self.parent.die(self.level, False)
     
+  def nextLevel(self, cEntry):
+    self.newLevel = True
+    self.parent.die(self.level, True)
     
   #Initialize collisions
   def initCollisions(self):

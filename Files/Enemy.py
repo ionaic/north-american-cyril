@@ -132,6 +132,8 @@ class Enemy(object):
       #self.enemyNode.loop('run')
     
   def update(self, dt, player):
+    if player.newLevel:
+      return
     if self.AIchar.getVelocity() == LVecBase3f(0, 0, 0):
         self.AIbehaviors.startFollow()
     
