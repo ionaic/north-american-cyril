@@ -308,6 +308,7 @@ class Player(object):
     sightMask = BitMask32(0x2)
     deathMask = BitMask32(0x4)
     clearSightMask = BitMask32(0x8)
+    activeMask = BitMask32(0x16)
     
     #Collide with enemies    
     cSphere = CollisionSphere( 0, 0, 2, 3 )
@@ -327,10 +328,11 @@ class Player(object):
     cNode.setFromCollideMask(sightMask)
     cNode.setIntoCollideMask(clearSightMask)
     cNodePath = self.playerNode.attachNewNode(cNode)
+    cNodePath.show()
     base.cTrav.addCollider(cNodePath, base.cHandler)
     
     #Collide with env
-    cSphere = CollisionSphere(0,0,-2/self.playerScale,0.9/self.playerScale)
+    cSphere = CollisionSphere(0,0,2,3)
     cNode = CollisionNode('pusherNode')
     cNode.addSolid(cSphere)
     cNode.setCollideMask(envMask)
@@ -338,6 +340,17 @@ class Player(object):
     #cNodePath.show()
     base.cTrav.addCollider(cNodePath, base.pusher)
     base.pusher.addCollider(cNodePath, self.playerNode, base.drive.node())
+    
+    #Collide with active env   
+    cSphere = CollisionSphere( 0, 0, 2, 3.1)
+    cNode = CollisionNode('playerEnv')
+    cNode.addSolid(cSphere)
+    cNode.setCollideMask(BitMask32.allOff())
+    cNode.setFromCollideMask(activeMask)
+    cNodePath = self.playerNode.attachNewNode(cNode)
+    #cNodePath.show()
+    base.cTrav.addCollider(cNodePath, base.cHandler)
+    
         
     #Item placement collision rays
     cNode = CollisionNode('rayRight')
