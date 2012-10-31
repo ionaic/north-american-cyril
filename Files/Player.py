@@ -24,8 +24,8 @@ class Player(object):
     self.movement = {}
     self.movement['stand'] = Movement(0, 0.03, 1.3)
     self.movement['caution'] = Movement(1, 0.051, 2.1)
-    self.movement['walk'] = Movement(1.5, 0.079, 2.7)
-    self.movement['sprint'] = Movement(30, 0.16, 3.6)
+    self.movement['walk'] = Movement(2, 0.079, 2.7)
+    self.movement['sprint'] = Movement(6, 0.16, 3.6)
     self.forward = Vec3(0,1,0)
     self.back = Vec3(0,-1,0)
     self.left = Vec3(-1,0,0)
@@ -246,7 +246,7 @@ class Player(object):
     #setPos depends on spawn position in level
     self.playerNode.setScale(self.playerScale)
     self.playerNode.reparentTo(render)
-    self.playerNode.setZ(1)
+    self.playerNode.setZ(2)
     
     #Loads camera
     lens =  base.cam.node().getLens()
