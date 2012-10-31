@@ -66,10 +66,10 @@ class Enemy(object):
     self.foundPlayer = False
     
   def initCollisions(self, player):
-    envMask = BitMask32(0x0)
+    envMask = BitMask32(0x1)
     sightMask = BitMask32(0x2)
     deathMask = BitMask32(0x4)
-    clearSightMask = BitMask32(0x0)
+    clearSightMask = BitMask32(0x8)
     
     #collides with walls
     cSphere = CollisionSphere( (0,0,20), 10)
@@ -93,7 +93,7 @@ class Enemy(object):
     #cNodePath.show()
     
     #collides with the player to determine if the player is in the enemie's cone of vision
-    cTube = CollisionTube (0,-40,0,0,-110,0, 80)
+    cTube = CollisionTube (0,-15,0,0,-60,0, 40)
     cNode = CollisionNode('vision')
     cNode.addSolid(cTube)
     cNode.setCollideMask(BitMask32.allOff())
@@ -155,7 +155,7 @@ class Enemy(object):
             entry = self.wallQueue.getEntry(wallSearchIndex)
             type = entry.getIntoNode().getName()
             
-            if type == 'start' or type == 'exit' or ('enemy' in type and type != 'enemyPusher'):
+            if type == 'start' or type == 'exit' or ('enemy' in type and type != 'enemyPusher') or 'world' in type:
                 wallSearchIndex = wallSearchIndex + 1
                 continue
                 
@@ -165,7 +165,7 @@ class Enemy(object):
                 if self.blocked == False:
                     self.startH = self.enemyNode.getH()
                 self.blocked = True
-            else:
+            elif 'pCube' not in type:
                 self.blocked = False
                 self.justUnblocked = True
                 self.timeUnblocked = time.time()
@@ -186,7 +186,7 @@ class Enemy(object):
             entry = self.queue.getEntry(sightSearchIndex)
             type = entry.getIntoNode().getName()
             
-            if type == 'start' or type == 'exit' or ('enemy' in type and type != 'enemyPusher'):
+            if type == 'start' or type == 'exit' or ('enemy' in type and type != 'enemyPusher') or 'world' in type:
                 sightSearchIndex = sightSearchIndex + 1
                 continue
             
@@ -194,7 +194,7 @@ class Enemy(object):
             
             if type == 'playerSight':
                 self.sightBlocked = False
-            else:
+            elif 'pCube' not in type:
                 self.sightBlocked = True
         else:
             sightSearch = False
