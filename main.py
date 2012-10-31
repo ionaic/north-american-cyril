@@ -18,8 +18,8 @@ class World(DirectObject):
     #globalClock.setFrameRate(1000)
     #Set windows properties
     props = WindowProperties()
-    #props.setFullscreen(1)
-    #props.setSize(int(base.pipe.getDisplayWidth()), int(base.pipe.getDisplayHeight()))
+    props.setFullscreen(1)
+    props.setSize(int(base.pipe.getDisplayWidth()), int(base.pipe.getDisplayHeight()))
     base.win.requestProperties(props)
     
     #mySound = ConfigVariableString('audio-library-name', 'p3fmod_audio')

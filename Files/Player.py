@@ -230,8 +230,8 @@ class Player(object):
     iLightNode.setZ(iLightNode.getZ() + 0.5)
     iLight = PointLight('item-light')
     iLightNP = iLightNode.attachNewNode(iLight)
-    iLightNP.node().setColor(Vec4(0.1, 0.15, 0.2, 1.0))
-    iLightNP.node().setAttenuation(Vec3(0, 0.008, 0.0001))
+    iLightNP.node().setColor(Vec4(0.2, 0.25, 0.3, 1.0))
+    iLightNP.node().setAttenuation(Vec3(0, 0.001, 0.000009))
     iLightNP.setZ(iLightNP.getZ() + 0.6)
     
     render.setLight(iLightNP)

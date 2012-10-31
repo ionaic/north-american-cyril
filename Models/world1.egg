@@ -3206,6 +3206,8 @@
       -0.0265963 1.19861 -11.4548 1
     }
   }
+  <Collide> {Polyset descend }
+  <Scalar> collide-mask { 0 }
   <VertexPool> Player_spawn.verts {
     <Vertex> 0 {
       -0.526596 0.698609 -11.9548

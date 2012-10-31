@@ -20,7 +20,6 @@ class Level:
         
 
   def loadLevel(self, levelNum):
-    levelNum = 4
     if levelNum == 1:
         self.env = loader.loadModel("Models/world1")
     elif levelNum == 2:
