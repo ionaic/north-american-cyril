@@ -194,6 +194,7 @@ class Player(object):
   def placeWall(self):
     item = render.attachNewNode('item-wall')
     item.setPos(self.itemNode.getPos(render))
+    item.setZ(item.getZ() - 10)
     item.setHpr(self.itemNode.getHpr(render))
     wall = loader.loadModel('Models/Wall')
     #wall.reparentTo(item)
@@ -203,11 +204,10 @@ class Player(object):
     self.wallActor = loader.loadModel('Models/WallActor.egg')
     self.wallActor.reparentTo(item)
     self.wallActor.setScale(self.playerScale*15)
-    self.wallActor.setPos(0,0,-10)
     
     #self.wallActor.setPlayRate(1.2, 'wallAnim')
     #self.wallActor.loop('wallAnim')
-    self.walls.append(self.wallActor)
+    self.walls.append(item)
     self.wallSfx.play()
   
   #Places light item and creates a point light
