@@ -21,7 +21,7 @@ class Enemy(object):
     self.timeUnblocked = -1
     
     self.initEnemy()
-    ##############################self.initSounds()
+    self.initSounds()
     self.initAI(AIpath)
     
   #Loads player node, camera, and light
@@ -32,10 +32,11 @@ class Enemy(object):
     self.enemyNode.reparentTo(render)
     
   def initSounds(self):
-    self.stompSfx = base.loadSfx('Sounds/stomp.wav')
+    self.stompSfx = base.loadSfx('sounds/stomp.ogg')
     self.stompSfx.setLoopCount(0)
-    self.chaseSfx = base.loadSfx('Sounds/chase.wav')
-    self.chaseSfx.setLoopCount(0)
+    self.stompSfx.setVolume(.15)
+    #self.chaseSfx = base.loadSfx('Sounds/chase.wav')
+    #self.chaseSfx.setLoopCount(0)
     self.movementSfx = None
     
   #AIpath is a list of vertices
@@ -122,8 +123,6 @@ class Enemy(object):
     if not self.foundPlayer and not self.sightBlocked:
       self.foundPlayer = True
       self.foundPlayerTime = time.time()
-    if time.time() > self.foundPlayerTime + 5:
-      self.foundPlayer = False
     
   def update(self, dt, player):
     if self.AIchar.getVelocity() == LVecBase3f(0, 0, 0):
@@ -171,6 +170,7 @@ class Enemy(object):
         self.move(dt, player)
         self.parent.chaseBGM(True)
     else:
+        self.parent.chaseBGM(False)
         if self.blocked == True:
             self.enemyNode.setH(self.enemyNode.getH() - 15)
         elif self.justUnblocked == True:
@@ -203,18 +203,22 @@ class Enemy(object):
                 self.enemyNode.setY(self.enemyNode.getY() + y_adjustment * math.fabs(math.cos(math.radians(angle))) * self.speed)
         else:
             self.AIworld.update()  
-    
-    ##########################Movement SFX
-    """
-    if self.foundPlayer and self.movementSfx != self.chaseSfx:
-      self.movementSfx.stop()
-      self.movementSfx = self.chaseSfx
-      self.movementSfx.play()
-    elif not self.foundPlayer and self.movementSfx != self.stompSfx:
-      self.movementSfx.stop()
-      self.movementSfx = self.stompSfx
-      self.movementSfx.play()
-    """
+            
+    if time.time() > self.foundPlayerTime + 5:
+      self.foundPlayer = False
+      
+    #Movement SFX
+    #if self.foundPlayer and self.movementSfx != self.chaseSfx:
+    #  if self.movementSfx != None:
+    #    self.movementSfx.stop()
+    #  self.movementSfx = self.chaseSfx
+    #  self.movementSfx.play()
+    #if not self.foundPlayer and self.movementSfx != self.stompSfx:
+    if self.movementSfx != self.stompSfx:
+        if self.movementSfx != None:
+          self.movementSfx.stop()
+        self.movementSfx = self.stompSfx
+        #self.movementSfx.play()
     
   #Moves player
   def move(self, dt, player):

@@ -269,10 +269,10 @@ class Play(DirectObject):
   #Set up BGM
   def setupSounds(self):
     ######################slow music############################
-    self.bgSlow = base.loadMusic("Sounds/musicbox.ogg")
+    self.bgSlow = base.loadMusic("sounds/slow.ogg")
     self.bgSlow.setLoopCount(0)
     ######################fast music############################
-    self.bgFast = base.loadMusic("Sounds/openclose.ogg")
+    self.bgFast = base.loadMusic("sounds/fast.ogg")
     self.bgFast.setLoopCount(0)
     self.playingBGM = self.bgSlow    
     

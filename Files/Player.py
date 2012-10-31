@@ -54,7 +54,7 @@ class Player(object):
     self.initKeyMap()
     self.initControls()
     self.initPlayer()
-    #################################self.initSounds()
+    self.initSounds()
     base.enableParticles()
     
     base.accept('enemy-into-player', self.die)
@@ -201,7 +201,7 @@ class Player(object):
     light.reparentTo(item)
     light.setScale(self.playerScale*5)
     self.walls.append(item)
-    ###########################self.wallSfx.play()
+    self.wallSfx.play()
   
   #Places light item and creates a point light
   def placeLight(self):
@@ -229,7 +229,7 @@ class Player(object):
     #Sets placement time for rotating
     item.setTag('startTime', '%f' % self.timer)
     self.lights.append(item)
-    ###############################self.magicSfx.play()
+    self.magicSfx.play()
       
   #Loads player node, camera, and light
   def initPlayer(self):
@@ -353,16 +353,17 @@ class Player(object):
     
   ########################################################
   def initSounds(self):
-    self.walkSfx = base.loadSfx('Sounds/footstep.wav')
+    self.walkSfx = base.loadSfx('sounds/footstep.ogg')
     self.walkSfx.setLoopCount(0)
-    self.runSfx = base.loadSfx('Sounds/run.wav')
+    self.runSfx = base.loadSfx('sounds/run.ogg')
     self.runSfx.setLoopCount(0)
     self.movementSfx = None
-    self.wallSfx = base.loadSfx('Sounds/wall.wav')
-    self.magicSfx = base.loadSfx('Sounds/magic.wav')
-    self.doorOpenSfx = base.loadSfx('Sounds/door_open.wav')
-    self.doorCloseSfx = base.loadSfx('Sounds/door_close.wav')
-    self.fireSfx = base.loadSfx('Sounds/fire.wav')
+    self.wallSfx = base.loadSfx('sounds/wall.ogg')
+    self.magicSfx = base.loadSfx('sounds/magic.ogg')
+    self.magicSfx.setVolume(.5)
+    self.doorOpenSfx = base.loadSfx('sounds/door_open.ogg')
+    self.doorCloseSfx = base.loadSfx('sounds/door_close.ogg')
+    self.fireSfx = base.loadSfx('sounds/fire.ogg')
   
   #Updates player
   def update(self, dt):
@@ -470,22 +471,21 @@ class Player(object):
     elif self.keyMap['right'] == 1:
       self.playerNode.setPos(self.playerNode, self.right * dt * move.speed * self.speed)
       
-    ##########################Movement SFX
-    """
+
     if move == self.movement['sprint'] and self.movementSfx != self.runSfx:
-      self.movementSfx.stop()
+      if self.movementSfx != None:
+        self.movementSfx.stop()
       self.movementSfx = self.runSfx
       self.movementSfx.play()
     elif move == self.movement['walk'] and self.movementSfx != self.walkSfx:
-      self.movementSfx.stop()
+      if self.movementSfx != None:
+        self.movementSfx.stop()
       self.movementSfx = self.walkSfx
       self.movementSfx.play()
-    elif self.movementSfx = None:
-      pass
-    elif move != self.movement['sprint'] or move != self.movement['walk']:
-      self.movementSfx.stop()
+    elif move != self.movement['sprint'] and move != self.movement['walk']:
+      if self.movementSfx != None:
+        self.movementSfx.stop()
       self.movementSfx = None
-    """
         
     self.headBob(move)
     if self.recharging and self.energyLeft < 100:
