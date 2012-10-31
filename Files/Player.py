@@ -235,6 +235,7 @@ class Player(object):
     #setPos depends on spawn position in level
     self.playerNode.setScale(self.playerScale)
     self.playerNode.reparentTo(render)
+    self.playerNode.setZ(1)
     
     #Loads camera
     lens =  base.cam.node().getLens()

@@ -100,11 +100,11 @@ class Play(DirectObject):
     
       #and initialize enemies
     if next:
-      enemy = Enemy( self, (0,0,3), [(0,-10,3), (0,10,3)] )
+      enemy = Enemy( self, (0,0,0), [(0,-10,0), (0,10,0)] )
       self.enemies.append(enemy)
       self.level += 1
     
-    pos = (-10,-10,3) #level.spawnPos
+    pos = (-30,-30,6) #level.spawnPos
     walls = 3 #level.walls
     lights = 3 #level.lights
     #Spawn player using spawn (spawn pos, max walls, max lights)

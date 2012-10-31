@@ -1,11 +1,12 @@
 from pandac.PandaModules import * #basic Panda modules
 from direct.showbase.DirectObject import DirectObject #event handling
 from panda3d.ai import * #panda AI
+from direct.actor.Actor import Actor
 import math, time
 
 class Enemy(object):
   def __init__(self, parent, spawnPos, AIpath):
-    self.speed = .03
+    self.speed = .1
     
     self.sightBlocked = True
     self.foundPlayer = False
@@ -26,10 +27,13 @@ class Enemy(object):
     
   #Loads player node, camera, and light
   def initEnemy(self):
-    self.enemyNode = loader.loadModel('smiley')
-    self.enemyNode.setPos(self.spawnPos)
-    self.enemyNode.setScale(0.5)
+    self.enemyNode = Actor('Models/monster', {'walk':'Models/monsterWalkAnim',
+                                              'run':'Models/monsterRunAnim'})
     self.enemyNode.reparentTo(render)
+    self.enemyNode.setScale(0.2)
+    self.enemyNode.setPos(self.spawnPos)
+    self.enemyNode.setPlayRate(1.2, 'walk')
+    self.enemyNode.loop('walk')
     
   def initSounds(self):
     self.stompSfx = base.loadSfx('sounds/stomp.ogg')
@@ -88,13 +92,13 @@ class Enemy(object):
     base.cTrav.addCollider(cNodePath, base.cHandler)
     
     #collides with the player to determine if the player is in the enemie's cone of vision
-    cTube = CollisionTube (0,-4,0,0,-6,0, 6)
+    cTube = CollisionTube (0,-40,0,0,-60,0, 60)
     cNode = CollisionNode('vision')
     cNode.addSolid(cTube)
     cNode.setCollideMask(BitMask32.allOff())
     cNode.setIntoCollideMask(sightMask)
     cNodePath = self.enemyNode.attachNewNode(cNode)
-    #cNodePath.show()
+    cNodePath.show()
     
     #checks to see if there is anything blocking the enemie's line of sight to the player
     self.queue = CollisionHandlerQueue()
@@ -123,6 +127,7 @@ class Enemy(object):
     if not self.foundPlayer and not self.sightBlocked:
       self.foundPlayer = True
       self.foundPlayerTime = time.time()
+      #self.enemyNode.loop('run')
     
   def update(self, dt, player):
     if self.AIchar.getVelocity() == LVecBase3f(0, 0, 0):
