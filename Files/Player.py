@@ -199,13 +199,15 @@ class Player(object):
     #wall.reparentTo(item)
     #wall.setScale(self.playerScale*15)
     
-    self.wallActor = Actor('Models/WallActor', {'wallAnim':'Models/WallAnim'})
+    #self.wallActor = Actor('Models/WallActor2', {'wallAnim':'Models/WallAnim2'})
+    self.wallActor = loader.loadModel('Models/WallActor.egg')
     self.wallActor.reparentTo(item)
     self.wallActor.setScale(self.playerScale*15)
-    self.wallActor.setPlayRate(1, 'wallAnim')
-    self.wallActor.loop('wallAnim')
+    self.wallActor.setPos(0,0,-10)
     
-    self.walls.append(item)
+    #self.wallActor.setPlayRate(1.2, 'wallAnim')
+    #self.wallActor.loop('wallAnim')
+    self.walls.append(self.wallActor)
     self.wallSfx.play()
   
   #Places light item and creates a point light
@@ -377,6 +379,9 @@ class Player(object):
     self.moveLight()
     if self.itemLoaded:
       self.itemRay()
+    for wall in self.walls:
+        if wall.getZ() < 0:
+            wall.setZ(wall.getZ() + .1)
     self.hud.updateHUD(self.wallsLeft, self.lightsLeft, self.energyLeft)
     self.timer += 0.05
   
