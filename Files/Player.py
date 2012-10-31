@@ -244,7 +244,7 @@ class Player(object):
     base.camera.reparentTo(self.playerNode)
     
     #Loads hand
-    self.hand = Actor('Models/handActor', {'handAnim':'Models/handAnimate'})
+    self.hand = Actor('Models/handActor', {'handAnim':'Models/handAnim'})
     self.hand.reparentTo(base.camera)
     self.hand.setScale(0.8)
     self.hand.setPos(7,9,-9)
