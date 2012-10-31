@@ -194,17 +194,19 @@ class Player(object):
   def placeWall(self):
     item = render.attachNewNode('item-wall')
     item.setPos(self.itemNode.getPos(render))
+    item.setZ(item.getZ() - 10)
     item.setHpr(self.itemNode.getHpr(render))
     wall = loader.loadModel('Models/Wall')
     #wall.reparentTo(item)
     #wall.setScale(self.playerScale*15)
     
-    self.wallActor = Actor('Models/WallActor', {'wallAnim':'Models/WallAnim'})
+    #self.wallActor = Actor('Models/WallActor2', {'wallAnim':'Models/WallAnim2'})
+    self.wallActor = loader.loadModel('Models/WallActor.egg')
     self.wallActor.reparentTo(item)
     self.wallActor.setScale(self.playerScale*15)
-    self.wallActor.setPlayRate(1, 'wallAnim')
-    self.wallActor.loop('wallAnim')
     
+    #self.wallActor.setPlayRate(1.2, 'wallAnim')
+    #self.wallActor.loop('wallAnim')
     self.walls.append(item)
     self.wallSfx.play()
   
@@ -377,6 +379,9 @@ class Player(object):
     self.moveLight()
     if self.itemLoaded:
       self.itemRay()
+    for wall in self.walls:
+        if wall.getZ() < 0:
+            wall.setZ(wall.getZ() + .1)
     self.hud.updateHUD(self.wallsLeft, self.lightsLeft, self.energyLeft)
     self.timer += 0.05
   

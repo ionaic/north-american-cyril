@@ -11,6 +11,7 @@
   <Scalar> magfilter { linear }
 }
 <Group> groundPlane_transform {
+  <Collide> {Polyset keep descend} 
   <Transform> {
     <Matrix4> {
       12 0 0 0
@@ -21,6 +22,7 @@
   }
 }
 <Group> pCube1 {
+  <Collide> {Polyset keep descend} 
   <Transform> {
     <Matrix4> {
       5.95046 0 0 0
@@ -271,6 +273,7 @@
       <RGBA> { 1 1 1 1 }
     }
   }
+  <Collide> {Polyset keep descend} 
   <Polygon> {
     <Normal> { 0 0 1 }
     <TRef> { lambert2SG }

@@ -1,7 +1,7 @@
 <CoordinateSystem> { Y-Up }
 
 <Comment> {
-  "maya2egg2013 -p -keep-uvs -round-uvs -tbnall -a model -cs y-up -uo cm -trans all -o C:/Users/weitht/Documents/GitHub/new-cyril/north-american-cyril/Models/animation_wall.egg C:/Users/weitht/Documents/GitHub/new-cyril/north-american-cyril/Models/animation_wall_temp.mb"
+  "maya2egg2013 -p -keep-uvs -round-uvs -tbnall -a model -cs y-up -uo cm -trans all -o C:/Users/cod/Desktop/north-american-cyril/Models/WallActor.egg C:/Users/cod/Desktop/north-american-cyril/Models/animation_wall_temp.mb"
 }
 <Texture> lambert2SG {
   floor.jpg
@@ -11,7 +11,6 @@
   <Scalar> magfilter { linear }
 }
 <Group> animation_wall_temp {
-  <Collide> {Polyset keep descend}
   <Dart> { 1 }
   <Group> groundPlane_transform {
   }
@@ -86,7 +85,7 @@
         <RGBA> { 1 1 1 1 }
       }
       <Vertex> 6 {
-        -2.97523 10.379 -0.5
+        -2.97523 1.15202 -0.5
         <UV> {
           0 1
           <Tangent> { 0 0 1 }
@@ -96,7 +95,7 @@
         <RGBA> { 1 1 1 1 }
       }
       <Vertex> 7 {
-        -2.97523 10.379 -0.5
+        -2.97523 1.15202 -0.5
         <UV> {
           0 0
           <Tangent> { 1 0 0 }
@@ -106,7 +105,7 @@
         <RGBA> { 1 1 1 1 }
       }
       <Vertex> 8 {
-        -2.97523 10.379 -0.5
+        -2.97523 1.15202 -0.5
         <UV> {
           0 1
           <Tangent> { 1 0 0 }
@@ -116,7 +115,7 @@
         <RGBA> { 1 1 1 1 }
       }
       <Vertex> 9 {
-        -2.97523 10.379 0.5
+        -2.97523 1.15202 0.5
         <UV> {
           1 1
           <Tangent> { 0 0 1 }
@@ -126,7 +125,7 @@
         <RGBA> { 1 1 1 1 }
       }
       <Vertex> 10 {
-        -2.97523 10.379 0.5
+        -2.97523 1.15202 0.5
         <UV> {
           0 1
           <Tangent> { 1 0 0 }
@@ -136,7 +135,7 @@
         <RGBA> { 1 1 1 1 }
       }
       <Vertex> 11 {
-        -2.97523 10.379 0.5
+        -2.97523 1.15202 0.5
         <UV> {
           0 0
           <Tangent> { 1 0 0 }
@@ -206,7 +205,7 @@
         <RGBA> { 1 1 1 1 }
       }
       <Vertex> 18 {
-        2.97523 10.379 -0.5
+        2.97523 1.15202 -0.5
         <UV> {
           1 0
           <Tangent> { 1 0 0 }
@@ -216,7 +215,7 @@
         <RGBA> { 1 1 1 1 }
       }
       <Vertex> 19 {
-        2.97523 10.379 -0.5
+        2.97523 1.15202 -0.5
         <UV> {
           1 1
           <Tangent> { 1 0 0 }
@@ -226,7 +225,7 @@
         <RGBA> { 1 1 1 1 }
       }
       <Vertex> 20 {
-        2.97523 10.379 -0.5
+        2.97523 1.15202 -0.5
         <UV> {
           1 1
           <Tangent> { 0 0 -1 }
@@ -236,7 +235,7 @@
         <RGBA> { 1 1 1 1 }
       }
       <Vertex> 21 {
-        2.97523 10.379 0.5
+        2.97523 1.15202 0.5
         <UV> {
           1 1
           <Tangent> { 1 0 0 }
@@ -246,7 +245,7 @@
         <RGBA> { 1 1 1 1 }
       }
       <Vertex> 22 {
-        2.97523 10.379 0.5
+        2.97523 1.15202 0.5
         <UV> {
           1 0
           <Tangent> { 1 0 0 }
@@ -256,7 +255,7 @@
         <RGBA> { 1 1 1 1 }
       }
       <Vertex> 23 {
-        2.97523 10.379 0.5
+        2.97523 1.15202 0.5
         <UV> {
           0 1
           <Tangent> { 0 0 -1 }

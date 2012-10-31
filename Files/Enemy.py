@@ -245,7 +245,7 @@ class Enemy(object):
         if self.movementSfx != None:
           self.movementSfx.stop()
         self.movementSfx = self.stompSfx
-        #self.movementSfx.play()
+        self.movementSfx.play()
     
   #Moves player
   def move(self, dt, player):
