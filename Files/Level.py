@@ -20,18 +20,20 @@ class Level:
         
 
   def loadLevel(self, levelNum):
+    levelNum = 4
     if levelNum == 1:
         self.env = loader.loadModel("Models/world1")
     elif levelNum == 2:
-        self.env = loader.loadModel("Models/lv2")
+        self.env = loader.loadModel("Models/world2")
     elif levelNum == 3:
-        self.env = loader.loadModel("Models/lv3")
+        self.env = loader.loadModel("Models/world3")
     elif levelNum == 4:
-        self.env = loader.loadModel("Models/lv4")
+        self.env = loader.loadModel("Models/world5")
+        self.env.setZ(-5)
     elif levelNum == 5:
-        self.env = loader.loadModel("Models/lv5")
+        self.env = loader.loadModel("Models/world4")
     else:
-        self.env = loader.loadModel("Models/lv1")
+        self.env = loader.loadModel("Models/world1")
 
     self.setItems(levelNum)
     self.setStart()
