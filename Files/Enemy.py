@@ -132,6 +132,12 @@ class Enemy(object):
       #self.enemyNode.loop('run')
     
   def update(self, dt, player):
+    try:
+      self.cNode
+    except AttributeError:
+      print ("enemy cnode not defined")
+      return
+      
     if self.AIchar.getVelocity() == LVecBase3f(0, 0, 0):
         self.AIbehaviors.startFollow()
     

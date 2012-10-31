@@ -109,17 +109,18 @@ class Play(DirectObject):
       level += 1
       self.player.level = level
       self.level.loadLevel(level)
-      for enemy in self.level.enemies:
-        enemySpawn = Enemy( self, enemy[0], enemy[1] )
-        self.enemies.append(enemySpawn)
+      
     
     playerPos = self.level.playerPos #level.spawnPos
     walls = self.level.numWalls
     lights = self.level.numLights
     #Spawn player using spawn (spawn pos, max walls, max lights)
     self.player.spawn(playerPos,walls,lights)
+    if next:
+      for enemy in self.level.enemies:
+        enemySpawn = Enemy( self, enemy[0], enemy[1] )
+        self.enemies.append(enemySpawn)
     if not next:
-      #enemies = list of enemies in level
       for enemy in self.enemies:
         enemy.respawn()
     
