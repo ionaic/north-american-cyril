@@ -261,10 +261,20 @@ class Player(object):
     self.hand.setH(90)
     self.hand.setPlayRate(1.2, 'handAnim')
     self.hand.loop('handAnim')
-    ambientLight = AmbientLight("handLight")
-    ambientLight.setColor((0.1, 0.1, 0.1, 1.0))
-    ambientLightNP = render.attachNewNode(ambientLight)
-    self.hand.setLight(ambientLightNP)
+    self.hand.setLightOff()
+    hLightNode = NodePath('handLightNode')
+    hLightNode.reparentTo(base.camera)
+    hLightNode.setPos(Vec3(1.33, 2.4, 0))
+    handLight = PointLight("handLight")
+    hLightNP = hLightNode.attachNewNode(handLight)
+    hLightNP.node().setColor((0.005, 0.005, 0.005, 1.0))
+    hLightNP.node().setAttenuation(Vec3(0, 0.0005, 0.000005))
+    
+    # ambientLight = AmbientLight("handLight")
+    # ambientLight.setColor((0.1, 0.1, 0.1, 1.0))
+    # ambientLightNP = render.attachNewNode(ambientLight)
+    # self.hand.setLight(ambientLightNP)
+    self.hand.setLight(hLightNP)
     
     #Loads artifact point light
     """
