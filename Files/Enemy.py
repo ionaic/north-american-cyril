@@ -6,7 +6,7 @@ import math, time
 
 class Enemy(object):
   def __init__(self, parent, spawnPos, AIpath):
-    self.speed = 0.25
+    self.speed = 0.4
     
     self.sightBlocked = False
     self.foundPlayer = False
@@ -48,7 +48,7 @@ class Enemy(object):
     
     self.AIworld = AIWorld(render)
     
-    self.AIchar = AICharacter('enemyNode',self.enemyNode, 120, 0.05, 5)
+    self.AIchar = AICharacter('enemyNode',self.enemyNode, 100, 10, 27)
     
     self.AIworld.addAiChar(self.AIchar)
     self.AIbehaviors = self.AIchar.getAiBehaviors()        
@@ -66,10 +66,10 @@ class Enemy(object):
     self.foundPlayer = False
     
   def initCollisions(self, player):
-    envMask = BitMask32(0x1)
+    envMask = BitMask32(0x0)
     sightMask = BitMask32(0x2)
     deathMask = BitMask32(0x4)
-    clearSightMask = BitMask32(0x8)
+    clearSightMask = BitMask32(0x0)
     
     #collides with walls
     cSphere = CollisionSphere( (0,0,20), 10)
@@ -93,7 +93,7 @@ class Enemy(object):
     #cNodePath.show()
     
     #collides with the player to determine if the player is in the enemie's cone of vision
-    cTube = CollisionTube (0,-40,0,0,-60,0, 60)
+    cTube = CollisionTube (0,-40,0,0,-110,0, 80)
     cNode = CollisionNode('vision')
     cNode.addSolid(cTube)
     cNode.setCollideMask(BitMask32.allOff())

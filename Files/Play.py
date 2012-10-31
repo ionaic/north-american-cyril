@@ -97,6 +97,14 @@ class Play(DirectObject):
   
   #level number, next = true if next level (false = respawning)
   def startLevel(self, level, next = False):
+    """
+    render.clearLight()
+    render.setShaderAuto()
+    """
+    self.map = MapGen(self)
+    self.player = Player(self)
+    self.level = Level()
+    self.enemies = []
     if next:
       for node in render.getChildren():
         node.removeNode()
@@ -104,12 +112,6 @@ class Play(DirectObject):
         if node.getName() != 'cam':
           print node.getName()
           node.removeNode()
-        
-
-      # self.map = MapGen(self)
-      # self.player = Player(self)
-      # self.level = Level()
-      self.enemies = []
     else:
       #Clear render
       self.player.clearItems()

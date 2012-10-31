@@ -12570,6 +12570,8 @@
       0 2.75203 13.3812 1
     }
   }
+  <Collide> { Polyset descend }
+  <Scalar> collide-mask { 0 }
   <VertexPool> lever1.verts {
     <Vertex> 0 {
       -1 2.75203 13.3812
@@ -18572,6 +18574,8 @@
       0 2.75203 -12.8224 1
     }
   }
+  <Collide> { Polyset descend }
+  <Scalar> collide-mask { 0 }
   <VertexPool> lever1.verts.vpool1 {
     <Vertex> 0 {
       -1 2.75203 -12.8224

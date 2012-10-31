@@ -12,7 +12,7 @@ class Level:
   def initLight(self):
     #Loads ambient lighting
     self.ambientLight = AmbientLight("ambientLight")
-    # self.ambientLight.setColor((0.1, 0.1, 0.1, 1.0))
+    #self.ambientLight.setColor((0.1, 0.1, 0.1, 1.0))
     self.ambientLight.setColor((0.01, 0.01, 0.01, 1.0))
     self.ambientLightNP = render.attachNewNode(self.ambientLight)
     #the node that calls setLight is what's illuminated by the given light
@@ -29,8 +29,8 @@ class Level:
     elif levelNum == 4:
         self.env = loader.loadModel("Models/world5")
         self.env.setZ(-5)
-    elif levelNum == 5:
-        self.env = loader.loadModel("Models/world4")
+    #elif levelNum == 5:
+    #    self.env = loader.loadModel("Models/world4")
     else:
         self.env = loader.loadModel("Models/world1")
 
