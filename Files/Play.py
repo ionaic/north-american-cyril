@@ -86,8 +86,9 @@ class Play(DirectObject):
       self.playingBGM.play()
     
   def initModels(self):
-    self.map = MapGen(self)
+    #self.map = MapGen(self)
     self.player = Player(self)
+    self.level = Level(self, 
     self.enemies = []
     self.level = 1
     self.startLevel(1)
