@@ -82,7 +82,9 @@ class Play(DirectObject):
   
   #level number, next = true if next level (false = respawning)
   def startLevel(self, level, next = True):
-    self.transition.fadeOut(2)
+    print 'fading out'
+    #print self.transition.fadeOut(3, 3)
+    print 'fading out done'
     #Clear render
     self.player.clearItems()
     
@@ -104,8 +106,7 @@ class Play(DirectObject):
       for enemy in self.enemies:
         enemy.respawn()
     
-    time.sleep(1)
-    self.transition.fadeIn(2)
+    self.transition.irisIn(2)
     
     self.playingBGM = self.bgSlow
     self.playingBGM.play()

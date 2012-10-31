@@ -3,6 +3,7 @@ from direct.gui.OnscreenImage import OnscreenImage
 
 class MainMenu:
   def __init__(self, main):
+    self.main = main
     self.mainFrame = DirectFrame(parent = base.render2d, 
                                   frameColor = (1,0,0,0), pos = (0,0,0),
                                   frameSize = (-1,1,-1,1))
@@ -11,7 +12,6 @@ class MainMenu:
 
                                    
     self.menuFrame = DirectFrame(frameColor=(0,0,0,0), pos = (0,0,-0.2),
-                                 #(left, right, bottom, top)
                                  frameSize=(-0.5,0.5,0.7,-0.4 ))
         
     self.start = DirectButton(parent = self.menuFrame,
@@ -21,7 +21,7 @@ class MainMenu:
                               text = 'Start',
                               text_fg = (1,0,0,1),
                               scale = 0.13,
-                              command = main.startGame)
+                              command = self.start)
     self.start.guiItem.setActive(True) 
     self.start.bind(DGG.WITHIN, self.mouseOver, [self.start])
     self.start.bind(DGG.WITHOUT, self.mouseOut, [self.start])
@@ -49,6 +49,11 @@ class MainMenu:
   def show(self):
     self.mainFrame.show()
     self.menuFrame.show()
+    
+  def start(self):
+    self.hide()
+    print 'hideen'
+    self.main.startGame()
 
   def __del__(self):
       self.start.destroy()

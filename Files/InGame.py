@@ -1,5 +1,6 @@
 from direct.gui.DirectGui import *
 from direct.showbase.DirectObject import DirectObject
+from direct.showbase.Transitions import Transitions
 from direct.task import Task
 from Play import *
 
@@ -42,6 +43,9 @@ class InGame(DirectObject):
     self.exit.bind(DGG.WITHIN, self.mouseOver, [self.exit])
     self.exit.bind(DGG.WITHOUT, self.mouseOut, [self.exit])
         
+    #self.firstTransition = Transitions(loader)
+    #self.firstTransition.setFadeColor(0,0,0)
+    
     self.deactivate()
 
   #Change text color on mouseover
@@ -51,9 +55,12 @@ class InGame(DirectObject):
     frame['text_fg'] = (1,0,0,1)
     
   def activate(self):
+  
+    #self.firstTransition.fadeOut(3)
     self.active = True
     self.paused = False
     self.play = Play(self)
+    #self.firstTransition.fadeOut(3)
   
   def deactivate(self):
     self.mainFrame.hide()
