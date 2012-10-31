@@ -1,0 +1,22 @@
+<CoordinateSystem> { Y-Up }
+
+<Comment> {
+  "maya2egg2013 -p -keep-uvs -round-uvs -tbnall -a chan -cs y-up -uo cm -trans all -o C:/Users/cod/Desktop/north-american-cyril/Models/WallAnim.egg C:/Users/cod/Desktop/north-american-cyril/Models/animation_wall_temp.mb"
+}
+<Table> {
+  <Bundle> animation_wall_temp {
+    <Table> "<skeleton>" {
+      <Table> pCube1 {
+        <Xfm$Anim_S$> xform {
+          <Scalar> fps { 24 }
+          <Char*> order { srpht }
+          <S$Anim> i { <V> { 5.95046 } }
+          <S$Anim> j { <V> { 0.0329627 } }
+          <S$Anim> y { <V> { 0.0989538 } }
+        }
+      }
+    }
+    <Table> morph {
+    }
+  }
+}
