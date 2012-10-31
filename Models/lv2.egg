@@ -43,6 +43,7 @@
       0.110161 2.83777 0.123299 1
     }
   }
+  <Collide> {Polyset keep descend}
   <VertexPool> lvl2.verts {
     <Vertex> 0 {
       -7.72482 5.67555 -7.00527
@@ -1456,7 +1457,7 @@
     <VertexRef> { 93 74 67 95 <Ref> { lvl2.verts } }
   }
 }
-<Group> Start {
+<Group> start {
   <Transform> {
     <Matrix4> {
       1 0 0 0

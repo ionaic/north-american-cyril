@@ -24,7 +24,7 @@ class Player(object):
     self.movement['stand'] = Movement(0, 0.03, 1.3)
     self.movement['caution'] = Movement(1, 0.051, 2.1)
     self.movement['walk'] = Movement(1.5, 0.079, 2.7)
-    self.movement['sprint'] = Movement(30, 0.16, 3.6)
+    self.movement['sprint'] = Movement(5, 0.16, 3.6)
     self.forward = Vec3(0,1,0)
     self.back = Vec3(0,-1,0)
     self.left = Vec3(-1,0,0)
@@ -490,14 +490,14 @@ class Player(object):
       move = self.movement['walk']
     
     if self.keyMap['forward'] == 1:
-      self.playerNode.setPos(self.playerNode, self.forward * dt * move.speed * self.speed)
+      self.playerNode.setFluidPos(self.playerNode, self.forward * dt * move.speed * self.speed)
     elif self.keyMap['back'] == 1:
-      self.playerNode.setPos(self.playerNode, self.back * dt * move.speed * self.speed)
+      self.playerNode.setFluidPos(self.playerNode, self.back * dt * move.speed * self.speed)
     
     if self.keyMap['left'] == 1:
-      self.playerNode.setPos(self.playerNode, self.left * dt * move.speed * self.speed)
+      self.playerNode.setFluidPos(self.playerNode, self.left * dt * move.speed * self.speed)
     elif self.keyMap['right'] == 1:
-      self.playerNode.setPos(self.playerNode, self.right * dt * move.speed * self.speed)
+      self.playerNode.setFluidPos(self.playerNode, self.right * dt * move.speed * self.speed)
       
 
     if move == self.movement['sprint'] and self.movementSfx != self.runSfx:

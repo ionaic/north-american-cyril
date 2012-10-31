@@ -39,7 +39,6 @@ class Play(DirectObject):
     base.accept("escape", self.togglePause)
     self.setupSounds()
     self.initModels()
-    self.setupCollisions()
     self.task = taskMgr.add(self.update, "updateTask")
   
   def fadeOut(self):
@@ -107,9 +106,13 @@ class Play(DirectObject):
       #and initialize enemies
     if next:
       level += 1
+      for node in render.getChildren():
+        node.removeNode()
+      self.player = Player(self)
+      self.level = Level()
+      self.enemies = []
       self.player.level = level
-      self.level.loadLevel(level)
-      
+      self.level.loadLevel(level)      
     
     playerPos = self.level.playerPos #level.spawnPos
     walls = self.level.numWalls
@@ -127,6 +130,9 @@ class Play(DirectObject):
     self.playingBGM = self.bgSlow
     self.playingBGM.play()
     
+    if next:
+      self.setupCollisions()
+      print 'setup'
     
   def die(self, level, next = False):
     self.transitionFunc(level, next)
