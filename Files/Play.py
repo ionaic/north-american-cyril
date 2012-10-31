@@ -86,8 +86,8 @@ class Play(DirectObject):
     
   def initModels(self):
     self.map = MapGen(self)
-    self.player = Player(self)
-    self.level = Level()
+    # self.player = Player(self)
+    # self.level = Level()
     self.enemies = []
     self.startLevel(0, True)
   
@@ -107,8 +107,8 @@ class Play(DirectObject):
           node.removeNode()
         
       self.map = MapGen(self)
-      self.player = Player(self)
-      self.level = Level()
+      # self.player = Player(self)
+      # self.level = Level()
       self.enemies = []
     else:
       #Clear render
