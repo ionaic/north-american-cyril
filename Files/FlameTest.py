@@ -40,6 +40,16 @@ class FlameTest:
         pos = self.itemNode.getPos()
         self.rFlame.setPos(pos[0], pos[1], pos[2] + 4)
         
+        lightNode = NodePath('flame')
+        lightNode.reparentTo(self.rFlame)
+        lightNode.setZ(lightNode.getZ() + 0.5)
+        flame = PointLight('flame-light')
+        flameNP = lightNode.attachNewNode(flame)
+        flameNP.node().setColor(Vec4(0.9, 0.7, 0.5, 1.0))
+        # flameNP.node().setAttenuation(Vec3(0, 0.001, 0.000009))
+        flameNP.setZ(flameNP.getZ() + 0.6)
+        render.setLight(flameNP)
+        
     
     def setupLights(self):
         # set up an ambient light
@@ -47,7 +57,7 @@ class FlameTest:
         
         #for setting colors, alpha is largely irrelevant
         # slightly blue to try and produce a wintry, snowy look
-        self.ambientLight.setColor((1, 1, 1, 1.0))
+        self.ambientLight.setColor((0.1, 0.1, 0.1, 1.0))
         
         #create a NodePath, and attach it directly into the scene
         self.ambientLightNP = render.attachNewNode(self.ambientLight)

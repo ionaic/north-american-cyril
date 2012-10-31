@@ -21,6 +21,7 @@ class Play(DirectObject):
     #Turn off default mouse control
     base.disableMouse()
     base.setFrameRateMeter(True)
+    
     #globalClock = ClockObject.getGlobalClock()
     #globalClock.setMode(ClockObject.MLimited)
     #globalClock.setFrameRate(1000)
@@ -97,6 +98,18 @@ class Play(DirectObject):
   
   #level number, next = true if next level (false = respawning)
   def startLevel(self, level, next = False):
+    # per pixel lighting
+    render.clearLight()
+    render.setShaderAuto()
+    try:
+        self.level.initLight()
+    except AttributeError:
+        pass
+    try:
+        self.player.initHandLight()
+    except AttributeError:
+        pass
+    
     if next:
       for node in render.getChildren():
         node.removeNode()
@@ -121,6 +134,7 @@ class Play(DirectObject):
       level += 1
       for node in render.getChildren():
         node.removeNode()
+      
       self.player = Player(self)
       self.level = Level()
       self.enemies = []

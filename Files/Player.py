@@ -263,6 +263,9 @@ class Player(object):
     self.hand.setPlayRate(1.2, 'handAnim')
     self.hand.loop('handAnim')
     
+    self.initHandLight()
+    
+  def initHandLight(self):
     # illuminate the hand properly
     self.hand.setLightOff()
     handLight = PointLight("handLight")
