@@ -39,7 +39,7 @@ class Player(object):
     self.itemMax = 6
     self.itemDist = self.itemMax
     self.sideBuffer = 0
-    self.wallModel = loader.loadModel('Models/WallTemp')
+    self.wallModel = loader.loadModel('Models/Wall')
     self.walls = []
     self.lightModel = loader.loadModel('Models/light')
     self.lights = []
@@ -141,7 +141,7 @@ class Player(object):
     if item == 'wall':
       self.itemNode = self.wallModel
       self.itemNode.setColor(Vec4(1,1,1,0))
-      self.itemNode.setScale(5)
+      self.itemNode.setScale(15)
     elif item == 'light':
       self.itemNode = self.lightModel
       self.itemNode.setColor(Vec4(1,1,1,1))
@@ -192,12 +192,19 @@ class Player(object):
   
   #Places wall
   def placeWall(self):
-    item = render.attachNewNode('item-light')
+    item = render.attachNewNode('item-wall')
     item.setPos(self.itemNode.getPos(render))
     item.setHpr(self.itemNode.getHpr(render))
-    light = loader.loadModel('Models/WallTemp')
-    light.reparentTo(item)
-    light.setScale(self.playerScale*5)
+    wall = loader.loadModel('Models/Wall')
+    #wall.reparentTo(item)
+    #wall.setScale(self.playerScale*15)
+    
+    self.wallActor = Actor('Models/WallActor', {'wallAnim':'Models/WallAnim'})
+    self.wallActor.reparentTo(item)
+    self.wallActor.setScale(self.playerScale*15)
+    self.wallActor.setPlayRate(1, 'wallAnim')
+    self.wallActor.loop('wallAnim')
+    
     self.walls.append(item)
     self.wallSfx.play()
   
