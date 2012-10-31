@@ -1,9 +1,11 @@
 import direct.directbase.DirectStart #starts Panda
 from pandac.PandaModules import * #basic Panda modules
 from direct.showbase.DirectObject import DirectObject #event handling
+from direct.showbase.Transitions import Transitions
 from direct.actor.Actor import Actor #animated models
 from direct.interval.IntervalGlobal import * #compound intervals
 from direct.task import Task #update functions
+import time
 from MapGen import *
 from Player import *
 from Enemy import *
@@ -29,13 +31,22 @@ class Play(DirectObject):
     #props.setSize(int(base.pipe.getDisplayWidth()), int(base.pipe.getDisplayHeight()))
     self.props.setMouseMode(WindowProperties.MRelative)
     base.win.requestProperties(self.props)
+    
+    self.transition = Transitions(loader)
+    self.transition.setFadeColor(0,0,0)
+    
     self.parent = parent
     base.accept("escape", self.togglePause)
     self.setupSounds()
     self.initModels()
     self.setupCollisions()
-
     self.task = taskMgr.add(self.update, "updateTask")
+  
+  def fadeOut(self):
+    self.transition.fadeOut(1)
+    
+  def fadeIn(self):
+    self.transition.irisIn(1)
   
   def togglePause(self):
     if self.parent.paused:
@@ -69,11 +80,16 @@ class Play(DirectObject):
       self.playingBGM.play()
     
   def initModels(self):
-    self.map = MapGen()
+    self.map = MapGen(self)
     self.player = Player(self)
     self.enemies = []
     self.level = 1
     self.startLevel(1)
+  
+  def transitionFunc(self, level, next = True):
+    tSequence = Sequence(Func(self.fadeOut), Wait(1), Func(self.startLevel, level, next), 
+                               Func(self.fadeIn))
+    tSequence.start()
   
   #level number, next = true if next level (false = respawning)
   def startLevel(self, level, next = True):
@@ -84,11 +100,11 @@ class Play(DirectObject):
     
       #and initialize enemies
     if next:
-      enemy = Enemy( self, (0,0,3), [(0,-10,3), (0,10,3)] )
+      enemy = Enemy( self, (0,0,0), [(0,-10,0), (0,10,0)] )
       self.enemies.append(enemy)
       self.level += 1
     
-    pos = (-10,-10,3) #level.spawnPos
+    pos = (-30,-30,6) #level.spawnPos
     walls = 3 #level.walls
     lights = 3 #level.lights
     #Spawn player using spawn (spawn pos, max walls, max lights)
@@ -101,6 +117,9 @@ class Play(DirectObject):
     self.playingBGM = self.bgSlow
     self.playingBGM.play()
     
+    
+  def die(self, level, next = True):
+    self.transitionFunc(level, next)
     
   def setupCollisions(self): 
     #Make a collision traverser, set it to default   
@@ -125,10 +144,10 @@ class Play(DirectObject):
   #Set up BGM
   def setupSounds(self):
     ######################slow music############################
-    self.bgSlow = base.loadMusic("Sounds/musicbox.ogg")
+    self.bgSlow = base.loadMusic("sounds/slow.ogg")
     self.bgSlow.setLoopCount(0)
     ######################fast music############################
-    self.bgFast = base.loadMusic("Sounds/openclose.ogg")
+    self.bgFast = base.loadMusic("sounds/fast.ogg")
     self.bgFast.setLoopCount(0)
     self.playingBGM = self.bgSlow    
     
@@ -138,4 +157,3 @@ class Play(DirectObject):
     for enemy in self.enemies:
       enemy.update(globalClock.getDt(), self.player)
     return task.cont
-    

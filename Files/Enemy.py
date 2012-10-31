@@ -1,11 +1,12 @@
 from pandac.PandaModules import * #basic Panda modules
 from direct.showbase.DirectObject import DirectObject #event handling
 from panda3d.ai import * #panda AI
+from direct.actor.Actor import Actor
 import math, time
 
 class Enemy(object):
   def __init__(self, parent, spawnPos, AIpath):
-    self.speed = .03
+    self.speed = .1
     
     self.sightBlocked = True
     self.foundPlayer = False
@@ -15,22 +16,31 @@ class Enemy(object):
     
     self.parent = parent
     
+    self.startH = -1
+    self.blocked = False
+    self.justUnblocked = False
+    self.timeUnblocked = -1
+    
     self.initEnemy()
-    ##############################self.initSounds()
+    self.initSounds()
     self.initAI(AIpath)
     
   #Loads player node, camera, and light
   def initEnemy(self):
-    self.enemyNode = loader.loadModel('smiley')
-    self.enemyNode.setPos(self.spawnPos)
-    self.enemyNode.setScale(0.5)
+    self.enemyNode = Actor('Models/monster', {'walk':'Models/monsterWalkAnim',
+                                              'run':'Models/monsterRunAnim'})
     self.enemyNode.reparentTo(render)
+    self.enemyNode.setScale(0.2)
+    self.enemyNode.setPos(self.spawnPos)
+    self.enemyNode.setPlayRate(1.2, 'walk')
+    self.enemyNode.loop('walk')
     
   def initSounds(self):
-    self.stompSfx = base.loadSfx('Sounds/stomp.wav')
+    self.stompSfx = base.loadSfx('sounds/stomp.ogg')
     self.stompSfx.setLoopCount(0)
-    self.chaseSfx = base.loadSfx('Sounds/chase.wav')
-    self.chaseSfx.setLoopCount(0)
+    self.stompSfx.setVolume(.15)
+    #self.chaseSfx = base.loadSfx('Sounds/chase.wav')
+    #self.chaseSfx.setLoopCount(0)
     self.movementSfx = None
     
   #AIpath is a list of vertices
@@ -82,7 +92,7 @@ class Enemy(object):
     base.cTrav.addCollider(cNodePath, base.cHandler)
     
     #collides with the player to determine if the player is in the enemie's cone of vision
-    cTube = CollisionTube (0,-4,0,0,-6,0, 6)
+    cTube = CollisionTube (0,-40,0,0,-60,0, 60)
     cNode = CollisionNode('vision')
     cNode.addSolid(cTube)
     cNode.setCollideMask(BitMask32.allOff())
@@ -100,14 +110,24 @@ class Enemy(object):
     cNodePath = base.render.attachNewNode(self.cNode)
     base.cTrav.addCollider(cNodePath, self.queue)
     
+    #checks to see if it is blocked by a wall while patrolling
+    self.wallQueue = CollisionHandlerQueue()
+    cRay = CollisionRay(0, 0, 0, 0, -1, 0)
+    cNode = CollisionNode('wallSight')
+    cNode.addSolid(cRay)
+    cNode.setCollideMask(BitMask32.allOff())
+    cNode.setFromCollideMask(envMask|clearSightMask)
+    cNodePath = self.enemyNode.attachNewNode(cNode)
+    #cNodePath.show()
+    base.cTrav.addCollider(cNodePath, self.wallQueue)
+    
     base.accept('playerSight-again-vision', self.inSight)
     
   def inSight(self, cEntry):
     if not self.foundPlayer and not self.sightBlocked:
       self.foundPlayer = True
       self.foundPlayerTime = time.time()
-    if time.time() > self.foundPlayerTime + 5:
-      self.foundPlayer = False
+      #self.enemyNode.loop('run')
     
   def update(self, dt, player):
     if self.AIchar.getVelocity() == LVecBase3f(0, 0, 0):
@@ -117,6 +137,27 @@ class Enemy(object):
     self.cNode.modifySolid(0).setOrigin(LPoint3f (self.enemyNode.getX(), self.enemyNode.getY(), self.enemyNode.getZ()))
     self.cNode.modifySolid(0).setDirection(LVector3f ((self.enemyNode.getX() - player.playerNode.getX()) * -1, (self.enemyNode.getY() - player.playerNode.getY()) * -1, 0))
     
+    self.wallQueue.sortEntries()
+    if self.wallQueue.getNumEntries() > 0:
+        entry = self.wallQueue.getEntry(0)
+        type = entry.getIntoNode().getName()
+
+        if type == 'enemy1':
+            entry.getIntoNode().setIntoCollideMask(BitMask32.allOff())
+        if type == 'Wall':
+            if self.blocked == False:
+                self.startH = self.enemyNode.getH()
+            self.blocked = True
+        else:
+            self.blocked = False
+            self.justUnblocked = True
+            self.timeUnblocked = time.time()
+    else:
+        if self.blocked == True:
+            self.blocked = False
+            self.justUnblocked = True
+            self.timeUnblocked = time.time()
+            
     #checks the first element that the enemy sees between the player
     #if the first object it sees is not the player then it doesn't chase towards it
     self.queue.sortEntries()
@@ -134,21 +175,56 @@ class Enemy(object):
         self.move(dt, player)
         self.parent.chaseBGM(True)
     else:
-        self.AIworld.update() 
         self.parent.chaseBGM(False)
-    
-    ##########################Movement SFX
-    """
-    if self.foundPlayer and self.movementSfx != self.chaseSfx:
-      self.movementSfx.stop()
-      self.movementSfx = self.chaseSfx
-      self.movementSfx.play()
-    elif not self.foundPlayer and self.movementSfx != self.stompSfx:
-      self.movementSfx.stop()
-      self.movementSfx = self.stompSfx
-      self.movementSfx.play()
-    """
+        if self.blocked == True:
+            self.enemyNode.setH(self.enemyNode.getH() - 15)
+        elif self.justUnblocked == True:
+            if self.timeUnblocked + 3.0 < time.time():
+                self.justUnblocked = False
+                self.timeUnblocked = -1
+            else:
+                x_adjustment = 1
+                y_adjustment = 1
+
+                measure_against = self.startH % 360
+                if self.enemyNode.getH() < 0:
+                    measure_against = 360 - measure_against
+                    
+                if measure_against >=0 and measure_against < 90:
+                    x_adjustment = 1
+                    y_adjustment = -1
+                if measure_against >=90 and measure_against < 180:
+                    x_adjustment = 1
+                    y_adjustment = 1
+                if measure_against >= 180 and measure_against < 270:
+                    x_adjustment = -1    
+                    y_adjustment = 1
+                if measure_against >= 270 and measure_against < 360:
+                    x_adjustment = -1
+                    y_adjustment = -1
+                    
+                angle = self.startH - self.enemyNode.getH()
+                self.enemyNode.setX(self.enemyNode.getX() + x_adjustment * math.fabs(math.sin(math.radians(angle))) * self.speed)
+                self.enemyNode.setY(self.enemyNode.getY() + y_adjustment * math.fabs(math.cos(math.radians(angle))) * self.speed)
+        else:
+            self.AIworld.update()  
+            
+    if time.time() > self.foundPlayerTime + 5:
+      self.foundPlayer = False
       
+    #Movement SFX
+    #if self.foundPlayer and self.movementSfx != self.chaseSfx:
+    #  if self.movementSfx != None:
+    #    self.movementSfx.stop()
+    #  self.movementSfx = self.chaseSfx
+    #  self.movementSfx.play()
+    #if not self.foundPlayer and self.movementSfx != self.stompSfx:
+    if self.movementSfx != self.stompSfx:
+        if self.movementSfx != None:
+          self.movementSfx.stop()
+        self.movementSfx = self.stompSfx
+        #self.movementSfx.play()
+    
   #Moves player
   def move(self, dt, player):
     hypotenuse = math.sqrt( (player.playerNode.getX() - self.enemyNode.getX())**2 + (player.playerNode.getY() - self.enemyNode.getY())**2 ) 
