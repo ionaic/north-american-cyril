@@ -109,7 +109,7 @@ class Play(DirectObject):
       level += 1
       self.player.level = level
       self.level.loadLevel(level)
-      enemy = Enemy( self, (100,100,0), [(0,-10,0), (0,10,0)] )
+      enemy = Enemy( self, (50,50,0), [(0,-10,0), (0,10,0)] )
       self.enemies.append(enemy)
     
     pos = self.level.playerPos #level.spawnPos
@@ -117,7 +117,6 @@ class Play(DirectObject):
     lights = 3 #level.lights
     #Spawn player using spawn (spawn pos, max walls, max lights)
     self.player.spawn(pos,walls,lights)
-    print pos, self.player.playerNode.getPos(render)
     if not next:
       #enemies = list of enemies in level
       for enemy in self.enemies:

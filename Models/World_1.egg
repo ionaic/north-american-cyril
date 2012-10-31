@@ -3199,8 +3199,6 @@
     }
   }
   <ObjectType> { ghost }
-  <Collide> { Sphere }
-  <Scalar> collide-mask { 0 }
   <VertexPool> Player_spawn.verts {
     <Vertex> 0 {
       -0.526596 0.698609 -11.9548
@@ -3478,7 +3476,6 @@
     }
   }
   <ObjectType> { ghost }
-  <Scalar> collide-mask { 0 }
   <VertexPool> enemy1Shape.verts {
     <Vertex> 0 {
       9.776 0.328344 8.81753
@@ -3755,7 +3752,7 @@
       -0.0752193 1.8049 12.2569 1
     }
   }
-  <ObjectType> { bubble }
+  <ObjectType> { sphere }
   <VertexPool> exitShape.verts {
     <Vertex> 0 {
       -1.44105 0.00801052 11.7569
@@ -3801,5 +3798,281 @@
   <Polygon> {
     <Normal> { 0 0 -1 }
     <VertexRef> { 1 3 2 0 <Ref> { exitShape.verts } }
+  }
+}
+<Group> enemy1a {
+  <Transform> {
+    <Matrix4> {
+      1 0 0 0
+      0 1 0 0
+      0 0 1 0
+      -9.86509 0.61431 10.7361 1
+    }
+  }
+  <VertexPool> enemy1aShape.verts {
+    <Vertex> 0 {
+      -10.3676 -9.49513e-009 10.0174
+      <UV> {
+        0.125 0
+        <Tangent> { 0 0 1 }
+        <Binormal> { 0 1 0 }
+      }
+      <Normal> { -1 0 0 }
+      <RGBA> { 0.5 0.5 0.5 1 }
+    }
+    <Vertex> 1 {
+      -10.3676 -9.49513e-009 10.0174
+      <UV> {
+        0.375 0.75
+        <Tangent> { 1 0 0 }
+        <Binormal> { 0 0 1 }
+      }
+      <Normal> { 0 -1 0 }
+      <RGBA> { 0.5 0.5 0.5 1 }
+    }
+    <Vertex> 2 {
+      -10.3676 -9.49513e-009 10.0174
+      <UV> {
+        0.375 0.75
+        <Tangent> { 1 0 0 }
+        <Binormal> { 0 -1 0 }
+      }
+      <Normal> { 0 0 -1 }
+      <RGBA> { 0.5 0.5 0.5 1 }
+    }
+    <Vertex> 3 {
+      -10.3676 -9.49513e-009 11.4548
+      <UV> {
+        0.375 0
+        <Tangent> { 0 0 1 }
+        <Binormal> { 0 1 0 }
+      }
+      <Normal> { -1 0 0 }
+      <RGBA> { 0.5 0.5 0.5 1 }
+    }
+    <Vertex> 4 {
+      -10.3676 -9.49513e-009 11.4548
+      <UV> {
+        0.375 1
+        <Tangent> { 1 0 0 }
+        <Binormal> { 0 0 1 }
+      }
+      <Normal> { 0 -1 0 }
+      <RGBA> { 0.5 0.5 0.5 1 }
+    }
+    <Vertex> 5 {
+      -10.3676 -9.49513e-009 11.4548
+      <UV> {
+        0.375 0
+        <Tangent> { 1 0 0 }
+        <Binormal> { 0 1 0 }
+      }
+      <Normal> { 0 0 1 }
+      <RGBA> { 0.5 0.5 0.5 1 }
+    }
+    <Vertex> 6 {
+      -10.3676 1.22862 10.0174
+      <UV> {
+        0.125 0.25
+        <Tangent> { 0 0 1 }
+        <Binormal> { 0 1 0 }
+      }
+      <Normal> { -1 0 0 }
+      <RGBA> { 0.5 0.5 0.5 1 }
+    }
+    <Vertex> 7 {
+      -10.3676 1.22862 10.0174
+      <UV> {
+        0.375 0.5
+        <Tangent> { 1 0 0 }
+        <Binormal> { 0 -1 0 }
+      }
+      <Normal> { 0 0 -1 }
+      <RGBA> { 0.5 0.5 0.5 1 }
+    }
+    <Vertex> 8 {
+      -10.3676 1.22862 10.0174
+      <UV> {
+        0.375 0.5
+        <Tangent> { 1 0 0 }
+        <Binormal> { 0 0 -1 }
+      }
+      <Normal> { 0 1 0 }
+      <RGBA> { 0.5 0.5 0.5 1 }
+    }
+    <Vertex> 9 {
+      -10.3676 1.22862 11.4548
+      <UV> {
+        0.375 0.25
+        <Tangent> { 0 0 1 }
+        <Binormal> { 0 1 0 }
+      }
+      <Normal> { -1 0 0 }
+      <RGBA> { 0.5 0.5 0.5 1 }
+    }
+    <Vertex> 10 {
+      -10.3676 1.22862 11.4548
+      <UV> {
+        0.375 0.25
+        <Tangent> { 1 0 0 }
+        <Binormal> { 0 1 0 }
+      }
+      <Normal> { 0 0 1 }
+      <RGBA> { 0.5 0.5 0.5 1 }
+    }
+    <Vertex> 11 {
+      -10.3676 1.22862 11.4548
+      <UV> {
+        0.375 0.25
+        <Tangent> { 1 0 0 }
+        <Binormal> { 0 0 -1 }
+      }
+      <Normal> { 0 1 0 }
+      <RGBA> { 0.5 0.5 0.5 1 }
+    }
+    <Vertex> 12 {
+      -9.3626 -9.49513e-009 10.0174
+      <UV> {
+        0.625 0.75
+        <Tangent> { 1 0 0 }
+        <Binormal> { 0 0 1 }
+      }
+      <Normal> { 0 -1 0 }
+      <RGBA> { 0.5 0.5 0.5 1 }
+    }
+    <Vertex> 13 {
+      -9.3626 -9.49513e-009 10.0174
+      <UV> {
+        0.625 0.75
+        <Tangent> { 1 0 0 }
+        <Binormal> { 0 -1 0 }
+      }
+      <Normal> { 0 0 -1 }
+      <RGBA> { 0.5 0.5 0.5 1 }
+    }
+    <Vertex> 14 {
+      -9.3626 -9.49513e-009 10.0174
+      <UV> {
+        0.875 0
+        <Tangent> { 0 0 -1 }
+        <Binormal> { 0 1 0 }
+      }
+      <Normal> { 1 0 0 }
+      <RGBA> { 0.5 0.5 0.5 1 }
+    }
+    <Vertex> 15 {
+      -9.3626 -9.49513e-009 11.4548
+      <UV> {
+        0.625 1
+        <Tangent> { 1 0 0 }
+        <Binormal> { 0 0 1 }
+      }
+      <Normal> { 0 -1 0 }
+      <RGBA> { 0.5 0.5 0.5 1 }
+    }
+    <Vertex> 16 {
+      -9.3626 -9.49513e-009 11.4548
+      <UV> {
+        0.625 0
+        <Tangent> { 1 0 0 }
+        <Binormal> { 0 1 0 }
+      }
+      <Normal> { 0 0 1 }
+      <RGBA> { 0.5 0.5 0.5 1 }
+    }
+    <Vertex> 17 {
+      -9.3626 -9.49513e-009 11.4548
+      <UV> {
+        0.625 0
+        <Tangent> { 0 0 -1 }
+        <Binormal> { 0 1 0 }
+      }
+      <Normal> { 1 0 0 }
+      <RGBA> { 0.5 0.5 0.5 1 }
+    }
+    <Vertex> 18 {
+      -9.3626 1.22862 10.0174
+      <UV> {
+        0.625 0.5
+        <Tangent> { 1 0 0 }
+        <Binormal> { 0 -1 0 }
+      }
+      <Normal> { 0 0 -1 }
+      <RGBA> { 0.5 0.5 0.5 1 }
+    }
+    <Vertex> 19 {
+      -9.3626 1.22862 10.0174
+      <UV> {
+        0.625 0.5
+        <Tangent> { 1 0 0 }
+        <Binormal> { 0 0 -1 }
+      }
+      <Normal> { 0 1 0 }
+      <RGBA> { 0.5 0.5 0.5 1 }
+    }
+    <Vertex> 20 {
+      -9.3626 1.22862 10.0174
+      <UV> {
+        0.875 0.25
+        <Tangent> { 0 0 -1 }
+        <Binormal> { 0 1 0 }
+      }
+      <Normal> { 1 0 0 }
+      <RGBA> { 0.5 0.5 0.5 1 }
+    }
+    <Vertex> 21 {
+      -9.3626 1.22862 11.4548
+      <UV> {
+        0.625 0.25
+        <Tangent> { 1 0 0 }
+        <Binormal> { 0 1 0 }
+      }
+      <Normal> { 0 0 1 }
+      <RGBA> { 0.5 0.5 0.5 1 }
+    }
+    <Vertex> 22 {
+      -9.3626 1.22862 11.4548
+      <UV> {
+        0.625 0.25
+        <Tangent> { 1 0 0 }
+        <Binormal> { 0 0 -1 }
+      }
+      <Normal> { 0 1 0 }
+      <RGBA> { 0.5 0.5 0.5 1 }
+    }
+    <Vertex> 23 {
+      -9.3626 1.22862 11.4548
+      <UV> {
+        0.625 0.25
+        <Tangent> { 0 0 -1 }
+        <Binormal> { 0 1 0 }
+      }
+      <Normal> { 1 0 0 }
+      <RGBA> { 0.5 0.5 0.5 1 }
+    }
+  }
+  <Polygon> {
+    <Normal> { 0 0 1 }
+    <VertexRef> { 5 16 21 10 <Ref> { enemy1aShape.verts } }
+  }
+  <Polygon> {
+    <Normal> { 0 1 0 }
+    <VertexRef> { 11 22 19 8 <Ref> { enemy1aShape.verts } }
+  }
+  <Polygon> {
+    <Normal> { 0 0 -1 }
+    <VertexRef> { 7 18 13 2 <Ref> { enemy1aShape.verts } }
+  }
+  <Polygon> {
+    <Normal> { 0 -1 0 }
+    <VertexRef> { 1 12 15 4 <Ref> { enemy1aShape.verts } }
+  }
+  <Polygon> {
+    <Normal> { 1 0 0 }
+    <VertexRef> { 17 14 20 23 <Ref> { enemy1aShape.verts } }
+  }
+  <Polygon> {
+    <Normal> { -1 0 0 }
+    <VertexRef> { 0 3 9 6 <Ref> { enemy1aShape.verts } }
   }
 }

@@ -1,6 +1,6 @@
 //Maya ASCII 2013 scene
 //Name: World_1.ma
-//Last modified: Wed, Oct 31, 2012 04:41:49 AM
+//Last modified: Wed, Oct 31, 2012 05:31:42 AM
 //Codeset: 1252
 requires maya "2013";
 requires "stereoCamera" "10.0";
@@ -13,12 +13,12 @@ fileInfo "osv" "Microsoft Windows 7 Enterprise Edition, 64-bit Windows 7 Service
 fileInfo "license" "student";
 createNode transform -s -n "persp";
 	setAttr ".v" no;
-	setAttr ".t" -type "double3" -26.258364171089454 26.70856343297946 -23.439754286157477 ;
-	setAttr ".r" -type "double3" -35.138352729566982 -488.99999999979633 0 ;
+	setAttr ".t" -type "double3" -0.60677115310020646 5.6614122670026337 -16.43386625294006 ;
+	setAttr ".r" -type "double3" -14.738352729551355 -540.99999999975955 0 ;
 createNode camera -s -n "perspShape" -p "persp";
 	setAttr -k off ".v" no;
 	setAttr ".fl" 34.999999999999993;
-	setAttr ".coi" 45.701889490455166;
+	setAttr ".coi" 20.160501528894997;
 	setAttr ".imn" -type "string" "persp";
 	setAttr ".den" -type "string" "persp_depth";
 	setAttr ".man" -type "string" "persp_mask";
@@ -120,6 +120,17 @@ createNode transform -n "exit";
 	setAttr ".s" -type "double3" 2.7316620129747906 3.5937821370929135 1 ;
 	setAttr -k on ".eggObjectTypes1" 2;
 createNode mesh -n "exitShape" -p "exit";
+	setAttr -k off ".v";
+	setAttr ".vir" yes;
+	setAttr ".vif" yes;
+	setAttr ".uvst[0].uvsn" -type "string" "map1";
+	setAttr ".cuvs" -type "string" "map1";
+	setAttr ".dcc" -type "string" "Ambient+Diffuse";
+	setAttr ".covm[0]"  0 1 1;
+	setAttr ".cdvm[0]"  0 1 1;
+createNode transform -n "enemy1a";
+	setAttr ".t" -type "double3" -9.8650918255750479 0.61431049351085565 10.736108206971695 ;
+createNode mesh -n "enemy1aShape" -p "enemy1a";
 	setAttr -k off ".v";
 	setAttr ".vir" yes;
 	setAttr ".vif" yes;
@@ -411,13 +422,18 @@ createNode place2dTexture -n "place2dTexture7";
 createNode polyNormal -n "polyNormal1";
 	setAttr ".ics" -type "componentList" 1 "f[0:69]";
 	setAttr ".unm" no;
+createNode polyCube -n "polyCube6";
+	setAttr ".w" 1.0049868884516933;
+	setAttr ".h" 1.2286209870217113;
+	setAttr ".d" 1.4373891088683415;
+	setAttr ".cuv" 4;
 select -ne :time1;
 	setAttr ".o" 1;
 	setAttr ".unw" 1;
 select -ne :renderPartition;
 	setAttr -s 10 ".st";
 select -ne :initialShadingGroup;
-	setAttr -s 3 ".dsm";
+	setAttr -s 4 ".dsm";
 	setAttr ".ro" yes;
 select -ne :initialParticleSE;
 	setAttr ".ro" yes;
@@ -448,6 +464,7 @@ connectAttr "groupId4.id" "lvlShape1.ciog.cog[2].cgid";
 connectAttr "polyCube2.out" "Player_spawn.i";
 connectAttr "polyCube3.out" "enemy1Shape.i";
 connectAttr "deleteComponent3.og" "exitShape.i";
+connectAttr "polyCube6.out" "enemy1aShape.i";
 relationship "link" ":lightLinker1" ":initialShadingGroup.message" ":defaultLightSet.message";
 relationship "link" ":lightLinker1" ":initialParticleSE.message" ":defaultLightSet.message";
 relationship "link" ":lightLinker1" "lambert2SG.message" ":defaultLightSet.message";
@@ -695,6 +712,7 @@ connectAttr "lambert9SG.pa" ":renderPartition.st" -na;
 connectAttr "Player_spawn.iog" ":initialShadingGroup.dsm" -na;
 connectAttr "enemy1Shape.iog" ":initialShadingGroup.dsm" -na;
 connectAttr "exitShape.iog" ":initialShadingGroup.dsm" -na;
+connectAttr "enemy1aShape.iog" ":initialShadingGroup.dsm" -na;
 connectAttr "lambert2.msg" ":defaultShaderList1.s" -na;
 connectAttr "lambert3.msg" ":defaultShaderList1.s" -na;
 connectAttr "lambert4.msg" ":defaultShaderList1.s" -na;

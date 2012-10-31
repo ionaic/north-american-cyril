@@ -93,13 +93,13 @@ class Enemy(object):
     #cNodePath.show()
     
     #collides with the player to determine if the player is in the enemie's cone of vision
-    cTube = CollisionTube (0,-40,0,0,-60,0, 60)
+    cTube = CollisionTube (0,-40,0,0,-600,0, 60)
     cNode = CollisionNode('vision')
     cNode.addSolid(cTube)
     cNode.setCollideMask(BitMask32.allOff())
     cNode.setIntoCollideMask(sightMask)
     cNodePath = self.enemyNode.attachNewNode(cNode)
-    #cNodePath.show()
+    cNodePath.show()
     
     #checks to see if there is anything blocking the enemie's line of sight to the player
     self.queue = CollisionHandlerQueue()
