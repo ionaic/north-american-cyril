@@ -6,7 +6,7 @@ import math, time
 
 class Enemy(object):
   def __init__(self, parent, spawnPos, AIpath):
-    self.speed = .1
+    self.speed = 0.25
     
     self.sightBlocked = False
     self.foundPlayer = False
@@ -93,7 +93,7 @@ class Enemy(object):
     #cNodePath.show()
     
     #collides with the player to determine if the player is in the enemie's cone of vision
-    cTube = CollisionTube (0,-40,0,0,-600,0, 60)
+    cTube = CollisionTube (0,-40,0,0,-60,0, 60)
     cNode = CollisionNode('vision')
     cNode.addSolid(cTube)
     cNode.setCollideMask(BitMask32.allOff())

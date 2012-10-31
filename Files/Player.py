@@ -289,7 +289,8 @@ class Player(object):
     self.spawnPos = pos
     self.maxWalls = walls
     self.maxLights = lights
-    self.playerNode.setPos(render, pos)
+    heightPos = LPoint3f(pos[0], pos[1], 3)
+    self.playerNode.setPos(render, heightPos)
     self.wallsLeft = walls
     self.walls = []
     self.lightsLeft = lights

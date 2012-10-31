@@ -35,22 +35,36 @@ class Level:
 
     self.setItems(levelNum)
     self.setStart()
+    self.setTorches()
     # environments are small, make them larger
     self.env.setScale(self.envScale)
     self.env.setTwoSided(True)
     self.env.reparentTo(render)
  
   def setStart(self):
-    playerSpawn = self.env.find('*/start')
+    playerSpawn = self.env.find('*/Start')
+    pos = LPoint3f(playerSpawn.getX(), playerSpawn.getY(), 0.)
     self.playerPos = playerSpawn.getPos() * self.envScale
     
-    self.enemies = {}
+    self.enemies = []
     enemies = self.env.findAllMatches('*/enemy?')
     for enemy in enemies:
-      print enemy.getName()
-      print self.env.findAllMatches("*/%s?"%enemy.getName())
-      self.enemies[enemy] = enemy.getPos() * self.envScale
-       
+      eSpawn = enemy.getPos() * self.envScale
+      ePath = self.env.findAllMatches("*/%s?"%enemy.getName())
+      AiPath = [eSpawn]
+      for vertex in ePath:
+        pos = LPoint3f(vertex.getX(), vertex.getY(), 0.)
+        AiPath.append(pos * self.envScale)
+      eTuple = (eSpawn, AiPath)
+      print eTuple
+      self.enemies.append( (eSpawn, AiPath) )
+  
+  def setTorches(self):
+    torches = self.env.findAllMatches('*/torch')
+    for torch in torches:
+      torchPos = torch.getPos() * self.envScale
+      
+  
   def setItems(self, levelNum):
     if levelNum == 1:
       self.numLights = 5
