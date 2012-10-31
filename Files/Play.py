@@ -88,18 +88,17 @@ class Play(DirectObject):
   def initModels(self):
     #self.map = MapGen(self)
     self.player = Player(self)
-    self.level = Level(self, 
+    self.level = Level()
     self.enemies = []
-    self.level = 1
-    self.startLevel(1)
+    self.startLevel(0, True)
   
-  def transitionFunc(self, level, next = True):
+  def transitionFunc(self, level, next = False):
     tSequence = Sequence(Func(self.fadeOut), Wait(1), Func(self.startLevel, level, next), 
                                Func(self.fadeIn))
     tSequence.start()
   
   #level number, next = true if next level (false = respawning)
-  def startLevel(self, level, next = True):
+  def startLevel(self, level, next = False):
     #Clear render
     self.player.clearItems()
     
@@ -107,9 +106,11 @@ class Play(DirectObject):
     
       #and initialize enemies
     if next:
+      level += 1
+      self.player.level = level
+      self.level.loadLevel(level)
       enemy = Enemy( self, (0,0,0), [(0,-10,0), (0,10,0)] )
       self.enemies.append(enemy)
-      self.level += 1
     
     pos = (-30,-30,6) #level.spawnPos
     walls = 3 #level.walls
@@ -125,7 +126,7 @@ class Play(DirectObject):
     self.playingBGM.play()
     
     
-  def die(self, level, next = True):
+  def die(self, level, next = False):
     self.transitionFunc(level, next)
     
   def setupCollisions(self): 

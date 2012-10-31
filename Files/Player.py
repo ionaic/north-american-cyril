@@ -15,7 +15,7 @@ class Player(object):
   #Initializes player
   def __init__(self, parent):
     self.parent = parent
-    self.level = 1
+    self.level = 0
     #Movement data
     self.speed = 40
     self.playerScale = 0.05
