@@ -49,10 +49,8 @@ class Level:
       return
 
   def setStart(self):
-    print 'x'
-    print self.env.findAllMatches('**/**')
-    return
-    self.start = self.loadObj(self.env, "playerSpawn").node().getSolid(0).getCollisionOrigin()
+    playerSpawn = self.env.find('**/playerSpawn*')
+    print playerSpawn.node().getPos()
     #self.startDir = direction
  
   # replace self.end = pos with collision object? 
