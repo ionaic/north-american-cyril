@@ -380,11 +380,12 @@ class Player(object):
       return
     base.queue.sortEntries()
     playerPos = base.camera.getPos(render)
-    first = base.queue.getEntry(0)
-    cPos = first.getSurfacePoint(render)
-    rayName = first.getFromNodePath().getName()
-    dist = math.sqrt((playerPos[0]-cPos[0])**2 + (playerPos[1]-cPos[1])**2)
-    self.itemDist = min(dist, self.itemMax)
+    if base.queue.getNumEntries() > 0:
+        first = base.queue.getEntry(0)
+        cPos = first.getSurfacePoint(render)
+        rayName = first.getFromNodePath().getName()
+        dist = math.sqrt((playerPos[0]-cPos[0])**2 + (playerPos[1]-cPos[1])**2)
+        self.itemDist = min(dist, self.itemMax)
     """
     if rayName == 'rayLeft':
       self.sideBuffer = 0.5
