@@ -43,6 +43,7 @@
       0.110161 2.83777 0.123299 1
     }
   }
+  <Collide> {Polyset keep descend}
   <VertexPool> lvl2.verts {
     <Vertex> 0 {
       -7.72482 5.67555 -7.00527

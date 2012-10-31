@@ -39,7 +39,6 @@ class Play(DirectObject):
     base.accept("escape", self.togglePause)
     self.setupSounds()
     self.initModels()
-    self.setupCollisions()
     self.task = taskMgr.add(self.update, "updateTask")
   
   def fadeOut(self):
@@ -108,21 +107,36 @@ class Play(DirectObject):
     if next:
       print 'next level \n\n\n'
       level += 1
+      for node in render.getChildren():
+        node.removeNode()
+      self.player = Player(self)
+      self.level = Level()
+      self.enemies = []
       self.player.level = level
+<<<<<<< HEAD
       self.level.loadLevel(level)
       for enemy in self.level.enemies:
         enemySpawn = Enemy( self, enemy[0], enemy[1] )
         self.enemies.append(enemySpawn)
       print 'yes \n\n\n'
+=======
+      self.level.loadLevel(level)      
+>>>>>>> codennis
     
     playerPos = self.level.playerPos #level.spawnPos
     walls = self.level.numWalls
     lights = self.level.numLights
     #Spawn player using spawn (spawn pos, max walls, max lights)
     self.player.spawn(playerPos,walls,lights)
+<<<<<<< HEAD
     print 'derp'
+=======
+    if next:
+      for enemy in self.level.enemies:
+        enemySpawn = Enemy( self, enemy[0], enemy[1] )
+        self.enemies.append(enemySpawn)
+>>>>>>> codennis
     if not next:
-      #enemies = list of enemies in level
       for enemy in self.enemies:
         enemy.respawn()
     print 'derp2'
@@ -130,6 +144,9 @@ class Play(DirectObject):
     self.playingBGM = self.bgSlow
     self.playingBGM.play()
     
+    if next:
+      self.setupCollisions()
+      print 'setup'
     
   def die(self, level, next = False):
     self.transitionFunc(level, next)

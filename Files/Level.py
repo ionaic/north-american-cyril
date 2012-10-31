@@ -12,8 +12,8 @@ class Level:
   def initLight(self):
     #Loads ambient lighting
     self.ambientLight = AmbientLight("ambientLight")
-    self.ambientLight.setColor((0.1, 0.1, 0.1, 1.0))
-    #self.ambientLight.setColor((0.01, 0.01, 0.01, 1.0))
+    # self.ambientLight.setColor((0.1, 0.1, 0.1, 1.0))
+    self.ambientLight.setColor((0.01, 0.01, 0.01, 1.0))
     self.ambientLightNP = render.attachNewNode(self.ambientLight)
     #the node that calls setLight is what's illuminated by the given light
     render.setLight(self.ambientLightNP)
@@ -42,7 +42,10 @@ class Level:
     self.env.reparentTo(render)
  
   def setStart(self):
+<<<<<<< HEAD
     print 'setStart\n\n\n', self.env
+=======
+>>>>>>> codennis
     playerSpawn = self.env.find('*/start')
     pos = LPoint3f(playerSpawn.getX(), playerSpawn.getY(), 0.)
     self.playerPos = playerSpawn.getPos() * self.envScale

@@ -99,7 +99,7 @@ class Enemy(object):
     cNode.setCollideMask(BitMask32.allOff())
     cNode.setIntoCollideMask(sightMask)
     cNodePath = self.enemyNode.attachNewNode(cNode)
-    cNodePath.show()
+    #cNodePath.show()
     
     #checks to see if there is anything blocking the enemie's line of sight to the player
     self.queue = CollisionHandlerQueue()
@@ -132,6 +132,7 @@ class Enemy(object):
       #self.enemyNode.loop('run')
     
   def update(self, dt, player):
+<<<<<<< HEAD
     if player.newLevel:
       return
     try:
@@ -139,6 +140,14 @@ class Enemy(object):
     except AttributeError:
         print("enemy cnode not defined")
         return
+=======
+    try:
+      self.cNode
+    except AttributeError:
+      print ("enemy cnode not defined")
+      return
+      
+>>>>>>> codennis
     if self.AIchar.getVelocity() == LVecBase3f(0, 0, 0):
         self.AIbehaviors.startFollow()
     
