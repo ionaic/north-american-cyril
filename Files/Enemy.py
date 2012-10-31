@@ -121,7 +121,7 @@ class Enemy(object):
     cNode.setFromCollideMask(envMask|clearSightMask)
     cNodePath = self.enemyNode.attachNewNode(cNode)
     base.cTrav.addCollider(cNodePath, self.wallQueue)
-    cNodePath.show()
+    #cNodePath.show()
     
     base.accept('playerSight-again-vision', self.inSight)
     
