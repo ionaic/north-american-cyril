@@ -90,7 +90,7 @@ class Play(DirectObject):
     self.player = Player(self)
     self.level = Level()
     self.enemies = []
-    self.startLevel(1, True)
+    self.startLevel(0, True)
   
   def transitionFunc(self, level, next = False):
     tSequence = Sequence(Func(self.fadeOut), Wait(1), Func(self.startLevel, level, next), 
