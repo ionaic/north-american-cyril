@@ -22,7 +22,6 @@
   }
 }
 <Group> pCube1 {
-  <Collide> {Polyset keep descend} 
   <Transform> {
     <Matrix4> {
       5.95046 0 0 0
@@ -31,6 +30,7 @@
       0 0.0989538 0 1
     }
   }
+  <Collide> {Polyset keep descend} 
   <VertexPool> pCubeShape1.verts {
     <Vertex> 0 {
       -2.97523 0.0824725 -0.5
@@ -273,7 +273,6 @@
       <RGBA> { 1 1 1 1 }
     }
   }
-  <Collide> {Polyset keep descend} 
   <Polygon> {
     <Normal> { 0 0 1 }
     <TRef> { lambert2SG }

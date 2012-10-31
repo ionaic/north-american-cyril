@@ -42,7 +42,7 @@ class Level:
     self.env.reparentTo(render)
  
   def setStart(self):
-    playerSpawn = self.env.find('*/Start')
+    playerSpawn = self.env.find('*/start')
     pos = LPoint3f(playerSpawn.getX(), playerSpawn.getY(), 0.)
     self.playerPos = playerSpawn.getPos() * self.envScale
     
