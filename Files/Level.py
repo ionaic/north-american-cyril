@@ -5,7 +5,7 @@ from direct.showbase.DirectObject import DirectObject #event handling
 import Player
 
 class Level:
-    def __init__(self, levelNum):
+    def __init__(self, levelNum, player):
         self.loadLevel(levelNum)
         # self.start = [0, 0, 0]
         self.setItems(levelNum)
@@ -50,6 +50,8 @@ class Level:
     # replace self.end = pos with collision object? 
     def setEnd(self):
         self.end = self.loadColObj(self.env, "exit")
+        # self.end.setFromCollideMask(BitMask32.allOn())
+        self.end.setIntoCollideMask(BitMask32.allOn())
         self.endNP = self.env.attachNewNode(self.end)
         base.cTrav.addCollider(self.endNP, base.cHandler)
 

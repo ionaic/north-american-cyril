@@ -213,7 +213,7 @@ class Play(DirectObject):
       self.playingBGM.play()
     
   def initModels(self):
-    self.map = MapGen()
+    self.map = MapGen(self)
     self.player = Player(self)
     self.enemies = []
     self.level = 1
