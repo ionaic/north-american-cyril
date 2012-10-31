@@ -56,16 +56,22 @@ class Play(DirectObject):
       base.win.requestProperties(self.props)
       base.win.movePointer(0, base.win.getXSize()/2, base.win.getYSize()/2)
       taskMgr.add(self.task)
-      self.parent.mainFrame.hide()
       self.parent.paused = False 
+      self.parent.continueImage.hide()
+      self.parent.restartImage.hide()
+      self.parent.exitImage.hide()
+      self.parent.mainFrame.hide()
       self.playingBGM.setTime(self.bgmTime) 
       self.playingBGM.play()
     else:
       self.props.setCursorHidden(False)
       base.win.requestProperties(self.props)
       taskMgr.remove(self.task)
-      self.parent.mainFrame.show()
       self.parent.paused = True
+      self.parent.mainFrame.show()
+      self.parent.continueImage.show()
+      self.parent.restartImage.show()
+      self.parent.exitImage.show()
       self.bgmTime = self.playingBGM.getTime() 
       self.playingBGM.stop()
   
