@@ -21,7 +21,7 @@ class Level:
 
   def loadLevel(self, levelNum):
     if levelNum == 1:
-        self.env = loader.loadModel("Models/lv1")
+        self.env = loader.loadModel("Models/world1")
     elif levelNum == 2:
         self.env = loader.loadModel("Models/lv2")
     elif levelNum == 3:
@@ -42,8 +42,6 @@ class Level:
     self.env.reparentTo(render)
  
   def setStart(self):
-    # print 'setStart\n\n\n', self.env
-
     playerSpawn = self.env.find('*/start')
     pos = LPoint3f(playerSpawn.getX(), playerSpawn.getY(), 0.)
     self.playerPos = playerSpawn.getPos() * self.envScale
@@ -51,11 +49,11 @@ class Level:
     self.enemies = []
     enemies = self.env.findAllMatches('*/enemy?')
     for enemy in enemies:
-      eSpawn = enemy.getPos() * self.envScale
+      eSpawn = LPoint3f(enemy.getX(), enemy.getY(), 0) * self.envScale
       ePath = self.env.findAllMatches("*/%s?"%enemy.getName())
       AiPath = [eSpawn]
       for vertex in ePath:
-        pos = LPoint3f(vertex.getX(), vertex.getY(), 0.)
+        pos = LPoint3f(vertex.getX(), vertex.getY(), 0)
         AiPath.append(pos * self.envScale)
       eTuple = (eSpawn, AiPath)
       print eTuple

@@ -25,7 +25,7 @@ class Player(object):
     self.movement['stand'] = Movement(0, 0.03, 1.3)
     self.movement['caution'] = Movement(1, 0.051, 2.1)
     self.movement['walk'] = Movement(1.5, 0.079, 2.7)
-    self.movement['sprint'] = Movement(5, 0.16, 3.6)
+    self.movement['sprint'] = Movement(30, 0.16, 3.6)
     self.forward = Vec3(0,1,0)
     self.back = Vec3(0,-1,0)
     self.left = Vec3(-1,0,0)
@@ -199,8 +199,8 @@ class Player(object):
     item.setZ(item.getZ() - 10)
     item.setHpr(self.itemNode.getHpr(render))
     wall = loader.loadModel('Models/Wall')
-    #wall.reparentTo(item)
-    #wall.setScale(self.playerScale*15)
+    wall.reparentTo(item)
+    wall.setScale(self.playerScale*15)
     
     #self.wallActor = Actor('Models/WallActor2', {'wallAnim':'Models/WallAnim2'})
     self.wallActor = loader.loadModel('Models/WallActor.egg')
@@ -328,7 +328,7 @@ class Player(object):
     activeMask = BitMask32(0x16)
     
     #Collide with enemies    
-    cSphere = CollisionSphere( 0, 0, 2, 3 )
+    cSphere = CollisionSphere( 0, 0, 2, 4 )
     cNode = CollisionNode('player')
     cNode.addSolid(cSphere)
     cNode.setCollideMask(BitMask32.allOff())
@@ -338,28 +338,29 @@ class Player(object):
     base.cTrav.addCollider(cNodePath, base.queue)
     
     #collide with enemy sight
-    cSphere = CollisionSphere( 0, 0, 2, 3 )
+    cSphere = CollisionSphere( 0, 0, 2, 4 )
     cNode = CollisionNode('playerSight')
     cNode.addSolid(cSphere)
     cNode.setCollideMask(BitMask32.allOff())
     cNode.setFromCollideMask(sightMask)
     cNode.setIntoCollideMask(clearSightMask)
     cNodePath = self.playerNode.attachNewNode(cNode)
-    cNodePath.show()
+    #cNodePath.show()
     base.cTrav.addCollider(cNodePath, base.cHandler)
     
     #Collide with env
-    cSphere = CollisionSphere(0,0,2,3)
+    cSphere = CollisionSphere(0,0,2,4)
     cNode = CollisionNode('pusherNode')
     cNode.addSolid(cSphere)
-    cNode.setCollideMask(envMask)
+    cNode.setCollideMask(BitMask32.allOff())
+    cNode.setFromCollideMask(envMask)
     cNodePath = self.playerNode.attachNewNode(cNode)
     #cNodePath.show()
     base.cTrav.addCollider(cNodePath, base.pusher)
     base.pusher.addCollider(cNodePath, self.playerNode, base.drive.node())
     
     #Collide with active env   
-    cSphere = CollisionSphere( 0, 0, 2, 3.1)
+    cSphere = CollisionSphere( 0, 0, 2, 4.1)
     cNode = CollisionNode('playerEnv')
     cNode.addSolid(cSphere)
     cNode.setCollideMask(BitMask32.allOff())

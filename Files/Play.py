@@ -98,14 +98,26 @@ class Play(DirectObject):
   
   #level number, next = true if next level (false = respawning)
   def startLevel(self, level, next = False):
-    #Clear render
-    self.player.clearItems()
+    if next:
+      for node in render.getChildren():
+        node.removeNode()
+      for node in base.camera.getChildren():
+        if node.getName() != 'cam':
+          print node.getName()
+          node.removeNode()
+        
+      self.map = MapGen(self)
+      self.player = Player(self)
+      self.level = Level()
+      self.enemies = []
+    else:
+      #Clear render
+      self.player.clearItems()
     
     #If next level, load level map
     
       #and initialize enemies
     if next:
-      print 'next level \n\n\n'
       level += 1
       for node in render.getChildren():
         node.removeNode()
@@ -115,33 +127,26 @@ class Play(DirectObject):
       self.player.level = level
 
       self.level.loadLevel(level)
-      # for enemy in self.level.enemies:
-        # enemySpawn = Enemy( self, enemy[0], enemy[1] )
-        # self.enemies.append(enemySpawn)
-      # print 'yes \n\n\n'
-    
+      for enemy in self.level.enemies:
+        enemySpawn = Enemy( self, enemy[0], enemy[1] )
+        self.enemies.append(enemySpawn)
+        
     playerPos = self.level.playerPos #level.spawnPos
     walls = self.level.numWalls
     lights = self.level.numLights
     #Spawn player using spawn (spawn pos, max walls, max lights)
     self.player.spawn(playerPos,walls,lights)
-
-    if next:
-      for enemy in self.level.enemies:
-        enemySpawn = Enemy( self, enemy[0], enemy[1] )
-        self.enemies.append(enemySpawn)
-
+    
     if not next:
       for enemy in self.enemies:
         enemy.respawn()
-    print 'derp2'
-    
+        
     self.playingBGM = self.bgSlow
     self.playingBGM.play()
     
     if next:
       self.setupCollisions()
-      print 'setup'
+    
     
   def die(self, level, next = False):
     self.transitionFunc(level, next)
