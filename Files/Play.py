@@ -43,10 +43,10 @@ class Play(DirectObject):
     self.task = taskMgr.add(self.update, "updateTask")
   
   def fadeOut(self):
-    self.transition.fadeOut(2)
+    self.transition.fadeOut(1)
     
   def fadeIn(self):
-    self.transition.irisIn(2)
+    self.transition.irisIn(1)
   
   def togglePause(self):
     if self.parent.paused:
@@ -87,7 +87,7 @@ class Play(DirectObject):
     self.startLevel(1)
   
   def transitionFunc(self, level, next = True):
-    tSequence = Sequence(Func(self.fadeOut), Wait(2), Func(self.startLevel, level, next), 
+    tSequence = Sequence(Func(self.fadeOut), Wait(1), Func(self.startLevel, level, next), 
                                Func(self.fadeIn))
     tSequence.start()
   
