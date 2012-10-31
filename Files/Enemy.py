@@ -30,7 +30,7 @@ class Enemy(object):
     self.enemyNode = Actor('Models/monster', {'walk':'Models/monsterWalkAnim',
                                               'run':'Models/monsterRunAnim'})
     self.enemyNode.reparentTo(render)
-    self.enemyNode.setScale(0.2)
+    self.enemyNode.setScale(0.33)
     self.enemyNode.setPos(self.spawnPos)
     self.enemyNode.setPlayRate(1.2, 'walk')
     self.enemyNode.loop('walk')

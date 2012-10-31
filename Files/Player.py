@@ -279,7 +279,7 @@ class Player(object):
     pLight = PointLight('player-light')
     pLightNP = self.pLightNode.attachNewNode(pLight)
     pLightNP.node().setColor(Vec4(0.1, 0.15, 0.2, 1.0))
-    pLightNP.node().setAttenuation(Vec3(0, 0.01, 0.0001))
+    pLightNP.node().setAttenuation(Vec3(0, 0.0005, 0.000005))
     render.setLight(pLightNP)
     
   #Spawn plays at given pos with walls and lights
@@ -287,7 +287,7 @@ class Player(object):
     self.spawnPos = pos
     self.maxWalls = walls
     self.maxLights = lights
-    self.playerNode.setPos(pos)
+    self.playerNode.setPos(render, pos)
     self.wallsLeft = walls
     self.walls = []
     self.lightsLeft = lights
